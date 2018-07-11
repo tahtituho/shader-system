@@ -1,11 +1,16 @@
 /*
 * Mostly borrowed from http://lazyfoo.net/tutorials/OpenGL/01_hello_opengl/index2.php
+* and from https://github.com/joshb/glsl_lighting
 */
 
 #include <iostream>
+
+#include <GL/glew.h>
 #include <GL/freeglut.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+//#include <GL/gl.h>
+//#include <GL/glext.h>
+//#include <GL/glu.h>
+
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;

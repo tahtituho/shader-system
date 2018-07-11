@@ -8,7 +8,7 @@
             "type": "shell",
             "command": "g++",
             "args": [
-                "main.cpp", "-w", "-lGL", "-lGLU", "-lglut", "-o", "bin/shader-system"
+                "main.cpp", "-w", "-lGLEW", "-lGL", "-lGLU", "-lglut", "-o", "bin/shader-system"
             ],
             "group": {
                 "kind": "build",
