@@ -34,12 +34,19 @@ int main(int argc, char* args[])
 
     if(!initGL())
     {
-        std::cout << "fatal error" << std::endl;
+        std::cout << "init error" << std::endl;
         return 1;
     }
+    
+    if(!initShaders())
+    {
+        std::cout << "init shaders error" << std::endl;
+    }
+    
     glutDisplayFunc(render);
     glutTimerFunc(1000 / SCREEN_FPS, mainLoop, 0);
     glutMainLoop();
+    cleanUp();
     return 0;
 }
 
@@ -81,4 +88,47 @@ void mainLoop(int val)
     update();
     render();
     glutTimerFunc(1000 / SCREEN_FPS, mainLoop, val);
+}
+    update();
+    render();
+    glutTimerFunc(1000 / SCREEN_FPS, mainLoop, val);
+}
+
+bool initShaders()
+{
+    program = glCreateProgram();
+    //Create shaders and other stuff
+    GLint linkStatus;
+    glLinkProgram(program);
+    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
+    if(linkStatus == GL_FALSE)
+    {
+        GLint logLength;
+        char* log;
+
+        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
+        log = new char[logLength];
+        GLint infoLogStatus;
+        glGetProgramInfoLog(program, logLength, &infoLogStatus, log);
+        std::cout << "Program linking error: " << log << std::endl; 
+        delete[] log;
+        glDeleteProgram(program);
+        program = 0;
+        return false;
+
+    }
+    return true;
+
+}
+
+bool compileShader(GLenum type, std::string source)
+{
+    GLuint shader;
+    GLint sourceLength = source.length();
+    return true;
+}
+void cleanUp()
+{
+    glDeleteProgram(program);
+    program = 0;
 }
