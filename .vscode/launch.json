@@ -23,7 +23,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "build shader system"
+            "preLaunchTask": "debug build shader system"
         }
     ]
 }
