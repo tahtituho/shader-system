@@ -4,16 +4,39 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build shader system",
+            "label": "debug build shader system",
             "type": "shell",
             "command": "g++",
             "args": [
-                "main.cpp", "-w", "-g", "-lGLEW", "-lGL", "-lGLU", "-lglut", "-o", "bin/shader-system"
+                "main.cpp",
+                "-w",
+                "-g",
+                "-lGLEW",
+                "-lGL",
+                "-lGLU",
+                "-lglut",
+                "-o",
+                "bin/shader-system"
             ],
             "group": {
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "release build shader system",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "main.cpp",
+                "-w",
+                "-lGLEW",
+                "-lGL",
+                "-lGLU",
+                "-lglut",
+                "-o",
+                "bin/shader-system"
+            ]
         }
     ]
 }
