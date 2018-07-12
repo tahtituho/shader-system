@@ -26,6 +26,7 @@ GLuint program;
 int main(int argc, char* args[])
 {
     std::cout << "shader system version 0.1" << std::endl << "by tähtituho 2018" << std::endl;
+    glewExperimental = GL_TRUE;
 
     glutInit(&argc, args);
     glutInitContextVersion(2, 1);
@@ -34,19 +35,28 @@ int main(int argc, char* args[])
     glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
     glutCreateWindow("shader system");
 
+    GLenum glewError = glewInit();
+    if (GLEW_OK != glewError)
+    {
+        std::cout << "glew error: " << glewGetErrorString(glewError) << std::endl;
+        return false;
+    }
+
+    std::cout << "opengl vendor:   " << glGetString(GL_VENDOR) << std::endl; 
+    std::cout << "opengl renderer: " << glGetString(GL_RENDERER) << std::endl;
+    std::cout << "opengl version:  " << glGetString(GL_VERSION) << std::endl;
+    std::cout << "shading version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+    /*
+    this is not working
+    if(!initShaders())
+    {
+        std::cout << "init shaders error" << std::endl;
+    }
+    */
     if(!initGL())
     {
         std::cout << "init error" << std::endl;
         return 1;
-    }
-    
-    std::cout << "opengl vendor:   " << glGetString(GL_VENDOR) << std::endl; 
-    std::cout << "opengl renderer: " << glGetString(GL_RENDERER) << std::endl;
-    std::cout << "opengl version:  " << glGetString(GL_VERSION) << std::endl;
-    
-    if(!initShaders())
-    {
-        std::cout << "init shaders error" << std::endl;
     }
     
     glutDisplayFunc(render);
@@ -59,12 +69,7 @@ int main(int argc, char* args[])
 }
 
 bool initGL() {
-    GLenum glewError = glewInit();
-    if (GLEW_OK != glewError)
-    {
-        std::cout << "glew rrror: " << glewGetErrorString(glewError) << std::endl;
-        return false;
-    }
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
