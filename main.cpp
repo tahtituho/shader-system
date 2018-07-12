@@ -112,7 +112,9 @@ void mainLoop(int val)
 bool initShaders()
 {
     program = glCreateProgram();
-    //Create shaders and other stuff
+    
+    compileShader(GL_VERTEX_SHADER, std::string("vertex shader\0"));
+    compileShader(GL_FRAGMENT_SHADER, std::string("fragment shader\0"));
     GLint linkStatus;
     glLinkProgram(program);
     glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
@@ -138,8 +140,37 @@ bool initShaders()
 
 bool compileShader(GLenum type, std::string source)
 {
-    GLuint shader;
-    GLint sourceLength = source.length();
+    GLsizei sourceLength = source.length();
+    //assume that source contains shader source code
+    GLuint shader = glCreateShader(type);
+    /*
+    * https://stackoverflow.com/questions/8024433/glsl-shader-compilation-issue-at-runtime/8024613#8024613
+    * source should be lines of GLSL, not in one line
+    * https://gist.github.com/kenpower/4327014
+    * simple shaders to use
+    * */
+    glShaderSource(shader, 1, (const GLchar* const *)source.c_str(), &sourceLength);
+    glCompileShader(shader);
+
+    GLint compileResult;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &compileResult);
+    if(compileResult == GL_FALSE)
+    {
+        GLint logLength;
+        char* log;
+
+        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
+        log = new char[logLength];
+        GLint infoLogStatus;
+        glGetShaderInfoLog(shader, logLength, &infoLogStatus, log);
+        std::cout << "shader compile error: " << log << std::endl; 
+        delete[] log;
+        glDeleteShader(shader);
+        program = 0;
+        return false;
+    }
+    glAttachShader(program, shader);
+    glDeleteShader(shader);
     return true;
 }
 void cleanUp()
