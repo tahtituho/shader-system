@@ -4,6 +4,7 @@
 */
 
 #include <iostream>
+#include <string>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
@@ -17,7 +18,7 @@ void render();
 void handleKeyboard(unsigned char key, int x, int y);
 void mainLoop(int);
 bool initShaders();
-bool compileShader(GLenum type, const char* source);
+bool compileShader(GLenum type, const std::string source);
 void cleanUp();
 
 GLuint program;
