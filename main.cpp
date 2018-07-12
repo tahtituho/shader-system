@@ -14,6 +14,7 @@ const int SCREEN_FPS = 60;
 bool initGL();
 void update();
 void render();
+void handleKeyboard(unsigned char key, int x, int y);
 void mainLoop(int);
 bool initShaders();
 bool compileShader(GLenum type, const char* source);
@@ -48,9 +49,10 @@ int main(int argc, char* args[])
     }
     
     glutDisplayFunc(render);
+    glutKeyboardFunc(handleKeyboard);
     glutTimerFunc(1000 / SCREEN_FPS, mainLoop, 0);
     glutMainLoop();
-    
+
     cleanUp();
     return 0;
 }
@@ -95,6 +97,10 @@ void render()
     glutSwapBuffers();
 }
 
+void handleKeyboard(unsigned char key, int x, int y)
+{
+    //Do something with keys, maybe uniform variables
+}
 void mainLoop(int val)
 {
     update();
