@@ -127,7 +127,7 @@ bool initShaders()
         log = new char[logLength];
         GLint infoLogStatus;
         glGetProgramInfoLog(program, logLength, &infoLogStatus, log);
-        std::cout << "Program linking error: " << log << std::endl; 
+        std::cout << "program linking error: " << log << std::endl; 
         delete[] log;
         glDeleteProgram(program);
         program = 0;
