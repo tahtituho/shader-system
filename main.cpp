@@ -6,10 +6,6 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-//#include <GL/gl.h>
-//#include <GL/glext.h>
-//#include <GL/glu.h>
-
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
@@ -54,6 +50,7 @@ int main(int argc, char* args[])
     glutDisplayFunc(render);
     glutTimerFunc(1000 / SCREEN_FPS, mainLoop, 0);
     glutMainLoop();
+    
     cleanUp();
     return 0;
 }
