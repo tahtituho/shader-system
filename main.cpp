@@ -4,7 +4,6 @@
 */
 
 #include <iostream>
-
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 //#include <GL/gl.h>
@@ -20,7 +19,11 @@ bool initGL();
 void update();
 void render();
 void mainLoop(int);
-bool compileShader();
+bool initShaders();
+bool compileShader(GLenum type, const char* source);
+void cleanUp();
+
+GLuint program;
 
 int main(int argc, char* args[])
 {
@@ -28,6 +31,7 @@ int main(int argc, char* args[])
 
     glutInit(&argc, args);
     glutInitContextVersion(2, 1);
+ 
     glutInitDisplayMode(GLUT_DOUBLE);
     glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
     glutCreateWindow("shader system");
@@ -37,6 +41,10 @@ int main(int argc, char* args[])
         std::cout << "init error" << std::endl;
         return 1;
     }
+    
+    std::cout << "opengl vendor:   " << glGetString(GL_VENDOR) << std::endl; 
+    std::cout << "opengl renderer: " << glGetString(GL_RENDERER) << std::endl;
+    std::cout << "opengl version:  " << glGetString(GL_VERSION) << std::endl;
     
     if(!initShaders())
     {
@@ -51,6 +59,12 @@ int main(int argc, char* args[])
 }
 
 bool initGL() {
+    GLenum glewError = glewInit();
+    if (GLEW_OK != glewError)
+    {
+        std::cout << "glew rrror: " << glewGetErrorString(glewError) << std::endl;
+        return false;
+    }
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
@@ -61,6 +75,7 @@ bool initGL() {
     GLenum error = glGetError();
     if(error != GL_NO_ERROR)
     {
+        std::cout << "init opengl error: " << glewGetErrorString(error) << std::endl;
         return false;
     }
     return true;
@@ -85,10 +100,6 @@ void render()
 
 void mainLoop(int val)
 {
-    update();
-    render();
-    glutTimerFunc(1000 / SCREEN_FPS, mainLoop, val);
-}
     update();
     render();
     glutTimerFunc(1000 / SCREEN_FPS, mainLoop, val);
