@@ -26,7 +26,7 @@ GLuint program;
 int main(int argc, char* args[])
 {
     std::cout << "shader system version 0.1" << std::endl << "by tähtituho 2018" << std::endl;
-    glewExperimental = GL_TRUE;
+    //glewExperimental = GL_TRUE;
 
     glutInit(&argc, args);
     glutInitContextVersion(2, 1);
