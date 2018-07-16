@@ -46,13 +46,14 @@ int main(int argc, char* args[])
     std::cout << "opengl renderer: " << glGetString(GL_RENDERER) << std::endl;
     std::cout << "opengl version:  " << glGetString(GL_VERSION) << std::endl;
     std::cout << "shading version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-    /*
-    this is not working
+    std::cout << "glew version:    " << glewGetString(GLEW_VERSION) << std::endl;
+    
+    //this is not working
     if(!initShaders())
     {
         std::cout << "init shaders error" << std::endl;
     }
-    */
+    
     if(!initGL())
     {
         std::cout << "init error" << std::endl;
