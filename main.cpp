@@ -23,6 +23,17 @@ void cleanUp();
 
 GLuint program;
 
+char* vertexSource = "#version 120\n"   
+		            "void main() {        "
+		            "  gl_FragColor[0] = 0.0; "
+		            "  gl_FragColor[1] = 0.0; "
+		            "  gl_FragColor[2] = 1.0; "
+		            "}";
+char* fragmentSource = "#version 120\n"
+                        "void main() {"
+                        "gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);"
+                        "}";
+
 int main(int argc, char* args[])
 {
     std::cout << "shader system version 0.1" << std::endl << "by tähtituho 2018" << std::endl;
@@ -119,8 +130,8 @@ bool initShaders()
 {
     program = glCreateProgram();
     
-    compileShader(GL_VERTEX_SHADER, std::string("vertex shader\0"));
-    compileShader(GL_FRAGMENT_SHADER, std::string("fragment shader\0"));
+    compileShader(GL_VERTEX_SHADER, std::string(vertexSource));
+    compileShader(GL_FRAGMENT_SHADER, std::string(fragmentSource));
     GLint linkStatus;
     glLinkProgram(program);
     glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
