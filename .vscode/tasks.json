@@ -11,6 +11,7 @@
                 "main.cpp",
                 "-w",
                 "-g",
+                "-ggdb",
                 "-lGLEW",
                 "-lGL",
                 "-lGLU",
