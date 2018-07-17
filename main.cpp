@@ -31,7 +31,7 @@ int main(int argc, char* args[])
     glutInit(&argc, args);
     glutInitContextVersion(2, 1);
  
-    glutInitDisplayMode(GLUT_DOUBLE);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
     glutCreateWindow("shader system");
 
