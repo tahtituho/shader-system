@@ -48,7 +48,7 @@ char* fragmentSource = "#version 120\n"
 
 int main(int argc, char* args[])
 {
-    std::cout << "shader system version 0.1" << std::endl << "by tähtituho 2018" << std::endl;
+    std::cout << "shader system version 0.2" << std::endl << "by tähtituho 2018" << std::endl;
     //glewExperimental = GL_TRUE;
 
     glutInit(&argc, args);
