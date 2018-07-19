@@ -23,6 +23,11 @@ void cleanUp();
 
 GLuint program;
 GLint timeUniform;
+GLint resolutionUniform;
+
+/*
+ * shaders borrow from glslsandbox
+ * */
 
 char* vertexSource = "#version 120\n"   
 		            "void main() {        "
@@ -30,8 +35,15 @@ char* vertexSource = "#version 120\n"
 		            "}";
 char* fragmentSource = "#version 120\n"
                         "uniform float time;"
+                        "uniform vec2 resolution;"
                         "void main() {"
-                        "gl_FragColor = vec4(1.0, sin(time / 500.0), 0.0, 1.0);"
+                        "vec2 position = ( gl_FragCoord.xy / resolution.xy );"
+	                    "float color = 0.0;"
+	                    "color += sin( position.x * cos( time / 15.0 ) * 80.0 ) + cos( position.y * cos( time / 15.0 ) * 10.0 );"
+	                    "color += sin( position.y * sin( time / 10.0 ) * 40.0 ) + cos( position.x * sin( time / 25.0 ) * 40.0 );"
+	                    "color += sin( position.x * sin( time / 5.0 ) * 10.0 ) + sin( position.y * sin( time / 35.0 ) * 80.0 );"
+	                    "color *= sin( time / 10.0 ) * 0.5;"
+	                    "gl_FragColor = vec4( vec3( color, color * 0.5, sin( color + time / 3.0 ) * 0.75 ), 1.0 );"
                         "}";
 
 int main(int argc, char* args[])
@@ -109,7 +121,8 @@ void render()
     glUseProgram(program);
 
     GLint time = glutGet(GLUT_ELAPSED_TIME);
-    glUniform1f(timeUniform, (GLfloat)time);
+    glUniform1f(timeUniform, (GLfloat)time / 1000.0);
+    glUniform2f(resolutionUniform, (GLfloat)SCREEN_WIDTH, (GLfloat)SCREEN_HEIGHT);
 
     glBegin(GL_QUADS);
     glVertex2f(-1.0f, -1.0f);
@@ -158,6 +171,7 @@ bool initShaders()
 
     }
     timeUniform = glGetUniformLocation(program, "time");
+    resolutionUniform = glGetUniformLocation(program, "resolution");
     return true;
 
 }
