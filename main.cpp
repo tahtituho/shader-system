@@ -22,14 +22,16 @@ bool compileShader(GLenum type, const std::string source);
 void cleanUp();
 
 GLuint program;
+GLint timeUniform;
 
 char* vertexSource = "#version 120\n"   
 		            "void main() {        "
 		            "  gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;"
 		            "}";
 char* fragmentSource = "#version 120\n"
+                        "uniform float time;"
                         "void main() {"
-                        "gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);"
+                        "gl_FragColor = vec4(1.0, sin(time / 500.0), 0.0, 1.0);"
                         "}";
 
 int main(int argc, char* args[])
@@ -105,6 +107,10 @@ void render()
 {
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(program);
+
+    GLint time = glutGet(GLUT_ELAPSED_TIME);
+    glUniform1f(timeUniform, (GLfloat)time);
+
     glBegin(GL_QUADS);
     glVertex2f(-1.0f, -1.0f);
     glVertex2f( 1.0f, -1.0f);
@@ -151,6 +157,7 @@ bool initShaders()
         return false;
 
     }
+    timeUniform = glGetUniformLocation(program, "time");
     return true;
 
 }
