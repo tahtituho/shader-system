@@ -104,12 +104,14 @@ void update()
 void render()
 {
     glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(program);
     glBegin(GL_QUADS);
     glVertex2f(-1.0f, -1.0f);
     glVertex2f( 1.0f, -1.0f);
     glVertex2f( 1.0f,  1.0f);
     glVertex2f(-1.0f,  1.0f);
     glEnd();
+    glUseProgram(0);
     glutSwapBuffers();
 }
 
