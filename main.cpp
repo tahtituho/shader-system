@@ -155,17 +155,9 @@ bool initShaders()
 
 bool compileShader(GLenum type, std::string source)
 {
-    GLsizei sourceLength = source.length();
-    //assume that source contains shader source code
     GLuint shader = glCreateShader(type);
-    /*
-    * https://stackoverflow.com/questions/8024433/glsl-shader-compilation-issue-at-runtime/8024613#8024613
-    * source should be lines of GLSL, not in one line
-    * https://gist.github.com/kenpower/4327014
-    * simple shaders to use
-    * */
-    GLchar* temp = (GLchar*)source.c_str();
-    glShaderSource(shader, 1, (const GLchar* const *)source.c_str(), &sourceLength);
+    const GLchar* sourceChar = (const GLchar*)source.c_str();
+    glShaderSource(shader, 1, &sourceChar, 0);
     glCompileShader(shader);
 
     GLint compileResult;
