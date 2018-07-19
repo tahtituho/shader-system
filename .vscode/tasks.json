@@ -17,7 +17,7 @@
                 "-lGLU",
                 "-lglut",
                 "-o",
-                "bin/shader-system"
+                "bin/debug/shader-system"
             ],
             "group": {
                 "kind": "build",
@@ -36,7 +36,7 @@
                 "-lGLU",
                 "-lglut",
                 "-o",
-                "bin/shader-system"
+                "bin/release/shader-system"
             ]
         }
     ]

@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/shader-system",
+            "program": "${workspaceFolder}/bin/debug/shader-system",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
