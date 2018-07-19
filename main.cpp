@@ -25,9 +25,7 @@ GLuint program;
 
 char* vertexSource = "#version 120\n"   
 		            "void main() {        "
-		            "  gl_FragColor[0] = 0.0; "
-		            "  gl_FragColor[1] = 0.0; "
-		            "  gl_FragColor[2] = 1.0; "
+		            "  gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;"
 		            "}";
 char* fragmentSource = "#version 120\n"
                         "void main() {"
@@ -166,6 +164,7 @@ bool compileShader(GLenum type, std::string source)
     * https://gist.github.com/kenpower/4327014
     * simple shaders to use
     * */
+    GLchar* temp = (GLchar*)source.c_str();
     glShaderSource(shader, 1, (const GLchar* const *)source.c_str(), &sourceLength);
     glCompileShader(shader);
 
