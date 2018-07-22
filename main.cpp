@@ -223,7 +223,15 @@ bool compileShader(GLenum type, std::string source)
         log = new char[logLength];
         GLint infoLogStatus;
         glGetShaderInfoLog(shader, logLength, &infoLogStatus, log);
-        std::cerr << "[ERROR]: shader compile error: " << log << std::endl; 
+        if(type == GL_VERTEX_SHADER)
+        {
+            std::cerr << "[ERROR]: vertex shader compile error: " << log << std::endl; 
+        }
+        else
+        {
+            std::cerr << "[ERROR]: fragment shader compile error: " << log << std::endl; 
+        }
+        
         delete[] log;
         glDeleteShader(shader);
         program = 0;
