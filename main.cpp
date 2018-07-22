@@ -24,6 +24,8 @@ std::string readShaderSource(std::string path);
 bool compileShader(GLenum type, const std::string source);
 void cleanUp();
 
+bool fullscreen;
+
 GLuint program;
 GLint timeUniform;
 GLint resolutionUniform;
@@ -33,7 +35,7 @@ std::string fragmentPath;
 
 int main(int argc, char* args[])
 {
-    std::cout << "[INFO]: shader system version 0.2 by tähtituho 2018" << std::endl;
+    std::cout << "[INFO]: shader system version 0.4 by tähtituho 2018" << std::endl;
     //glewExperimental = GL_TRUE;
     int c = 0;
     while ((c = getopt(argc, args, "v:f:")) != -1)
@@ -144,7 +146,20 @@ void render()
 
 void handleKeyboard(unsigned char key, int x, int y)
 {
-    //Do something with keys, maybe uniform variables
+    switch(key)
+    {
+        case 'f':
+            if(fullscreen) 
+            {
+                glutReshapeWindow(SCREEN_WIDTH, SCREEN_HEIGHT);
+            }
+            else
+            {
+                glutFullScreen();
+            }
+            fullscreen = !fullscreen;
+            break;
+    }
 }
 void mainLoop(int val)
 {
