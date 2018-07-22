@@ -20,6 +20,7 @@ void render();
 void handleKeyboard(unsigned char key, int x, int y);
 void mainLoop(int);
 bool initShaders(std::string vertexSource, std::string fragmentSource);
+std::string readShaderSource(std::string path);
 bool compileShader(GLenum type, const std::string source);
 void cleanUp();
 
@@ -77,27 +78,11 @@ int main(int argc, char* args[])
     std::cout << "[INFO]: opengl version:  " << glGetString(GL_VERSION) << std::endl;
     std::cout << "[INFO]: shading version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
     std::cout << "[INFO]: glew version:    " << glewGetString(GLEW_VERSION) << std::endl;
-    
-   
-    char* vertexSource = "#version 120\n"   
-                        "void main() {        "
-                        "  gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;"
-                        "}";
-    char* fragmentSource = "#version 120\n"
-                            "uniform float time;"
-                            "uniform vec2 resolution;"
-                            "void main() {"
-                            "vec2 position = ( gl_FragCoord.xy / resolution.xy );"
-                            "float color = 0.0;"
-                            "color += sin( position.x * cos( time / 15.0 ) * 80.0 ) + cos( position.y * cos( time / 15.0 ) * 10.0 );"
-                            "color += sin( position.y * sin( time / 10.0 ) * 40.0 ) + cos( position.x * sin( time / 25.0 ) * 40.0 );"
-                            "color += sin( position.x * sin( time / 5.0 ) * 10.0 ) + sin( position.y * sin( time / 35.0 ) * 80.0 );"
-                            "color *= sin( time / 10.0 ) * 0.5;"
-                            "gl_FragColor = vec4( vec3( color, color * 0.5, sin( color + time / 3.0 ) * 0.75 ), 1.0 );"
-                            "}";
-    if(!initShaders(std::string(vertexSource), std::string(fragmentSource)))
+
+    if(!initShaders(vertexPath, fragmentPath))
     {
         std::cerr << "[ERROR]: init shaders error" << std::endl;
+        return 1;
     }
     
     if(!initGL())
@@ -174,12 +159,20 @@ std::string readShaderSource(std::string path)
     std::string content = std::string((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
     return content;
 }
-bool initShaders(std::string vertexSource, std::string fragmentSource)
+bool initShaders(std::string vertexPath, std::string fragmentPath)
 {
-    program = glCreateProgram();
+    if(!program) 
+    {
+        program = glCreateProgram();
+    }
     
-    compileShader(GL_VERTEX_SHADER, vertexSource);
-    compileShader(GL_FRAGMENT_SHADER, fragmentSource);
+    std::string vertexSource = readShaderSource(vertexPath);
+    std::string fragmentSource = readShaderSource(fragmentPath);
+    if(compileShader(GL_VERTEX_SHADER, vertexSource) == false || compileShader(GL_FRAGMENT_SHADER, fragmentSource) == false)
+    {
+        return false;
+    }
+       
     GLint linkStatus;
     glLinkProgram(program);
     glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
