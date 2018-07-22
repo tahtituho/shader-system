@@ -5,6 +5,8 @@
 
 #include <iostream>
 #include <string>
+#include <fstream>
+#include <unistd.h>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
@@ -17,7 +19,7 @@ void update();
 void render();
 void handleKeyboard(unsigned char key, int x, int y);
 void mainLoop(int);
-bool initShaders();
+bool initShaders(std::string vertexSource, std::string fragmentSource);
 bool compileShader(GLenum type, const std::string source);
 void cleanUp();
 
@@ -25,31 +27,36 @@ GLuint program;
 GLint timeUniform;
 GLint resolutionUniform;
 
-/*
- * shaders borrow from glslsandbox
- * */
-
-char* vertexSource = "#version 120\n"   
-		            "void main() {        "
-		            "  gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;"
-		            "}";
-char* fragmentSource = "#version 120\n"
-                        "uniform float time;"
-                        "uniform vec2 resolution;"
-                        "void main() {"
-                        "vec2 position = ( gl_FragCoord.xy / resolution.xy );"
-	                    "float color = 0.0;"
-	                    "color += sin( position.x * cos( time / 15.0 ) * 80.0 ) + cos( position.y * cos( time / 15.0 ) * 10.0 );"
-	                    "color += sin( position.y * sin( time / 10.0 ) * 40.0 ) + cos( position.x * sin( time / 25.0 ) * 40.0 );"
-	                    "color += sin( position.x * sin( time / 5.0 ) * 10.0 ) + sin( position.y * sin( time / 35.0 ) * 80.0 );"
-	                    "color *= sin( time / 10.0 ) * 0.5;"
-	                    "gl_FragColor = vec4( vec3( color, color * 0.5, sin( color + time / 3.0 ) * 0.75 ), 1.0 );"
-                        "}";
+std::string vertexPath;
+std::string fragmentPath;
 
 int main(int argc, char* args[])
 {
-    std::cout << "shader system version 0.2" << std::endl << "by tähtituho 2018" << std::endl;
+    std::cout << "[INFO]: shader system version 0.2 by tähtituho 2018" << std::endl;
     //glewExperimental = GL_TRUE;
+    int c = 0;
+    while ((c = getopt(argc, args, "v:f:")) != -1)
+    {
+        switch(c) 
+        {
+            case 'v':
+                vertexPath = std::string(optarg);
+                break;  
+            case 'f':
+                fragmentPath = std::string(optarg);
+                break;
+            default:
+                std::cerr << "[ERROR]: provide vertex and fragment shader files as parameter .ie -v vertex.glgl -f fragment.glsl" << std::endl;
+                return 1;
+
+        }
+    }
+
+    if(vertexPath.empty() || fragmentPath.empty())
+    {
+        std::cerr << "[ERROR]: provide vertex and fragment shader files as parameter .ie -v vertex.glgl -f fragment.glsl" << std::endl;
+        return 1;
+    }
 
     glutInit(&argc, args);
     glutInitContextVersion(2, 1);
@@ -65,21 +72,37 @@ int main(int argc, char* args[])
         return false;
     }
 
-    std::cout << "opengl vendor:   " << glGetString(GL_VENDOR) << std::endl; 
-    std::cout << "opengl renderer: " << glGetString(GL_RENDERER) << std::endl;
-    std::cout << "opengl version:  " << glGetString(GL_VERSION) << std::endl;
-    std::cout << "shading version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-    std::cout << "glew version:    " << glewGetString(GLEW_VERSION) << std::endl;
+    std::cout << "[INFO]: opengl vendor:   " << glGetString(GL_VENDOR) << std::endl; 
+    std::cout << "[INFO]: opengl renderer: " << glGetString(GL_RENDERER) << std::endl;
+    std::cout << "[INFO]: opengl version:  " << glGetString(GL_VERSION) << std::endl;
+    std::cout << "[INFO]: shading version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+    std::cout << "[INFO]: glew version:    " << glewGetString(GLEW_VERSION) << std::endl;
     
-    //this is not working
-    if(!initShaders())
+   
+    char* vertexSource = "#version 120\n"   
+                        "void main() {        "
+                        "  gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;"
+                        "}";
+    char* fragmentSource = "#version 120\n"
+                            "uniform float time;"
+                            "uniform vec2 resolution;"
+                            "void main() {"
+                            "vec2 position = ( gl_FragCoord.xy / resolution.xy );"
+                            "float color = 0.0;"
+                            "color += sin( position.x * cos( time / 15.0 ) * 80.0 ) + cos( position.y * cos( time / 15.0 ) * 10.0 );"
+                            "color += sin( position.y * sin( time / 10.0 ) * 40.0 ) + cos( position.x * sin( time / 25.0 ) * 40.0 );"
+                            "color += sin( position.x * sin( time / 5.0 ) * 10.0 ) + sin( position.y * sin( time / 35.0 ) * 80.0 );"
+                            "color *= sin( time / 10.0 ) * 0.5;"
+                            "gl_FragColor = vec4( vec3( color, color * 0.5, sin( color + time / 3.0 ) * 0.75 ), 1.0 );"
+                            "}";
+    if(!initShaders(std::string(vertexSource), std::string(fragmentSource)))
     {
-        std::cout << "init shaders error" << std::endl;
+        std::cerr << "[ERROR]: init shaders error" << std::endl;
     }
     
     if(!initGL())
     {
-        std::cout << "init error" << std::endl;
+        std::cerr << "[ERROR]: init error" << std::endl;
         return 1;
     }
     
@@ -104,7 +127,7 @@ bool initGL() {
     GLenum error = glGetError();
     if(error != GL_NO_ERROR)
     {
-        std::cout << "init opengl error: " << glewGetErrorString(error) << std::endl;
+        std::cerr << "[ERROR]: init opengl error: " << glewGetErrorString(error) << std::endl;
         return false;
     }
     return true;
@@ -145,12 +168,18 @@ void mainLoop(int val)
     glutTimerFunc(1000 / SCREEN_FPS, mainLoop, val);
 }
 
-bool initShaders()
+std::string readShaderSource(std::string path)
+{
+    std::ifstream ifs(path);
+    std::string content = std::string((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
+    return content;
+}
+bool initShaders(std::string vertexSource, std::string fragmentSource)
 {
     program = glCreateProgram();
     
-    compileShader(GL_VERTEX_SHADER, std::string(vertexSource));
-    compileShader(GL_FRAGMENT_SHADER, std::string(fragmentSource));
+    compileShader(GL_VERTEX_SHADER, vertexSource);
+    compileShader(GL_FRAGMENT_SHADER, fragmentSource);
     GLint linkStatus;
     glLinkProgram(program);
     glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
@@ -163,7 +192,7 @@ bool initShaders()
         log = new char[logLength];
         GLint infoLogStatus;
         glGetProgramInfoLog(program, logLength, &infoLogStatus, log);
-        std::cout << "program linking error: " << log << std::endl; 
+        std::cerr << "[ERROR]: program linking error: " << log << std::endl; 
         delete[] log;
         glDeleteProgram(program);
         program = 0;
@@ -194,7 +223,7 @@ bool compileShader(GLenum type, std::string source)
         log = new char[logLength];
         GLint infoLogStatus;
         glGetShaderInfoLog(shader, logLength, &infoLogStatus, log);
-        std::cout << "shader compile error: " << log << std::endl; 
+        std::cerr << "[ERROR]: shader compile error: " << log << std::endl; 
         delete[] log;
         glDeleteShader(shader);
         program = 0;

@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/debug/shader-system",
-            "args": [],
+            "args": ["-v", "vertex.glsl", "-f", "fragment.glsl"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
