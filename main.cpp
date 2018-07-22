@@ -13,15 +13,16 @@
 const GLint SCREEN_WIDTH = 640;
 const GLint SCREEN_HEIGHT = 480;
 const GLint SCREEN_FPS = 60;
+const char* VERSION = "0.5";
 
 bool initGL();
 void update();
 void render();
 void handleKeyboard(unsigned char key, int x, int y);
 void mainLoop(int);
-bool initShaders(std::string vertexSource, std::string fragmentSource);
+bool initShaders(bool first);
 std::string readShaderSource(std::string path);
-bool compileShader(GLenum type, const std::string source);
+bool compileShader(const GLenum type, const std::string source, bool first);
 void cleanUp();
 
 bool fullscreen;
@@ -31,11 +32,13 @@ GLint timeUniform;
 GLint resolutionUniform;
 
 std::string vertexPath;
+GLuint vertexShader;
 std::string fragmentPath;
+GLuint fragmentShader;
 
 int main(int argc, char* args[])
 {
-    std::cout << "[INFO]: shader system version 0.4 by tähtituho 2018" << std::endl;
+    std::cout << "[INFO]: shader system version " << VERSION << " by tähtituho 2018" << std::endl;
     //glewExperimental = GL_TRUE;
     int c = 0;
     while ((c = getopt(argc, args, "v:f:")) != -1)
@@ -81,7 +84,7 @@ int main(int argc, char* args[])
     std::cout << "[INFO]: shading version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
     std::cout << "[INFO]: glew version:    " << glewGetString(GLEW_VERSION) << std::endl;
 
-    if(!initShaders(vertexPath, fragmentPath))
+    if(!initShaders(true))
     {
         std::cerr << "[ERROR]: init shaders error" << std::endl;
         return 1;
@@ -159,6 +162,9 @@ void handleKeyboard(unsigned char key, int x, int y)
             }
             fullscreen = !fullscreen;
             break;
+        case 'r':
+            initShaders(false);
+            break;
     }
 }
 void mainLoop(int val)
@@ -174,20 +180,33 @@ std::string readShaderSource(std::string path)
     std::string content = std::string((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
     return content;
 }
-bool initShaders(std::string vertexPath, std::string fragmentPath)
+bool initShaders(bool first)
 {
-    if(!program) 
+    if(first) 
     {
         program = glCreateProgram();
     }
-    
+   
+   
     std::string vertexSource = readShaderSource(vertexPath);
     std::string fragmentSource = readShaderSource(fragmentPath);
-    if(compileShader(GL_VERTEX_SHADER, vertexSource) == false || compileShader(GL_FRAGMENT_SHADER, fragmentSource) == false)
+
+    if(compileShader(GL_VERTEX_SHADER, vertexSource, first) == false) 
     {
         return false;
     }
-       
+    if(compileShader(GL_FRAGMENT_SHADER, fragmentSource, first) == false)
+    {
+        return false;
+    }
+    if(first == false)
+    {
+        glDeleteProgram(program);
+        program = glCreateProgram();
+    }
+    glAttachShader(program, vertexShader);
+    glAttachShader(program, fragmentShader);
+   
     GLint linkStatus;
     glLinkProgram(program);
     glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
@@ -202,8 +221,12 @@ bool initShaders(std::string vertexPath, std::string fragmentPath)
         glGetProgramInfoLog(program, logLength, &infoLogStatus, log);
         std::cerr << "[ERROR]: program linking error: " << log << std::endl; 
         delete[] log;
-        glDeleteProgram(program);
-        program = 0;
+        if(first)
+        {
+            glDeleteProgram(program);
+            program = 0;
+        }
+        
         return false;
 
     }
@@ -213,7 +236,7 @@ bool initShaders(std::string vertexPath, std::string fragmentPath)
 
 }
 
-bool compileShader(GLenum type, std::string source)
+bool compileShader(const GLenum type, std::string source, bool first)
 {
     GLuint shader = glCreateShader(type);
     const GLchar* sourceChar = (const GLchar*)source.c_str();
@@ -241,16 +264,27 @@ bool compileShader(GLenum type, std::string source)
         }
         
         delete[] log;
+        
         glDeleteShader(shader);
         program = 0;
+
         return false;
     }
-    glAttachShader(program, shader);
-    glDeleteShader(shader);
+    if(type == GL_VERTEX_SHADER)
+    {      
+        vertexShader = shader;
+    }
+    else
+    {
+        fragmentShader = shader;
+    }
+
     return true;
 }
 void cleanUp()
 {
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
     glDeleteProgram(program);
     program = 0;
 }
