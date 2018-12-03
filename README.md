@@ -13,6 +13,7 @@ this will be future
 # notes on compiling
 windows/linux
 create output folder for executable(ie. bin/debug)
+
 on windows copy freeglut.dll and glew32.dll into output folder.
 
 
