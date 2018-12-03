@@ -1,0 +1,30 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "D:\\development\\freeglut\\include\\*",
+                "D:\\development\\glew-2.1.0\\include\\*"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "WIN32",
+                "GLEW_BUILD"
+            ],
+            "compilerPath": "D:\\development\\MinGW\\bin\\gcc.exe",
+            "intelliSenseMode": "gcc-x64",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}",
+                    "D:\\development\\freeglut\\include\\*",
+                    "D:\\development\\glew-2.1.0\\include\\*"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            }
+        }
+    ],
+    "version": 4
+}

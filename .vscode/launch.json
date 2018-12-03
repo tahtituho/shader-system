@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) Launch",
+            "name": "(gdb) Linux Launch",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/debug/shader-system",
@@ -23,7 +23,28 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "debug build shader system"
+            "preLaunchTask": "debug build shader system (Linux)"
+        },
+        {
+            "name": "(gdb) Windows Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/debug/shader-system.exe",
+            "args": ["-v", "shaders\\vertex.glsl", "-f", "shaders\\fragment.glsl"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "miDebuggerPath": "D:\\development\\MinGW\\bin\\gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "debug build shader system (Windows)"
         }
     ]
 }
