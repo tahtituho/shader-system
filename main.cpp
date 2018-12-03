@@ -5,8 +5,8 @@
 
 #include <iostream>
 #include <string>
-#include <fstream>
 #include <unistd.h>
+#include <fstream>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
@@ -39,7 +39,6 @@ GLuint fragmentShader;
 int main(int argc, char* args[])
 {
     std::cout << "[INFO]: shader system version " << VERSION << " by tähtituho 2018" << std::endl;
-    //glewExperimental = GL_TRUE;
     int c = 0;
     while ((c = getopt(argc, args, "v:f:")) != -1)
     {
