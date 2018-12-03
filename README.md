@@ -3,12 +3,17 @@ attempt to create simple shader demo system with support for rocket.
 
 # requirements
 when running on ubuntu, freeglut and glew are available from package management
+on windows these have to be installed from following web sites
 - freeGlut http://freeglut.sourceforge.net/
 - glew http://glew.sourceforge.net/
+  
+this will be future
 - jsoncpp https://github.com/open-source-parsers/jsoncpp
   
-# lore
-motivation for this is to determine if my old Thinkpad X61 can be used to develop shaders.
+# notes on compiling
+windows/linux
+create output folder for executable(ie. bin/debug)
+on windows copy freeglut.dll and glew32.dll into output folder.
 
-i am under impression that this machine is capable of using hardware OpenGL 2.1. best way to verify this is to write simple and small shader program. mostly what should be accompished is to mimic http://glslsandbox.com
+
 
