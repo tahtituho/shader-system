@@ -16,7 +16,7 @@ namespace DemoSystem  {
         int FPS;
     };
 
-    struct Music {
+    struct Tune {
         std::string file;
         int BPM;
     };
@@ -33,7 +33,7 @@ namespace DemoSystem  {
             bool read(std::string file);
             Demo demo;
             Screen screen;
-            Music music;   
+            Tune tune;   
             Shaders shaders;
     };
 
