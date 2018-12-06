@@ -7,7 +7,7 @@ on windows these have to be installed from following web sites
 - freeGlut http://freeglut.sourceforge.net/
 - glew http://glew.sourceforge.net/
   
-this will be future
+this will be future for reading settings from JSON file
 - jsoncpp https://github.com/open-source-parsers/jsoncpp
   
 # notes on compiling
