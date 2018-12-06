@@ -61,7 +61,7 @@ int main(int argc, char* args[])
         std::cerr << "[ERROR]: provide vertex and fragment shader files as parameter .ie -v vertex.glgl -f fragment.glsl" << std::endl;
         return 1;
     }
-
+  
     glutInit(&argc, args);
     glutInitContextVersion(2, 1);
  
@@ -81,6 +81,7 @@ int main(int argc, char* args[])
     std::cout << "[INFO]: opengl version:  " << glGetString(GL_VERSION) << std::endl;
     std::cout << "[INFO]: shading version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
     std::cout << "[INFO]: glew version:    " << glewGetString(GLEW_VERSION) << std::endl;
+    std::cout << "[INFO]: bass version:    " << BASS_GetVersion() << std::endl;
 
     if(!initShaders(true))
     {
