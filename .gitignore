@@ -1,1 +1,3 @@
 bin/*
+*.pdb
+.vscode/settings.json
