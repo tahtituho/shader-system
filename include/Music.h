@@ -9,7 +9,10 @@ namespace DemoSystem {
         public:
             Music();    
             ~Music();
-            bool Initialize(int frequency, std::string file);
+            bool initialize(int frequency, std::string file);
+
+        private:
+            HSTREAM stream;
     };
 }
 #endif

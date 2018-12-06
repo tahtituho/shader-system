@@ -46,6 +46,7 @@
             "args": [
                 "libs/jsoncpp.cpp",
                 "libs/Configuration.cpp",
+                "libs/Music.cpp",
                 "main.cpp",
                 "-w",
                 "-g",
