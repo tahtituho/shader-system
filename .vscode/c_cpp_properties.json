@@ -5,7 +5,9 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "D:\\development\\freeglut\\include\\*",
-                "D:\\development\\glew-2.1.0\\include\\*"
+                "D:\\development\\glew-2.1.0\\include\\*",
+                "${workspaceFolder}\\libs\\json\\*",
+                "${workspaceFolder}\\include\\*"
             ],
             "defines": [
                 "_DEBUG",
@@ -19,7 +21,9 @@
                 "path": [
                     "${workspaceFolder}",
                     "D:\\development\\freeglut\\include\\*",
-                    "D:\\development\\glew-2.1.0\\include\\*"
+                    "D:\\development\\glew-2.1.0\\include\\*",
+                    "${workspaceFolder}\\libs\\*",
+                    "${workspaceFolder}\\include\\*"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""

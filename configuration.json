@@ -1,0 +1,19 @@
+{
+    "demo": {
+        "name": "demo",
+        "group": "demogroup"
+    },
+    "screen": {
+        "width": 640,
+        "height": 480,
+        "FPS": 60
+    },
+    "music": {
+        "file": "demo-release.mp3",
+        "BPM": 120
+    },
+    "shaders": {
+        "vertex": "shaders\\vertex.glsl",
+        "fragment": "shaders\\fragment.glsl"
+    }
+}
