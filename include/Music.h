@@ -10,6 +10,9 @@ namespace DemoSystem {
             Music();    
             ~Music();
             bool initialize(int frequency, std::string file);
+            void play();
+            int position();
+            void seek(int position);
 
         private:
             HSTREAM stream;
