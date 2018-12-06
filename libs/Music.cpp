@@ -1,7 +1,7 @@
 #include "Music.h"
 
 DemoSystem::Music::Music() {
-    
+    this->playing = false;
 }
 
 DemoSystem::Music::~Music() {
@@ -18,20 +18,32 @@ bool DemoSystem::Music::initialize(int frequency, std::string file) {
         int error = BASS_ErrorGetCode();
         return false;
     }
-   
+
     return true;
 
 }
 
 void DemoSystem::Music::play() {
-    !BASS_ChannelPlay(this->stream, false);
+    BASS_ChannelPlay(this->stream, false);
+    this->playing = true;
 }
 
-int DemoSystem::Music::position() {
-    //Not yet implemented
-    return 0;
+void DemoSystem::Music::pause() {
+    BASS_ChannelPause(this->stream);
+    this->playing = false;
 }
 
-void DemoSystem::Music::seek(int position) {
-    //Not yet implemented
+bool DemoSystem::Music::isPlaying() {
+    return this->playing;
+}
+
+double DemoSystem::Music::position() {
+    QWORD bytePosition = BASS_ChannelGetPosition(this->stream, BASS_POS_BYTE);
+    return BASS_ChannelBytes2Seconds(this->stream, bytePosition);
+}
+
+void DemoSystem::Music::seek(double position) {
+    QWORD bytePosition = BASS_ChannelSeconds2Bytes(this->stream, position);
+    BASS_ChannelSetPosition(this->stream, bytePosition, 
+BASS_POS_BYTE);
 }

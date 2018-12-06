@@ -11,11 +11,14 @@ namespace DemoSystem {
             ~Music();
             bool initialize(int frequency, std::string file);
             void play();
-            int position();
-            void seek(int position);
+            void pause();
+            bool isPlaying();
+            double position();
+            void seek(double position);
 
         private:
             HSTREAM stream;
+            bool playing;
     };
 }
 #endif
