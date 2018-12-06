@@ -5,16 +5,15 @@
 
 #include <iostream>
 #include <string>
-#include <unistd.h>
 #include <fstream>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <json.h>
+#include "Configuration.h"
 
-const GLint SCREEN_WIDTH = 640;
-const GLint SCREEN_HEIGHT = 480;
-const GLint SCREEN_FPS = 60;
-const char* VERSION = "0.5";
+const char* VERSION = "0.6";
 
+bool handleConfigurations(std::string configurations);
 bool initGL();
 void update();
 void render();
@@ -36,26 +35,26 @@ GLuint vertexShader;
 std::string fragmentPath;
 GLuint fragmentShader;
 
+DemoSystem::Configuration configurations;
+
 int main(int argc, char* args[])
 {
     std::cout << "[INFO]: shader system version " << VERSION << " by tähtituho 2018" << std::endl;
-    int c = 0;
-    while ((c = getopt(argc, args, "v:f:")) != -1)
-    {
-        switch(c) 
-        {
-            case 'v':
-                vertexPath = std::string(optarg);
-                break;  
-            case 'f':
-                fragmentPath = std::string(optarg);
-                break;
-            default:
-                std::cerr << "[ERROR]: provide vertex and fragment shader files as parameter .ie -v vertex.glgl -f fragment.glsl" << std::endl;
-                return 1;
-
-        }
+    
+    std::string confFile = "configuration.json";
+    if(argc > 1) {
+        confFile = std::string(args[1]);
     }
+    else {
+        std::cout << "[INFO]: Use configuration json file as parameter. Defaulting to configuration.json" << std::endl;
+    }
+    
+    if(!configurations.read(confFile)) {
+        std::cout << "[INFO]: configuration file " << confFile << " is missing. Using default configuration file configuration.json" << std::endl;
+    }
+
+    vertexPath = configurations.shaders.vertex;
+    fragmentPath = configurations.shaders.fragment;
 
     if(vertexPath.empty() || fragmentPath.empty())
     {
@@ -67,8 +66,8 @@ int main(int argc, char* args[])
     glutInitContextVersion(2, 1);
  
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-    glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-    glutCreateWindow("shader system");
+    glutInitWindowSize(configurations.screen.width, configurations.screen.height);
+    glutCreateWindow((configurations.demo.group + " : " + configurations.demo.name).c_str());
 
     GLenum glewError = glewInit();
     if (GLEW_OK != glewError)
@@ -97,11 +96,16 @@ int main(int argc, char* args[])
     
     glutDisplayFunc(render);
     glutKeyboardFunc(handleKeyboard);
-    glutTimerFunc(1000 / SCREEN_FPS, mainLoop, 0);
+    glutTimerFunc(1000 / configurations.screen.FPS, mainLoop, 0);
     glutMainLoop();
 
     cleanUp();
     return 0;
+}
+
+bool handleConfigurations(std::string path) {
+
+    return true;
 }
 
 bool initGL() {
@@ -134,7 +138,7 @@ void render()
 
     GLint time = glutGet(GLUT_ELAPSED_TIME);
     glUniform1f(timeUniform, (GLfloat)time / 1000.0);
-    glUniform2f(resolutionUniform, (GLfloat)SCREEN_WIDTH, (GLfloat)SCREEN_HEIGHT);
+    glUniform2f(resolutionUniform, (GLfloat)configurations.screen.width, (GLfloat)configurations.screen.height);
 
     glBegin(GL_QUADS);
     glVertex2f(-1.0f, -1.0f);
@@ -153,7 +157,7 @@ void handleKeyboard(unsigned char key, int x, int y)
         case 'f':
             if(fullscreen) 
             {
-                glutReshapeWindow(SCREEN_WIDTH, SCREEN_HEIGHT);
+                glutReshapeWindow(configurations.screen.width, configurations.screen.height);
             }
             else
             {
@@ -170,7 +174,7 @@ void mainLoop(int val)
 {
     update();
     render();
-    glutTimerFunc(1000 / SCREEN_FPS, mainLoop, val);
+    glutTimerFunc(1000 / configurations.screen.FPS, mainLoop, val);
 }
 
 std::string readShaderSource(std::string path)
