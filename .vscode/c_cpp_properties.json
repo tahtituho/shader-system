@@ -7,7 +7,8 @@
                 "D:\\development\\freeglut\\include\\*",
                 "D:\\development\\glew-2.1.0\\include\\*",
                 "${workspaceFolder}\\libs\\json\\*",
-                "${workspaceFolder}\\include\\*"
+                "${workspaceFolder}\\include\\*",
+                "D:\\development\\bass24\\c"
             ],
             "defines": [
                 "_DEBUG",
@@ -23,7 +24,8 @@
                     "D:\\development\\freeglut\\include\\*",
                     "D:\\development\\glew-2.1.0\\include\\*",
                     "${workspaceFolder}\\libs\\*",
-                    "${workspaceFolder}\\include\\*"
+                    "${workspaceFolder}\\include\\*",
+                    "D:\\development\\bass24\\c"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""

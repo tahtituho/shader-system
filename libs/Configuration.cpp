@@ -11,6 +11,7 @@ DemoSystem::Configuration::Configuration() {
 
     this->tune.file = "tune.mp3";
     this->tune.BPM = 80;
+    this->tune.frequency = 44000;
 
     this->shaders.vertex = "shaders/vertex.glsl";
     this->shaders.fragment = "shaders/fragment.glsl";
@@ -33,6 +34,7 @@ bool DemoSystem::Configuration::read(std::string file) {
 
         this->tune.file = c["music"]["file"].type() != Json::ValueType::nullValue ? c["music"]["file"].asString() : this->tune.file;
         this->tune.BPM = c["music"]["BPM"].type() != Json::ValueType::nullValue ? c["music"]["BPM"].asInt() : this->tune.BPM;
+        this->tune.frequency = c["music"]["frequency"].type() != Json::ValueType::nullValue ? c["music"]["frequency"].asInt() : this->tune.frequency;
 
         this->shaders.vertex = c["shaders"]["vertex"].type() != Json::ValueType::nullValue ? c["shaders"]["vertex"].asString() : this->shaders.vertex;
         this->shaders.fragment = c["shaders"]["fragment"].type() != Json::ValueType::nullValue ? c["shaders"]["fragment"].asString() : this->shaders.fragment;

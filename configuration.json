@@ -9,8 +9,9 @@
         "FPS": 60
     },
     "music": {
-        "file": "demo-release.mp3",
-        "BPM": 120
+        "file": "assets\\music\\demo-release.mp3",
+        "BPM": 120,
+        "frequency": 44000
     },
     "shaders": {
         "vertex": "shaders\\vertex.glsl",

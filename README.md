@@ -7,7 +7,8 @@ on windows these have to be installed from following web sites
 - freeGlut http://freeglut.sourceforge.net/
 - glew http://glew.sourceforge.net/
 - jsoncpp https://github.com/open-source-parsers/jsoncpp
-  
+- bass http://www.un4seen.com/bass.html
+- 
 c++ compiler is needed, and on linux g++ can found easily from package management 
 
 but on windows mingw work well
