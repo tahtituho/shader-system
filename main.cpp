@@ -37,6 +37,7 @@ std::string fragmentPath;
 GLuint fragmentShader;
 
 DemoSystem::Configuration configurations;
+DemoSystem::Music music;
 
 int main(int argc, char* args[])
 {
@@ -63,6 +64,8 @@ int main(int argc, char* args[])
         return 1;
     }
   
+    music.initialize(configurations.tune.frequency, configurations.tune.file);
+
     glutInit(&argc, args);
     glutInitContextVersion(2, 1);
  
@@ -99,6 +102,7 @@ int main(int argc, char* args[])
     glutDisplayFunc(render);
     glutKeyboardFunc(handleKeyboard);
     glutTimerFunc(1000 / configurations.screen.FPS, mainLoop, 0);
+
     glutMainLoop();
 
     cleanUp();
@@ -131,7 +135,9 @@ bool initGL() {
 
 void update()
 {
-
+    if(music.isPlaying()) {
+        std::cout << "Position: " << music.position() << std::endl;
+    }
 }
 void render()
 {
@@ -169,6 +175,14 @@ void handleKeyboard(unsigned char key, int x, int y)
             break;
         case 'r':
             initShaders(false);
+            break;
+        case 'p':
+            if(music.isPlaying()) {
+                music.pause();
+            }
+            else {
+                music.play();
+            }
             break;
     }
 }
