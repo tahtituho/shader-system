@@ -10,6 +10,7 @@
 #include <GL/freeglut.h>
 #include <json.h>
 #include "Configuration.h"
+#include "Music.h"
 
 const char* VERSION = "0.6";
 
