@@ -45,8 +45,8 @@
             "command": "g++.exe",
             "args": [
                 "libs/jsoncpp.cpp",
-                "libs/Configuration.cpp",
-                "libs/Music.cpp",
+                "src/Configuration.cpp",
+                "src/Music.cpp",
                 "main.cpp",
                 "-w",
                 "-g",

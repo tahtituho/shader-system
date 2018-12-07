@@ -25,6 +25,7 @@
                     "D:\\development\\glew-2.1.0\\include\\*",
                     "${workspaceFolder}\\libs\\*",
                     "${workspaceFolder}\\include\\*",
+                    "${workspaceFolder}\\src\\*",
                     "D:\\development\\bass24\\c"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
