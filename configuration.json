@@ -10,7 +10,8 @@
     },
     "music": {
         "file": "assets\\music\\demo-release.mp3",
-        "BPM": 120,
+        "BPM": 120.0,
+        "RPB": 8,
         "frequency": 44000
     },
     "shaders": {

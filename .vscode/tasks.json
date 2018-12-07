@@ -44,6 +44,9 @@
             "type": "shell",
             "command": "g++.exe",
             "args": [
+                "libs/device.c",
+                "libs/track.c",
+                "libs/Cosmonaut.cpp",
                 "libs/jsoncpp.cpp",
                 "libs/Configuration.cpp",
                 "libs/Music.cpp",
@@ -61,11 +64,13 @@
                 "-lbass",
                 "-ID:\\development\\glew-2.1.0\\include",
                 "-ID:\\development\\freeglut\\include",
+                "-I${workspaceFolder}\\libs",
                 "-I${workspaceFolder}\\libs\\json",
                 "-I${workspaceFolder}\\include",
                 "-ID:\\development\\bass24\\c",
                 "-static-libgcc",
                 "-static-libstdc++",
+                "-fpermissive",
                 "-o",
                 "bin\\debug\\shader-system.exe"
             ],        

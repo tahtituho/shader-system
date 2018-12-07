@@ -10,7 +10,8 @@ DemoSystem::Configuration::Configuration() {
     this->screen.FPS = 60;
 
     this->tune.file = "tune.mp3";
-    this->tune.BPM = 80;
+    this->tune.BPM = 80.0;
+    this->tune.RPB = 8;
     this->tune.frequency = 44000;
 
     this->shaders.vertex = "shaders/vertex.glsl";
@@ -33,7 +34,8 @@ bool DemoSystem::Configuration::read(std::string file) {
         this->screen.FPS = c["screen"]["FPS"].type() != Json::ValueType::nullValue ? c["screen"]["FPS"].asInt() : this->screen.FPS;
 
         this->tune.file = c["music"]["file"].type() != Json::ValueType::nullValue ? c["music"]["file"].asString() : this->tune.file;
-        this->tune.BPM = c["music"]["BPM"].type() != Json::ValueType::nullValue ? c["music"]["BPM"].asInt() : this->tune.BPM;
+        this->tune.BPM = c["music"]["BPM"].type() != Json::ValueType::nullValue ? c["music"]["BPM"].asDouble() : this->tune.BPM;
+        this->tune.RPB = c["music"]["RPB"].type() != Json::ValueType::nullValue ? c["music"]["RPB"].asInt() : this->tune.RPB;
         this->tune.frequency = c["music"]["frequency"].type() != Json::ValueType::nullValue ? c["music"]["frequency"].asInt() : this->tune.frequency;
 
         this->shaders.vertex = c["shaders"]["vertex"].type() != Json::ValueType::nullValue ? c["shaders"]["vertex"].asString() : this->shaders.vertex;

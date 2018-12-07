@@ -18,7 +18,8 @@ namespace DemoSystem  {
 
     struct Tune {
         std::string file;
-        int BPM;
+        double BPM;
+        int RPB;
         int frequency;
     };
 
