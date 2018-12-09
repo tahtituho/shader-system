@@ -2,6 +2,8 @@
 #define COSMONAUT_H
 #include <sync.h>
 #include <string>
+#include <math.h>
+#define SYNC_PLAYER
 
 namespace DemoSystem {
     class Cosmonaut {
@@ -10,6 +12,9 @@ namespace DemoSystem {
             ~Cosmonaut();
             void initialize(double bpm, int rpb);
             bool connectPlayer(std::string host);
+            void setFunctions(sync_cb* functions);
+            void update(double row);
+            double getRowRate();
 
         private:
             bool player;
@@ -19,10 +24,9 @@ namespace DemoSystem {
             double rowRate;
 
             sync_device* device;
+            sync_cb* functions;
         };
-
-
-
 }
+
 
 #endif

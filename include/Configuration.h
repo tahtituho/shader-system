@@ -23,6 +23,12 @@ namespace DemoSystem  {
         int frequency;
     };
 
+    struct Sync {
+        std::string file;
+        int RPB;
+        std::string host;
+    };
+
     struct Shaders {
         std::string vertex;
         std::string fragment;
@@ -36,6 +42,7 @@ namespace DemoSystem  {
             Demo demo;
             Screen screen;
             Tune tune;   
+            Sync sync;
             Shaders shaders;
     };
 

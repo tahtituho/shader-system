@@ -11,8 +11,11 @@ DemoSystem::Configuration::Configuration() {
 
     this->tune.file = "tune.mp3";
     this->tune.BPM = 80.0;
-    this->tune.RPB = 8;
     this->tune.frequency = 44000;
+
+    this->sync.RPB = 8;
+    this->sync.file = "tune.rocket";
+    this->sync.host = "localhost";
 
     this->shaders.vertex = "shaders/vertex.glsl";
     this->shaders.fragment = "shaders/fragment.glsl";
@@ -35,8 +38,11 @@ bool DemoSystem::Configuration::read(std::string file) {
 
         this->tune.file = c["music"]["file"].type() != Json::ValueType::nullValue ? c["music"]["file"].asString() : this->tune.file;
         this->tune.BPM = c["music"]["BPM"].type() != Json::ValueType::nullValue ? c["music"]["BPM"].asDouble() : this->tune.BPM;
-        this->tune.RPB = c["music"]["RPB"].type() != Json::ValueType::nullValue ? c["music"]["RPB"].asInt() : this->tune.RPB;
         this->tune.frequency = c["music"]["frequency"].type() != Json::ValueType::nullValue ? c["music"]["frequency"].asInt() : this->tune.frequency;
+
+        this->sync.file = c["sync"]["file"].type() != Json::ValueType::nullValue ? c["sync"]["file"].asString() : this->sync.file;
+        this->sync.host = c["sync"]["host"].type() != Json::ValueType::nullValue ? c["sync"]["host"].asString() : this->sync.host;
+        this->sync.RPB = c["sync"]["RPB"].type() != Json::ValueType::nullValue ? c["sync"]["RPB"].asInt() : this->sync.RPB;
 
         this->shaders.vertex = c["shaders"]["vertex"].type() != Json::ValueType::nullValue ? c["shaders"]["vertex"].asString() : this->shaders.vertex;
         this->shaders.fragment = c["shaders"]["fragment"].type() != Json::ValueType::nullValue ? c["shaders"]["fragment"].asString() : this->shaders.fragment;
