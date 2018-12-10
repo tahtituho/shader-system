@@ -11,10 +11,10 @@
 #include <json.h>
 #include "Configuration.h"
 #include "Music.h"
+#include "Cosmonaut.h"
 
 const char* VERSION = "0.6";
-
-bool handleConfigurations(std::string configurations);
+#define SYNC_PLAYER
 bool initGL();
 void update();
 void render();
@@ -24,6 +24,10 @@ bool initShaders(bool first);
 std::string readShaderSource(std::string path);
 bool compileShader(const GLenum type, const std::string source, bool first);
 void cleanUp();
+
+void musicPause(void* c, int flag);
+void musicSetRow(void* c, int row);
+int musicPlaying(void* c);
 
 bool fullscreen;
 
@@ -38,6 +42,7 @@ GLuint fragmentShader;
 
 DemoSystem::Configuration configurations;
 DemoSystem::Music music;
+DemoSystem::Cosmonaut cosmonaut;
 
 int main(int argc, char* args[])
 {
@@ -63,8 +68,6 @@ int main(int argc, char* args[])
         std::cerr << "[ERROR]: provide vertex and fragment shader files as parameter .ie -v vertex.glgl -f fragment.glsl" << std::endl;
         return 1;
     }
-  
-    music.initialize(configurations.tune.frequency, configurations.tune.file);
 
     glutInit(&argc, args);
     glutInitContextVersion(2, 1);
@@ -72,6 +75,7 @@ int main(int argc, char* args[])
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize(configurations.screen.width, configurations.screen.height);
     glutCreateWindow((configurations.demo.group + " : " + configurations.demo.name).c_str());
+    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 
     GLenum glewError = glewInit();
     if (GLEW_OK != glewError)
@@ -103,15 +107,42 @@ int main(int argc, char* args[])
     glutKeyboardFunc(handleKeyboard);
     glutTimerFunc(1000 / configurations.screen.FPS, mainLoop, 0);
 
+    music.initialize(configurations.tune.frequency, configurations.tune.file);
+    cosmonaut.initialize(configurations.tune.BPM, configurations.sync.RPB);
+    cosmonaut.connectPlayer(configurations.sync.host);
+    sync_cb functions;
+    functions.is_playing = (void*)&musicPlaying;
+    functions.pause = (void*)&musicPause;
+    functions.set_row = (void*)&musicSetRow;
+    cosmonaut.setFunctions(&functions);
+    music.play();
     glutMainLoop();
 
     cleanUp();
     return 0;
 }
 
-bool handleConfigurations(std::string path) {
+void musicPause(void* c, int flag) {
+    if(flag == 1) {
+        music.pause();
+    }
+    else {
+        music.play();
+    }
+}
 
-    return true;
+void musicSetRow(void* c, int row) {
+    DemoSystem::Cosmonaut c1 = *((DemoSystem::Cosmonaut *)c);
+    music.seek(row / c1.getRowRate());
+}
+
+int musicPlaying(void* c) {
+    if(music.isPlaying()) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
 }
 
 bool initGL() {
@@ -135,10 +166,10 @@ bool initGL() {
 
 void update()
 {
-    if(music.isPlaying()) {
-        std::cout << "Position: " << music.position() << std::endl;
-    }
+    double position = music.position();
+    cosmonaut.update(position * cosmonaut.getRowRate());
 }
+
 void render()
 {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -176,13 +207,8 @@ void handleKeyboard(unsigned char key, int x, int y)
         case 'r':
             initShaders(false);
             break;
-        case 'p':
-            if(music.isPlaying()) {
-                music.pause();
-            }
-            else {
-                music.play();
-            }
+        case 27:
+            glutLeaveMainLoop();
             break;
     }
 }
@@ -302,8 +328,9 @@ bool compileShader(const GLenum type, std::string source, bool first)
 }
 void cleanUp()
 {
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
     glDeleteProgram(program);
     program = 0;
+
+    cosmonaut.cleanUp();
+    music.cleanUp();
 }
