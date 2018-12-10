@@ -1,14 +1,8 @@
-/*
-* Mostly borrowed from http://lazyfoo.net/tutorials/OpenGL/01_hello_opengl/index2.php
-* and from https://github.com/joshb/glsl_lighting
-*/
-
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-#include <json.h>
 #include "Configuration.h"
 #include "Music.h"
 
@@ -139,6 +133,7 @@ void update()
         std::cout << "Position: " << music.position() << std::endl;
     }
 }
+
 void render()
 {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -186,6 +181,7 @@ void handleKeyboard(unsigned char key, int x, int y)
             break;
     }
 }
+
 void mainLoop(int val)
 {
     update();
@@ -199,13 +195,13 @@ std::string readShaderSource(std::string path)
     std::string content = std::string((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
     return content;
 }
+
 bool initShaders(bool first)
 {
     if(first) 
     {
         program = glCreateProgram();
     }
-   
    
     std::string vertexSource = readShaderSource(vertexPath);
     std::string fragmentSource = readShaderSource(fragmentPath);
@@ -300,10 +296,9 @@ bool compileShader(const GLenum type, std::string source, bool first)
 
     return true;
 }
+
 void cleanUp()
 {
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
     glDeleteProgram(program);
     program = 0;
 }
