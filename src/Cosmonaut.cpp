@@ -1,4 +1,5 @@
 #include "Cosmonaut.h"
+#include <iostream>
 
 DemoSystem::Cosmonaut::Cosmonaut() {
     this->player = false;
@@ -7,7 +8,7 @@ DemoSystem::Cosmonaut::Cosmonaut() {
 }
 
 DemoSystem::Cosmonaut::~Cosmonaut() {
-    sync_destroy_device(this->device);
+
 }
 
 void DemoSystem::Cosmonaut::initialize(double bpm, int rpb) {
@@ -22,6 +23,7 @@ void DemoSystem::Cosmonaut::initialize(double bpm, int rpb) {
 bool DemoSystem::Cosmonaut::connectPlayer(std::string host) {
     this->player = true;
     sync_tcp_connect(this->device, host.c_str(), SYNC_DEFAULT_PORT); 
+    this->time = sync_get_track(this->device, "time");
 }
 
 void DemoSystem::Cosmonaut::setFunctions(sync_cb* functions) {
@@ -29,11 +31,19 @@ void DemoSystem::Cosmonaut::setFunctions(sync_cb* functions) {
 }
 
 void DemoSystem::Cosmonaut::update(double row) {
+    //something destroys device in sync_update, ie calls destructor for cosmonaut
    if(sync_update(this->device, (int)floor(row), this->functions, (void*)this)) {
        sync_tcp_connect(this->device, host.c_str(), SYNC_DEFAULT_PORT); 
    }
+  
+   double t = sync_get_val(this->time, row);
+    std::cout << "Time: " << t << std::endl;
 }
 
 double DemoSystem::Cosmonaut::getRowRate() {
     return this->rowRate;
+}
+
+void DemoSystem::Cosmonaut::cleanUp() {
+    sync_destroy_device(this->device);
 }

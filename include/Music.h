@@ -16,6 +16,7 @@ namespace DemoSystem {
             bool isPlaying();
             double position();
             void seek(double row);
+            void cleanUp();
 
         private:
             HSTREAM stream;

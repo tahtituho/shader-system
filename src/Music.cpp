@@ -5,8 +5,6 @@ DemoSystem::Music::Music() {
 }
 
 DemoSystem::Music::~Music() {
-    BASS_SampleFree(this->stream);
-    BASS_Free();
 }
 
 bool DemoSystem::Music::initialize(int frequency, std::string file) {
@@ -53,4 +51,9 @@ double DemoSystem::Music::position() {
 void DemoSystem::Music::seek(double row) {
     QWORD bytePosition = BASS_ChannelSeconds2Bytes(this->stream, row);
     BASS_ChannelSetPosition(this->stream, bytePosition, BASS_POS_BYTE);
+}
+
+void DemoSystem::Music::cleanUp() {
+    BASS_SampleFree(this->stream);
+    BASS_Free();
 }

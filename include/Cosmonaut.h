@@ -15,6 +15,7 @@ namespace DemoSystem {
             void setFunctions(sync_cb* functions);
             void update(double row);
             double getRowRate();
+            void cleanUp();
 
         private:
             bool player;
@@ -22,9 +23,10 @@ namespace DemoSystem {
             double BPM;
             int RPB;
             double rowRate;
-
+          
             sync_device* device;
             sync_cb* functions;
+            const sync_track *time;
         };
 }
 
