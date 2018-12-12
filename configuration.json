@@ -21,5 +21,14 @@
     "shaders": {
         "vertex": "shaders\\vertex.glsl",
         "fragment": "shaders\\fragment.glsl"
-    }
+    },
+    "tracks": [
+        {
+            "type": "float3",
+            "name": {
+                "track": "scene1.color",
+                "variable": "baseColor"
+            }
+        }
+    ]
 }

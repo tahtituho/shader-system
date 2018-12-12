@@ -16,8 +16,8 @@
 const char* VERSION = "0.6";
 #define SYNC_PLAYER
 bool initGL();
-void update();
-void render();
+void update(double time);
+void render(double time);
 void handleKeyboard(unsigned char key, int x, int y);
 void mainLoop(int);
 bool initShaders(bool first);
@@ -42,7 +42,7 @@ GLuint fragmentShader;
 
 DemoSystem::Configuration configurations;
 DemoSystem::Music music;
-DemoSystem::Cosmonaut cosmonaut;
+DemoSystem::Cosmonaut* cosmonaut;
 
 int main(int argc, char* args[])
 {
@@ -108,13 +108,22 @@ int main(int argc, char* args[])
     glutTimerFunc(1000 / configurations.screen.FPS, mainLoop, 0);
 
     music.initialize(configurations.tune.frequency, configurations.tune.file);
-    cosmonaut.initialize(configurations.tune.BPM, configurations.sync.RPB);
-    cosmonaut.connectPlayer(configurations.sync.host);
+    cosmonaut = new DemoSystem::Cosmonaut();
+    cosmonaut->initialize(configurations.tune.BPM, configurations.sync.RPB);
+    cosmonaut->connectPlayer(configurations.sync.host);
     sync_cb functions;
     functions.is_playing = (void*)&musicPlaying;
     functions.pause = (void*)&musicPause;
     functions.set_row = (void*)&musicSetRow;
-    cosmonaut.setFunctions(&functions);
+    cosmonaut->setFunctions(&functions);
+    cosmonaut->setTracks(configurations.tracks);
+    //This should be done inside of cosmonaut, but glGetUniformLocation is not workin
+    //Find a way to fix this
+    
+    for(DemoSystem::Cosmonaut::Gateway gateway : cosmonaut->getGateways()) {
+        gateway.uniform = glGetUniformLocation(program, gateway.name.c_str());
+    }
+    
     music.play();
     glutMainLoop();
 
@@ -122,7 +131,7 @@ int main(int argc, char* args[])
     return 0;
 }
 
-void musicPause(void* c, int flag) {
+void musicPause(void* rr, int flag) {
     if(flag == 1) {
         music.pause();
     }
@@ -131,12 +140,12 @@ void musicPause(void* c, int flag) {
     }
 }
 
-void musicSetRow(void* c, int row) {
-    DemoSystem::Cosmonaut c1 = *((DemoSystem::Cosmonaut *)c);
-    music.seek(row / c1.getRowRate());
+void musicSetRow(void* rr, int row) {
+    double rowRate = *((double *)rr);
+    music.seek(row / rowRate);
 }
 
-int musicPlaying(void* c) {
+int musicPlaying(void* rr) {
     if(music.isPlaying()) {
         return 1;
     }
@@ -164,21 +173,31 @@ bool initGL() {
 
 }
 
-void update()
+void update(double time)
 {
-    double position = music.position();
-    cosmonaut.update(position * cosmonaut.getRowRate());
+    cosmonaut->update(time * cosmonaut->getRowRate());
 }
 
-void render()
+void render(double time)
 {
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(program);
 
-    GLint time = glutGet(GLUT_ELAPSED_TIME);
-    glUniform1f(timeUniform, (GLfloat)time / 1000.0);
+    glUniform1f(timeUniform, (GLfloat)time);
     glUniform2f(resolutionUniform, (GLfloat)configurations.screen.width, (GLfloat)configurations.screen.height);
-
+    //Somthing is reseting values, maybe gateway is destroyed?
+    for(DemoSystem::Cosmonaut::Gateway gateway : cosmonaut->getGateways()) {
+        if(gateway.type == DemoSystem::Track::FLOAT1) {
+            glUniform1f(gateway.uniform, (GLfloat)gateway.value.x);
+        }
+        else if(gateway.type == DemoSystem::Track::FLOAT2) {
+            glUniform2f(gateway.uniform, (GLfloat)gateway.value.x, (GLfloat)gateway.value.y);
+        }
+        else if(gateway.type == DemoSystem::Track::FLOAT3) {
+            glUniform3f(gateway.uniform, (GLfloat)gateway.value.x, (GLfloat)gateway.value.y, (GLfloat)gateway.value.z);
+        }
+    }
+    
     glBegin(GL_QUADS);
     glVertex2f(-1.0f, -1.0f);
     glVertex2f( 1.0f, -1.0f);
@@ -214,8 +233,9 @@ void handleKeyboard(unsigned char key, int x, int y)
 }
 void mainLoop(int val)
 {
-    update();
-    render();
+    double position = music.position();
+    update(position);
+    render(position);
     glutTimerFunc(1000 / configurations.screen.FPS, mainLoop, val);
 }
 
@@ -331,6 +351,7 @@ void cleanUp()
     glDeleteProgram(program);
     program = 0;
 
-    cosmonaut.cleanUp();
+    cosmonaut->cleanUp();
     music.cleanUp();
+    delete cosmonaut;
 }

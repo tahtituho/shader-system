@@ -3,6 +3,8 @@
 #include <string>
 #include <json.h>
 #include <fstream>
+#include <list>
+#include "sync.h"
 
 namespace DemoSystem  {
     struct Demo {
@@ -34,6 +36,18 @@ namespace DemoSystem  {
         std::string fragment;
     };
 
+    struct Track {
+        enum TrackType {
+            FLOAT1,
+            FLOAT2,
+            FLOAT3
+        };
+        
+        TrackType type;
+        std::string trackName;
+        std::string variableName;
+    };
+
     class Configuration {
         public:
             Configuration();
@@ -44,6 +58,7 @@ namespace DemoSystem  {
             Tune tune;   
             Sync sync;
             Shaders shaders;
+            std::list<DemoSystem::Track> tracks;
     };
 
 }

@@ -46,6 +46,25 @@ bool DemoSystem::Configuration::read(std::string file) {
 
         this->shaders.vertex = c["shaders"]["vertex"].type() != Json::ValueType::nullValue ? c["shaders"]["vertex"].asString() : this->shaders.vertex;
         this->shaders.fragment = c["shaders"]["fragment"].type() != Json::ValueType::nullValue ? c["shaders"]["fragment"].asString() : this->shaders.fragment;
+
+        if(c["tracks"].type() != Json::ValueType::nullValue) {
+            for(int i = 0; i < c["tracks"].size(); i++) {
+                Track t;
+                t.variableName = c["tracks"][i]["name"]["variable"].asString();
+                t.trackName = c["tracks"][i]["name"]["track"].asString();
+                std::string type = c["tracks"][i]["type"].asString();
+                if(type == "float1") {
+                    t.type = DemoSystem::Track::FLOAT1;
+                }
+                else if(type == "float2") {
+                    t.type = DemoSystem::Track::FLOAT2;
+                }
+                else if(type == "float3") {
+                    t.type = DemoSystem::Track::FLOAT3;
+                }
+                this->tracks.push_back(t);
+            }
+        }
         return true;
     }
     else {
