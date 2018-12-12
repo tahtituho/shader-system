@@ -42,7 +42,7 @@ namespace DemoSystem {
             GLint uniform;
         };
 
-        std::list<Gateway> getGateways();
+        std::list<Gateway> gateways;
         private:
             bool player;
             std::string host;
@@ -52,7 +52,7 @@ namespace DemoSystem {
           
             sync_device* device;
             sync_cb* functions;
-            std::list<Gateway> gateways;
+
             
         };
 }

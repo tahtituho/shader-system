@@ -13,8 +13,9 @@
 #include "Music.h"
 #include "Cosmonaut.h"
 
-const char* VERSION = "0.6";
+const char* VERSION = "0.7";
 #define SYNC_PLAYER
+
 bool initGL();
 void update(double time);
 void render(double time);
@@ -42,7 +43,7 @@ GLuint fragmentShader;
 
 DemoSystem::Configuration configurations;
 DemoSystem::Music music;
-DemoSystem::Cosmonaut* cosmonaut;
+DemoSystem::Cosmonaut cosmonaut;
 
 int main(int argc, char* args[])
 {
@@ -91,6 +92,16 @@ int main(int argc, char* args[])
     std::cout << "[INFO]: glew version:    " << glewGetString(GLEW_VERSION) << std::endl;
     std::cout << "[INFO]: bass version:    " << BASS_GetVersion() << std::endl;
 
+    music.initialize(configurations.tune.frequency, configurations.tune.file);
+    cosmonaut.initialize(configurations.tune.BPM, configurations.sync.RPB);
+    cosmonaut.connectPlayer(configurations.sync.host);
+    sync_cb functions;
+    functions.is_playing = (void*)&musicPlaying;
+    functions.pause = (void*)&musicPause;
+    functions.set_row = (void*)&musicSetRow;
+    cosmonaut.setFunctions(&functions);
+    cosmonaut.setTracks(configurations.tracks);
+
     if(!initShaders(true))
     {
         std::cerr << "[ERROR]: init shaders error" << std::endl;
@@ -106,24 +117,8 @@ int main(int argc, char* args[])
     glutDisplayFunc(render);
     glutKeyboardFunc(handleKeyboard);
     glutTimerFunc(1000 / configurations.screen.FPS, mainLoop, 0);
+    
 
-    music.initialize(configurations.tune.frequency, configurations.tune.file);
-    cosmonaut = new DemoSystem::Cosmonaut();
-    cosmonaut->initialize(configurations.tune.BPM, configurations.sync.RPB);
-    cosmonaut->connectPlayer(configurations.sync.host);
-    sync_cb functions;
-    functions.is_playing = (void*)&musicPlaying;
-    functions.pause = (void*)&musicPause;
-    functions.set_row = (void*)&musicSetRow;
-    cosmonaut->setFunctions(&functions);
-    cosmonaut->setTracks(configurations.tracks);
-    //This should be done inside of cosmonaut, but glGetUniformLocation is not workin
-    //Find a way to fix this
-    
-    for(DemoSystem::Cosmonaut::Gateway gateway : cosmonaut->getGateways()) {
-        gateway.uniform = glGetUniformLocation(program, gateway.name.c_str());
-    }
-    
     music.play();
     glutMainLoop();
 
@@ -175,7 +170,7 @@ bool initGL() {
 
 void update(double time)
 {
-    cosmonaut->update(time * cosmonaut->getRowRate());
+    cosmonaut.update(time * cosmonaut.getRowRate());
 }
 
 void render(double time)
@@ -185,19 +180,19 @@ void render(double time)
 
     glUniform1f(timeUniform, (GLfloat)time);
     glUniform2f(resolutionUniform, (GLfloat)configurations.screen.width, (GLfloat)configurations.screen.height);
-    //Somthing is reseting values, maybe gateway is destroyed?
-    for(DemoSystem::Cosmonaut::Gateway gateway : cosmonaut->getGateways()) {
-        if(gateway.type == DemoSystem::Track::FLOAT1) {
-            glUniform1f(gateway.uniform, (GLfloat)gateway.value.x);
+ 
+    for(std::list<DemoSystem::Cosmonaut::Gateway>::iterator it = cosmonaut.gateways.begin(); it != cosmonaut.gateways.end(); ++it) {
+        if(it->type == DemoSystem::Track::FLOAT1) {
+            glUniform1f(it->uniform, (GLfloat)it->value.x);
         }
-        else if(gateway.type == DemoSystem::Track::FLOAT2) {
-            glUniform2f(gateway.uniform, (GLfloat)gateway.value.x, (GLfloat)gateway.value.y);
+        else if(it->type == DemoSystem::Track::FLOAT2) {
+            glUniform2f(it->uniform, (GLfloat)it->value.x, (GLfloat)it->value.y);
         }
-        else if(gateway.type == DemoSystem::Track::FLOAT3) {
-            glUniform3f(gateway.uniform, (GLfloat)gateway.value.x, (GLfloat)gateway.value.y, (GLfloat)gateway.value.z);
+        else if(it->type == DemoSystem::Track::FLOAT3) {
+            glUniform3f(it->uniform, (GLfloat)it->value.x, (GLfloat)it->value.y, (GLfloat)it->value.z);
         }
     }
-    
+
     glBegin(GL_QUADS);
     glVertex2f(-1.0f, -1.0f);
     glVertex2f( 1.0f, -1.0f);
@@ -297,6 +292,12 @@ bool initShaders(bool first)
     }
     timeUniform = glGetUniformLocation(program, "time");
     resolutionUniform = glGetUniformLocation(program, "resolution");
+
+    //This should be done inside of cosmonaut
+    //Find a way to fix this
+    for(std::list<DemoSystem::Cosmonaut::Gateway>::iterator it = cosmonaut.gateways.begin(); it != cosmonaut.gateways.end(); ++it) {
+        it->uniform = glGetUniformLocation(program, it->name.c_str());
+    }
     return true;
 
 }
@@ -351,7 +352,6 @@ void cleanUp()
     glDeleteProgram(program);
     program = 0;
 
-    cosmonaut->cleanUp();
+    cosmonaut.cleanUp();
     music.cleanUp();
-    delete cosmonaut;
 }
