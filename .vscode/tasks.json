@@ -8,33 +8,53 @@
             "type": "shell",
             "command": "g++",
             "args": [
+                "libs/jsoncpp.cpp",
+                "src/Configuration.cpp",
+                "src/Music.cpp",
                 "main.cpp",
                 "-w",
                 "-g",
                 "-ggdb",
+                "-L${workspaceFolder}/libs",
+                "-L${workspaceFolder}/include",
+                "-L/home/helgrima/Development/bass24/x64",
                 "-lGLEW",
                 "-lGL",
                 "-lGLU",
                 "-lglut",
+                "-lbass",
+                "-I${workspaceFolder}/libs/json",
+                "-I${workspaceFolder}/include",
+                "-I/home/helgrima/Development/bass24",
                 "-o",
                 "bin/debug/shader-system"
             ],
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "problemMatcher": [
+                "$eslint-compact"
+            ]
         },
         {
             "label": "release build shader system (Linux)",
             "type": "shell",
             "command": "g++",
             "args": [
+                "libs/jsoncpp.cpp",
+                "src/Configuration.cpp",
+                "src/Music.cpp",
                 "main.cpp",
                 "-w",
+                "-L${workspaceFolder}/libs",
                 "-lGLEW",
                 "-lGL",
                 "-lGLU",
                 "-lglut",
+                "-I${workspaceFolder}/libs/json",
+                "-I${workspaceFolder}/include",
+                "-Ihome/helgrima/Development/bass24",
                 "-o",
                 "bin/release/shader-system"
             ]
@@ -68,14 +88,16 @@
                 "-static-libstdc++",
                 "-o",
                 "bin\\debug\\shader-system.exe"
-            ],        
+            ],
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
             "problemMatcher": {
                 "owner": "cpp",
-                "fileLocation": ["absolute"],
+                "fileLocation": [
+                    "absolute"
+                ],
                 "pattern": {
                     "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
                     "file": 1,
@@ -85,6 +107,6 @@
                     "message": 5
                 }
             }
-        }   
+        }
     ]
 }
