@@ -3,6 +3,8 @@
 #include <string>
 #include <json.h>
 #include <fstream>
+#include <list>
+#include "sync.h"
 
 namespace DemoSystem  {
     struct Demo {
@@ -18,13 +20,32 @@ namespace DemoSystem  {
 
     struct Tune {
         std::string file;
-        int BPM;
+        double BPM;
+        int RPB;
         int frequency;
+    };
+
+    struct Sync {
+        std::string file;
+        int RPB;
+        std::string host;
     };
 
     struct Shaders {
         std::string vertex;
         std::string fragment;
+    };
+
+    struct Track {
+        enum TrackType {
+            FLOAT1,
+            FLOAT2,
+            FLOAT3
+        };
+        
+        TrackType type;
+        std::string trackName;
+        std::string variableName;
     };
 
     class Configuration {
@@ -35,7 +56,9 @@ namespace DemoSystem  {
             Demo demo;
             Screen screen;
             Tune tune;   
+            Sync sync;
             Shaders shaders;
+            std::list<DemoSystem::Track> tracks;
     };
 
 }

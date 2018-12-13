@@ -5,8 +5,6 @@ DemoSystem::Music::Music() {
 }
 
 DemoSystem::Music::~Music() {
-    BASS_SampleFree(this->stream);
-    BASS_Free();
 }
 
 bool DemoSystem::Music::initialize(int frequency, std::string file) {
@@ -20,21 +18,29 @@ bool DemoSystem::Music::initialize(int frequency, std::string file) {
     }
 
     return true;
-
 }
 
 void DemoSystem::Music::play() {
-    BASS_ChannelPlay(this->stream, false);
+    if(this->playing == false) {
+        BASS_ChannelPlay(this->stream, false);
+    }
     this->playing = true;
 }
 
 void DemoSystem::Music::pause() {
-    BASS_ChannelPause(this->stream);
-    this->playing = false;
+    if(this->playing == true) {
+        BASS_ChannelPause(this->stream);
+        this->playing = false;
+    }
 }
 
 bool DemoSystem::Music::isPlaying() {
-    return this->playing;
+    if(this->playing) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
 }
 
 double DemoSystem::Music::position() {
@@ -42,8 +48,12 @@ double DemoSystem::Music::position() {
     return BASS_ChannelBytes2Seconds(this->stream, bytePosition);
 }
 
-void DemoSystem::Music::seek(double position) {
-    QWORD bytePosition = BASS_ChannelSeconds2Bytes(this->stream, position);
-    BASS_ChannelSetPosition(this->stream, bytePosition, 
-BASS_POS_BYTE);
+void DemoSystem::Music::seek(double row) {
+    QWORD bytePosition = BASS_ChannelSeconds2Bytes(this->stream, row);
+    BASS_ChannelSetPosition(this->stream, bytePosition, BASS_POS_BYTE);
+}
+
+void DemoSystem::Music::cleanUp() {
+    BASS_SampleFree(this->stream);
+    BASS_Free();
 }

@@ -10,11 +10,25 @@
     },
     "music": {
         "file": "assets\\music\\demo-release.mp3",
-        "BPM": 120,
+        "BPM": 120.0,
         "frequency": 44000
+    },
+    "sync": {
+        "RPB": 8,
+        "file": "assets\\music\\demo-release.rocket",
+        "host": "localhost"
     },
     "shaders": {
         "vertex": "shaders\\vertex.glsl",
         "fragment": "shaders\\fragment.glsl"
-    }
+    },
+    "tracks": [
+        {
+            "type": "float3",
+            "name": {
+                "track": "scene1.color",
+                "variable": "baseColor"
+            }
+        }
+    ]
 }

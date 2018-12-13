@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 #include <bass.h>
+#include "Cosmonaut.h"
 
 namespace DemoSystem {
     class Music {
@@ -14,7 +15,8 @@ namespace DemoSystem {
             void pause();
             bool isPlaying();
             double position();
-            void seek(double position);
+            void seek(double row);
+            void cleanUp();
 
         private:
             HSTREAM stream;

@@ -5,19 +5,24 @@
 #include <GL/freeglut.h>
 #include "Configuration.h"
 #include "Music.h"
+#include "Cosmonaut.h"
 
-const char* VERSION = "0.6";
+const char* VERSION = "0.7";
+#define SYNC_PLAYER
 
-bool handleConfigurations(std::string configurations);
 bool initGL();
-void update();
-void render();
+void update(double time);
+void render(double time);
 void handleKeyboard(unsigned char key, int x, int y);
 void mainLoop(int);
 bool initShaders(bool first);
 std::string readShaderSource(std::string path);
 bool compileShader(const GLenum type, const std::string source, bool first);
 void cleanUp();
+
+void musicPause(void* c, int flag);
+void musicSetRow(void* c, int row);
+int musicPlaying(void* c);
 
 bool fullscreen;
 
@@ -32,6 +37,7 @@ GLuint fragmentShader;
 
 DemoSystem::Configuration configurations;
 DemoSystem::Music music;
+DemoSystem::Cosmonaut cosmonaut;
 
 int main(int argc, char* args[])
 {
@@ -57,8 +63,6 @@ int main(int argc, char* args[])
         std::cerr << "[ERROR]: provide vertex and fragment shader files as parameter .ie -v vertex.glgl -f fragment.glsl" << std::endl;
         return 1;
     }
-  
-    music.initialize(configurations.tune.frequency, configurations.tune.file);
 
     glutInit(&argc, args);
     glutInitContextVersion(2, 1);
@@ -66,6 +70,7 @@ int main(int argc, char* args[])
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize(configurations.screen.width, configurations.screen.height);
     glutCreateWindow((configurations.demo.group + " : " + configurations.demo.name).c_str());
+    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 
     GLenum glewError = glewInit();
     if (GLEW_OK != glewError)
@@ -80,6 +85,16 @@ int main(int argc, char* args[])
     std::cout << "[INFO]: shading version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
     std::cout << "[INFO]: glew version:    " << glewGetString(GLEW_VERSION) << std::endl;
     std::cout << "[INFO]: bass version:    " << BASS_GetVersion() << std::endl;
+
+    music.initialize(configurations.tune.frequency, configurations.tune.file);
+    cosmonaut.initialize(configurations.tune.BPM, configurations.sync.RPB);
+    cosmonaut.connectPlayer(configurations.sync.host);
+    sync_cb functions;
+    functions.is_playing = (void*)&musicPlaying;
+    functions.pause = (void*)&musicPause;
+    functions.set_row = (void*)&musicSetRow;
+    cosmonaut.setFunctions(&functions);
+    cosmonaut.setTracks(configurations.tracks);
 
     if(!initShaders(true))
     {
@@ -96,16 +111,36 @@ int main(int argc, char* args[])
     glutDisplayFunc(render);
     glutKeyboardFunc(handleKeyboard);
     glutTimerFunc(1000 / configurations.screen.FPS, mainLoop, 0);
+    
 
+    music.play();
     glutMainLoop();
 
     cleanUp();
     return 0;
 }
 
-bool handleConfigurations(std::string path) {
+void musicPause(void* rr, int flag) {
+    if(flag == 1) {
+        music.pause();
+    }
+    else {
+        music.play();
+    }
+}
 
-    return true;
+void musicSetRow(void* rr, int row) {
+    double rowRate = *((double *)rr);
+    music.seek(row / rowRate);
+}
+
+int musicPlaying(void* rr) {
+    if(music.isPlaying()) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
 }
 
 bool initGL() {
@@ -127,21 +162,30 @@ bool initGL() {
 
 }
 
-void update()
+void update(double time)
 {
-    if(music.isPlaying()) {
-        std::cout << "Position: " << music.position() << std::endl;
-    }
+    cosmonaut.update(time * cosmonaut.getRowRate());
 }
 
-void render()
+void render(double time)
 {
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(program);
 
-    GLint time = glutGet(GLUT_ELAPSED_TIME);
-    glUniform1f(timeUniform, (GLfloat)time / 1000.0);
+    glUniform1f(timeUniform, (GLfloat)time);
     glUniform2f(resolutionUniform, (GLfloat)configurations.screen.width, (GLfloat)configurations.screen.height);
+ 
+    for(std::list<DemoSystem::Cosmonaut::Gateway>::iterator it = cosmonaut.gateways.begin(); it != cosmonaut.gateways.end(); ++it) {
+        if(it->type == DemoSystem::Track::FLOAT1) {
+            glUniform1f(it->uniform, (GLfloat)it->value.x);
+        }
+        else if(it->type == DemoSystem::Track::FLOAT2) {
+            glUniform2f(it->uniform, (GLfloat)it->value.x, (GLfloat)it->value.y);
+        }
+        else if(it->type == DemoSystem::Track::FLOAT3) {
+            glUniform3f(it->uniform, (GLfloat)it->value.x, (GLfloat)it->value.y, (GLfloat)it->value.z);
+        }
+    }
 
     glBegin(GL_QUADS);
     glVertex2f(-1.0f, -1.0f);
@@ -171,21 +215,17 @@ void handleKeyboard(unsigned char key, int x, int y)
         case 'r':
             initShaders(false);
             break;
-        case 'p':
-            if(music.isPlaying()) {
-                music.pause();
-            }
-            else {
-                music.play();
-            }
+        case 27:
+            glutLeaveMainLoop();
             break;
     }
 }
 
 void mainLoop(int val)
 {
-    update();
-    render();
+    double position = music.position();
+    update(position);
+    render(position);
     glutTimerFunc(1000 / configurations.screen.FPS, mainLoop, val);
 }
 
@@ -247,6 +287,12 @@ bool initShaders(bool first)
     }
     timeUniform = glGetUniformLocation(program, "time");
     resolutionUniform = glGetUniformLocation(program, "resolution");
+
+    //This should be done inside of cosmonaut
+    //Find a way to fix this
+    for(std::list<DemoSystem::Cosmonaut::Gateway>::iterator it = cosmonaut.gateways.begin(); it != cosmonaut.gateways.end(); ++it) {
+        it->uniform = glGetUniformLocation(program, it->name.c_str());
+    }
     return true;
 
 }
@@ -301,4 +347,7 @@ void cleanUp()
 {
     glDeleteProgram(program);
     program = 0;
+
+    cosmonaut.cleanUp();
+    music.cleanUp();
 }
