@@ -8,7 +8,10 @@
             "type": "shell",
             "command": "g++",
             "args": [
+                "libs/device.c",
+                "libs/track.c",          
                 "libs/jsoncpp.cpp",
+                "src/Cosmonaut.cpp",
                 "src/Configuration.cpp",
                 "src/Music.cpp",
                 "main.cpp",
@@ -26,6 +29,8 @@
                 "-I${workspaceFolder}/libs/json",
                 "-I${workspaceFolder}/include",
                 "-I/home/helgrima/Development/bass24",
+                "-I/home/helgrima//Development/rocket/lib",
+                "-fpermissive",
                 "-o",
                 "bin/debug/shader-system"
             ],
@@ -42,7 +47,10 @@
             "type": "shell",
             "command": "g++",
             "args": [
+                "libs/device.c",
+                "libs/track.c",          
                 "libs/jsoncpp.cpp",
+                "src/Cosmonaut.cpp",
                 "src/Configuration.cpp",
                 "src/Music.cpp",
                 "main.cpp",
@@ -55,6 +63,8 @@
                 "-I${workspaceFolder}/libs/json",
                 "-I${workspaceFolder}/include",
                 "-Ihome/helgrima/Development/bass24",
+                "-I/home/helgrima//Development/rocket/lib",
+                "-fpermissive",
                 "-o",
                 "bin/release/shader-system"
             ]
