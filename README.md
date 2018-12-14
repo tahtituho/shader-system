@@ -21,7 +21,9 @@ make sure that include and library folders in tasks.json are correct for you con
 windows/linux
 create output folder for executable(ie. bin/debug) it cannot create folders by itself.
 
-on windows copy freeglut.dll, glew32.dll and bass.dll into output folder.
+windows
+make sure that mingw is available, easy way to handle this is to add mingw folder to PATH variable
+copy freeglut.dll, glew32.dll and bass.dll into output folder.
 
 # executing
 when demo system is executed without parameters, it defaults configuration file to "configuration.json".
