@@ -7,7 +7,7 @@
 #include "Music.h"
 #include "Cosmonaut.h"
 
-const char* VERSION = "0.7";
+const char* VERSION = "1.0";
 #define SYNC_PLAYER
 
 bool initGL();
