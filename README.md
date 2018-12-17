@@ -2,7 +2,7 @@
 attempt to create simple shader demo system with support for rocket. 
 
 # requirements
-glfw, rocket and jsoncpp are included in project. other libraries must be installed from following locations:
+glfw, rocket and jsoncpp are included in project. bass and glew must be installed from following locations:
 
 - glfw version 3.2.1 https://www.glfw.org/
 - rocket commit 901db86412a0d57600cb072c16deac9c3ebc709d https://github.com/rocket/rocket
