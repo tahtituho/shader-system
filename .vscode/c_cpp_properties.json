@@ -4,8 +4,7 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "D:\\development\\freeglut\\include\\*",
-                "D:\\development\\glew-2.1.0\\include\\*",
+                "D:\\development\\glew-2.1.0\\include\\",
                 "${workspaceFolder}\\libs\\json\\*",
                 "${workspaceFolder}\\include\\*",
                 "D:\\development\\bass24\\c"
@@ -21,7 +20,6 @@
             "browse": {
                 "path": [
                     "${workspaceFolder}",
-                    "D:\\development\\freeglut\\include\\*",
                     "D:\\development\\glew-2.1.0\\include\\*",
                     "${workspaceFolder}\\libs\\*",
                     "${workspaceFolder}\\include\\*",
