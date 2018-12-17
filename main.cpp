@@ -2,22 +2,23 @@
 #include <string>
 #include <fstream>
 #include <GL/glew.h>
-#include <GL/freeglut.h>
+#include <GLFW/glfw3.h>
 #include "Configuration.h"
 #include "Music.h"
 #include "Cosmonaut.h"
 
-const char* VERSION = "1.0";
+const char* VERSION = "1.1";
 #define SYNC_PLAYER
 
 bool initGL();
 void update(double time);
 void render(double time);
-void handleKeyboard(unsigned char key, int x, int y);
-void mainLoop(int);
+void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int mods);
+void mainLoop();
 bool initShaders(bool first);
 std::string readShaderSource(std::string path);
 bool compileShader(const GLenum type, const std::string source, bool first);
+void logError(int error, const char* desc);
 void cleanUp();
 
 void musicPause(void* c, int flag);
@@ -26,6 +27,7 @@ int musicPlaying(void* c);
 
 bool fullscreen;
 
+GLFWwindow* window;
 GLuint program;
 GLint timeUniform;
 GLint resolutionUniform;
@@ -64,18 +66,32 @@ int main(int argc, char* args[])
         return 1;
     }
 
-    glutInit(&argc, args);
-    glutInitContextVersion(2, 1);
- 
-    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-    glutInitWindowSize(configurations.screen.width, configurations.screen.height);
-    glutCreateWindow((configurations.demo.group + " : " + configurations.demo.name).c_str());
-    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
+    if (!glfwInit()) {
+        std::cerr << "[ERROR]: glfwInit failed" << std::endl;
+        return -1;
+    }
+
+    glfwSetErrorCallback(logError);
+  
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+
+    window = glfwCreateWindow(configurations.screen.width, configurations.screen.height, (configurations.demo.group + " : " + configurations.demo.name).c_str(), NULL, NULL);
+    
+    if(!window) {
+        std::cerr << "[ERROR]: window creation failed" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    glfwSetKeyCallback(window, handleKeyboard);
+    glfwMakeContextCurrent(window);
+    
+    glfwSwapInterval(1);
 
     GLenum glewError = glewInit();
     if (GLEW_OK != glewError)
     {
-        std::cout << "glew error: " << glewGetErrorString(glewError) << std::endl;
+        std::cerr << "[ERROR]: glew error: " << glewGetErrorString(glewError) << std::endl;
         return false;
     }
 
@@ -83,7 +99,6 @@ int main(int argc, char* args[])
     std::cout << "[INFO]: opengl renderer: " << glGetString(GL_RENDERER) << std::endl;
     std::cout << "[INFO]: opengl version:  " << glGetString(GL_VERSION) << std::endl;
     std::cout << "[INFO]: shading version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-    std::cout << "[INFO]: glew version:    " << glewGetString(GLEW_VERSION) << std::endl;
     std::cout << "[INFO]: bass version:    " << BASS_GetVersion() << std::endl;
 
     music.initialize(configurations.tune.frequency, configurations.tune.file);
@@ -108,14 +123,9 @@ int main(int argc, char* args[])
         return 1;
     }
     
-    glutDisplayFunc(render);
-    glutKeyboardFunc(handleKeyboard);
-    glutTimerFunc(1000 / configurations.screen.FPS, mainLoop, 0);
-    
 
     music.play();
-    glutMainLoop();
-
+    mainLoop();
     cleanUp();
     return 0;
 }
@@ -194,39 +204,42 @@ void render(double time)
     glVertex2f(-1.0f,  1.0f);
     glEnd();
     glUseProgram(0);
-    glutSwapBuffers();
+    glfwSwapBuffers(window);
+    glfwPollEvents();
 }
 
-void handleKeyboard(unsigned char key, int x, int y)
+void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    switch(key)
-    {
-        case 'f':
-            if(fullscreen) 
-            {
-                glutReshapeWindow(configurations.screen.width, configurations.screen.height);
-            }
-            else
-            {
-                glutFullScreen();
-            }
-            fullscreen = !fullscreen;
-            break;
-        case 'r':
-            initShaders(false);
-            break;
-        case 27:
-            glutLeaveMainLoop();
-            break;
+    if(action == GLFW_PRESS) {
+        switch(key)
+        {
+            case GLFW_KEY_F:
+                if(fullscreen) {
+                    glfwRestoreWindow(window);
+                }
+                else {
+                    glfwMaximizeWindow(window);
+                }
+                fullscreen = !fullscreen;
+                break;
+            case GLFW_KEY_R:
+                initShaders(false);
+                break;
+            case GLFW_KEY_ESCAPE:
+                glfwSetWindowShouldClose(window, GLFW_TRUE);
+                break;
+        }
     }
+
 }
 
-void mainLoop(int val)
+void mainLoop()
 {
-    double position = music.position();
-    update(position);
-    render(position);
-    glutTimerFunc(1000 / configurations.screen.FPS, mainLoop, val);
+    while(!glfwWindowShouldClose(window)) {
+        double position = music.position();
+        update(position);
+        render(position);
+    }
 }
 
 std::string readShaderSource(std::string path)
@@ -343,11 +356,18 @@ bool compileShader(const GLenum type, std::string source, bool first)
     return true;
 }
 
+void logError(int error, const char* desc)
+{
+    std::cerr << "[ERROR]: error(" << error << "): " << desc << std::endl; 
+}
+
 void cleanUp()
 {
     glDeleteProgram(program);
     program = 0;
 
+    glfwDestroyWindow(window);
     cosmonaut.cleanUp();
     music.cleanUp();
+    glfwTerminate();
 }
