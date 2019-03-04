@@ -7,7 +7,7 @@
 #include "Music.h"
 #include "Cosmonaut.h"
 
-const char* VERSION = "1.1";
+const char* VERSION = "1.2";
 #define SYNC_PLAYER
 
 bool initGL();
@@ -43,7 +43,7 @@ DemoSystem::Cosmonaut cosmonaut;
 
 int main(int argc, char* args[])
 {
-    std::cout << "[INFO]: shader system version " << VERSION << " by tähtituho 2018" << std::endl;
+    std::cout << "[INFO]: shader system version " << VERSION << " by tähtituho 2019" << std::endl;
     
     std::string confFile = "configuration.json";
     if(argc > 1) {
