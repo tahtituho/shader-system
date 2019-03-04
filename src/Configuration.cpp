@@ -19,6 +19,8 @@ DemoSystem::Configuration::Configuration() {
 
     this->shaders.vertex = "shaders/vertex.glsl";
     this->shaders.fragment = "shaders/fragment.glsl";
+    this->shaders.majorVersion = 2;
+    this->shaders.minorVersion = 1;
 }
 
 bool DemoSystem::Configuration::read(std::string file) {
@@ -46,6 +48,8 @@ bool DemoSystem::Configuration::read(std::string file) {
 
         this->shaders.vertex = c["shaders"]["vertex"].type() != Json::ValueType::nullValue ? c["shaders"]["vertex"].asString() : this->shaders.vertex;
         this->shaders.fragment = c["shaders"]["fragment"].type() != Json::ValueType::nullValue ? c["shaders"]["fragment"].asString() : this->shaders.fragment;
+        this->shaders.majorVersion = c["shaders"]["majorVersion"].type() != Json::ValueType::nullValue ? c["shaders"]["majorVersion"].asInt() : this->shaders.majorVersion;
+        this->shaders.minorVersion = c["shaders"]["minorVersion"].type() != Json::ValueType::nullValue ? c["shaders"]["minorVersion"].asInt() : this->shaders.minorVersion;
 
         if(c["tracks"].type() != Json::ValueType::nullValue) {
             for(int i = 0; i < c["tracks"].size(); i++) {

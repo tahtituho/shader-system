@@ -20,7 +20,9 @@
     },
     "shaders": {
         "vertex": "shaders\\vertex.glsl",
-        "fragment": "shaders\\fragment.glsl"
+        "fragment": "shaders\\fragment.glsl",
+        "majorVersion": 3,
+        "minorVersion": 0
     },
     "tracks": [
         {
