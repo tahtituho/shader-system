@@ -34,6 +34,8 @@ namespace DemoSystem  {
     struct Shaders {
         std::string vertex;
         std::string fragment;
+        int majorVersion;
+        int minorVersion;
     };
 
     struct Track {

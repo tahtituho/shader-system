@@ -73,8 +73,8 @@ int main(int argc, char* args[])
 
     glfwSetErrorCallback(logError);
   
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, configurations.shaders.majorVersion);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, configurations.shaders.minorVersion);
 
     window = glfwCreateWindow(configurations.screen.width, configurations.screen.height, (configurations.demo.group + " : " + configurations.demo.name).c_str(), NULL, NULL);
     
@@ -99,6 +99,7 @@ int main(int argc, char* args[])
     std::cout << "[INFO]: opengl renderer: " << glGetString(GL_RENDERER) << std::endl;
     std::cout << "[INFO]: opengl version:  " << glGetString(GL_VERSION) << std::endl;
     std::cout << "[INFO]: shading version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+    std::cout << "[INFO]: context version  " << configurations.shaders.majorVersion << "." << configurations.shaders.minorVersion << std::endl;
     std::cout << "[INFO]: bass version:    " << BASS_GetVersion() << std::endl;
 
     music.initialize(configurations.tune.frequency, configurations.tune.file);
