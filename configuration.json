@@ -24,6 +24,13 @@
         "majorVersion": 3,
         "minorVersion": 0
     },
+    "assets": [
+        {
+            "type": "texture",
+            "name": "texture01",
+            "file": "assets\\textures\\texture01.png"
+        }
+    ],
     "tracks": [
         {
             "type": "float3",

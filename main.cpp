@@ -6,6 +6,7 @@
 #include "Configuration.h"
 #include "Music.h"
 #include "Cosmonaut.h"
+#include "Textures.h"
 
 const char* VERSION = "1.2";
 #define SYNC_PLAYER
@@ -40,6 +41,7 @@ GLuint fragmentShader;
 DemoSystem::Configuration configurations;
 DemoSystem::Music music;
 DemoSystem::Cosmonaut cosmonaut;
+DemoSystem::Textures textures;
 
 int main(int argc, char* args[])
 {
@@ -111,6 +113,11 @@ int main(int argc, char* args[])
     functions.set_row = (void*)&musicSetRow;
     cosmonaut.setFunctions(&functions);
     cosmonaut.setTracks(configurations.tracks);
+    std::list<DemoSystem::Asset> t(configurations.assets);
+    t.remove_if([](DemoSystem::Asset a) {
+        return a.type != DemoSystem::Asset::AssetType::TEXTURE;
+    });
+    textures.setTextures(t);
 
     if(!initShaders(true))
     {

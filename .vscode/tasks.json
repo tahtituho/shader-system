@@ -15,6 +15,7 @@
                 "src/Cosmonaut.cpp",
                 "src/Configuration.cpp",
                 "src/Music.cpp",
+                "src/Textures.cpp",
                 "main.cpp",
                 "-w",
                 "-g",
@@ -55,6 +56,7 @@
                 "src/Cosmonaut.cpp",
                 "src/Configuration.cpp",
                 "src/Music.cpp",
+                "src/Textures.cpp",
                 "main.cpp",
                 "-w",
                 "-L${workspaceFolder}/libs",
@@ -83,6 +85,7 @@
                 "src/Cosmonaut.cpp",
                 "src/Configuration.cpp",
                 "src/Music.cpp",
+                "src/Textures.cpp",
                 "main.cpp",
                 "-D_WIN32_WINNT=0x501", //For getting rocket socket communication work on windows
                 "-w",
@@ -139,6 +142,7 @@
                 "src/Cosmonaut.cpp",
                 "src/Configuration.cpp",
                 "src/Music.cpp",
+                "src/Textures.cpp",
                 "main.cpp",
                 "-D_WIN32_WINNT=0x501", //For getting rocket socket communication work on windows
                 "-w",
