@@ -8,7 +8,7 @@
 #include "Cosmonaut.h"
 #include "Textures.h"
 
-const char* VERSION = "1.2";
+const char* VERSION = "1.3";
 #define SYNC_PLAYER
 
 bool initGL();
