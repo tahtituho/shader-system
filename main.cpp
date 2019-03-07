@@ -6,6 +6,7 @@
 #include "Configuration.h"
 #include "Music.h"
 #include "Cosmonaut.h"
+#include "Textures.h"
 
 const char* VERSION = "1.2";
 #define SYNC_PLAYER
@@ -40,6 +41,7 @@ GLuint fragmentShader;
 DemoSystem::Configuration configurations;
 DemoSystem::Music music;
 DemoSystem::Cosmonaut cosmonaut;
+DemoSystem::Textures textures;
 
 int main(int argc, char* args[])
 {
@@ -111,6 +113,11 @@ int main(int argc, char* args[])
     functions.set_row = (void*)&musicSetRow;
     cosmonaut.setFunctions(&functions);
     cosmonaut.setTracks(configurations.tracks);
+    std::list<DemoSystem::Asset> t(configurations.assets);
+    t.remove_if([](DemoSystem::Asset a) {
+        return a.type != DemoSystem::Asset::AssetType::TEXTURE;
+    });
+    textures.setTextures(t);
 
     if(!initShaders(true))
     {
@@ -163,6 +170,8 @@ bool initGL() {
     glLoadIdentity();
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+    glEnable(GL_TEXTURE_2D);
     GLenum error = glGetError();
     if(error != GL_NO_ERROR)
     {
@@ -198,6 +207,14 @@ void render(double time)
         }
     }
 
+    unsigned int textureIndex = 0;
+    for(std::list<DemoSystem::Textures::Texture>::iterator it = textures.textures.begin(); it != textures.textures.end(); ++it) {
+        glActiveTexture(GL_TEXTURE0 + textureIndex);
+        glBindTexture(GL_TEXTURE_2D, it->handle);
+        glUniform1i(it->uniform, textureIndex);
+        textureIndex++;
+    }
+    
     glBegin(GL_QUADS);
     glVertex2f(-1.0f, -1.0f);
     glVertex2f( 1.0f, -1.0f);
@@ -307,6 +324,18 @@ bool initShaders(bool first)
     for(std::list<DemoSystem::Cosmonaut::Gateway>::iterator it = cosmonaut.gateways.begin(); it != cosmonaut.gateways.end(); ++it) {
         it->uniform = glGetUniformLocation(program, it->name.c_str());
     }
+
+    for(std::list<DemoSystem::Textures::Texture>::iterator it = textures.textures.begin(); it != textures.textures.end(); ++it) {
+        glGenTextures(1, &it->handle);
+        glBindTexture(GL_TEXTURE_2D, it->handle);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, it->width, it->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &it->image[0]);
+        it->uniform = glGetUniformLocation(program, it->name.c_str());
+    }
+    
     return true;
 
 }

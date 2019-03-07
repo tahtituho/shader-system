@@ -50,6 +50,16 @@ namespace DemoSystem  {
         std::string variableName;
     };
 
+    struct Asset {
+        enum AssetType {
+            TEXTURE
+        };
+
+        AssetType type;
+        std::string file;
+        std::string name;
+    };
+
     class Configuration {
         public:
             Configuration();
@@ -61,6 +71,7 @@ namespace DemoSystem  {
             Sync sync;
             Shaders shaders;
             std::list<DemoSystem::Track> tracks;
+            std::list<DemoSystem::Asset> assets;
     };
 
 }

@@ -69,6 +69,20 @@ bool DemoSystem::Configuration::read(std::string file) {
                 this->tracks.push_back(t);
             }
         }
+
+        if(c["assets"].type() != Json::ValueType::nullValue) {
+            for(int i = 0; i < c["assets"].size(); i++) {
+                Asset a;
+                a.name = c["assets"][i]["name"].asString();
+                a.file = c["assets"][i]["file"].asString();
+                std::string type = c["assets"][i]["type"].asString();
+                if(type == "texture") {
+                    a.type = DemoSystem::Asset::AssetType::TEXTURE;
+                }
+                
+                this->assets.push_back(a);
+            }
+        }
         return true;
     }
     else {
