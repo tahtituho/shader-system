@@ -7,7 +7,7 @@ DemoSystem::Textures::Textures() {
 
 void DemoSystem::Textures::setTextures(std::list<DemoSystem::Asset> textures) {
     for(DemoSystem::Asset asset : textures) {
-        DemoSystem::Texture t;
+        DemoSystem::Textures::Texture t;
         t.name = asset.name;
         std::vector<unsigned char> buffer;
         lodepng::load_file(buffer, asset.file);
@@ -15,7 +15,6 @@ void DemoSystem::Textures::setTextures(std::list<DemoSystem::Asset> textures) {
         if(error == 0) {
             this->textures.push_back(t);
         }
-        //return std::string(lodepng_error_text(error));
     }
 }
 

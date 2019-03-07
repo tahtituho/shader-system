@@ -29,6 +29,11 @@
             "type": "texture",
             "name": "texture01",
             "file": "assets\\textures\\texture01.png"
+        },
+        {
+            "type": "texture",
+            "name": "texture02",
+            "file": "assets\\textures\\texture02.png"
         }
     ],
     "tracks": [
