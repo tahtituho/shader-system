@@ -22,6 +22,7 @@ bool compileShader(const GLenum type, const std::string source, bool first);
 void logError(int error, const char* desc);
 void cleanUp();
 void CheckForGLError();
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 void musicPause(void* c, int flag);
 void musicSetRow(void* c, int row);
@@ -38,6 +39,7 @@ std::string vertexPath;
 GLuint vertexShader;
 std::string fragmentPath;
 GLuint fragmentShader;
+unsigned int VBO, VAO, EBO;
 
 DemoSystem::Configuration configurations;
 DemoSystem::Music music;
@@ -98,6 +100,11 @@ int main(int argc, char* args[])
         std::cerr << "[ERROR]: glew error: " << glewGetErrorString(glewError) << std::endl;
         return false;
     }
+    glViewport(0, 0, 640, 480);
+    
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+    
 
     std::cout << "[INFO]: opengl vendor:   " << glGetString(GL_VENDOR) << std::endl; 
     std::cout << "[INFO]: opengl renderer: " << glGetString(GL_RENDERER) << std::endl;
@@ -127,12 +134,51 @@ int main(int argc, char* args[])
         return 1;
     }
 
-    if(!initGL())
+    // set up vertex data (and buffer(s)) and configure vertex attributes
+    // ------------------------------------------------------------------
+    // VBO is basically the vertices of the model, VAO is a list of VBO's
+    // We can use the index of the VAO to draw which VBO we want.
+    // In our case, we will be drawing to triangles to cover the screen,
+    // so we have room to show the shader. It should be possible to do 
+    // this with quads, and not mess with the triangles.
+    // Using EBO we can store the vertices in a separate variable,
+    // and then just use these vertices in any order we want.
+    float vertices[] = {
+         1.0f,  1.0f, 0.0f,
+         1.0f, -1.0f, 0.0f,
+        -1.0f, -1.0f, 0.0f,
+        -1.0f,  1.0f, 0.0f
+    };
+    unsigned int indices[] = {
+        0, 1, 3,  // first Triangle
+        1, 2, 3   // second Triangle
+    };
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0); 
+
+    glBindVertexArray(0); 
+
+    // This is not needed anymore, as GL matrix stacks are deprecated, but this includes the call
+    // to texture enabling, so not removed yet.
+    /*if(!initGL())
     {
         std::cerr << "[ERROR]: init error" << std::endl;
         return 1;
-    }
-    
+    }*/
+
 
     music.play();
     mainLoop();
@@ -186,13 +232,18 @@ void CheckForGLError()
 	}
 }
 
-bool initGL() {
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}  
 
-    glMatrixMode(GL_PROJECTION);
+bool initGL() {
+    // Decrepated
+    /*glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
     glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    glLoadIdentity();*/
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -214,6 +265,8 @@ void update(double time)
 
 void render(double time)
 {
+    // Background color
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(program);
 
@@ -233,19 +286,24 @@ void render(double time)
     }
 
     unsigned int textureIndex = 0;
-    for(std::list<DemoSystem::Textures::Texture>::iterator it = textures.textures.begin(); it != textures.textures.end(); ++it) {
+    // Textures commented for now
+    /*for(std::list<DemoSystem::Textures::Texture>::iterator it = textures.textures.begin(); it != textures.textures.end(); ++it) {
         glActiveTexture(GL_TEXTURE0 + textureIndex);
         glBindTexture(GL_TEXTURE_2D, it->handle);
         glUniform1i(it->uniform, textureIndex);
         textureIndex++;
-    }
+    }*/
     
-    glBegin(GL_QUADS);
+    // Old way of drawing quads. Should be able to draw quads with glDrawElements
+    /*glBegin(GL_QUADS);
     glVertex2f(-1.0f, -1.0f);
     glVertex2f( 1.0f, -1.0f);
     glVertex2f( 1.0f,  1.0f);
     glVertex2f(-1.0f,  1.0f);
-    glEnd();
+    glEnd();*/
+    // Use the vertex array to draw the vertices.
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glUseProgram(0);
     glfwSwapBuffers(window);
     glfwPollEvents();
