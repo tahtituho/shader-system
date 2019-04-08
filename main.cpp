@@ -21,6 +21,7 @@ std::string readShaderSource(std::string path);
 bool compileShader(const GLenum type, const std::string source, bool first);
 void logError(int error, const char* desc);
 void cleanUp();
+void CheckForGLError();
 
 void musicPause(void* c, int flag);
 void musicSetRow(void* c, int row);
@@ -77,9 +78,10 @@ int main(int argc, char* args[])
   
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, configurations.shaders.majorVersion);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, configurations.shaders.minorVersion);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     window = glfwCreateWindow(configurations.screen.width, configurations.screen.height, (configurations.demo.group + " : " + configurations.demo.name).c_str(), NULL, NULL);
-    
+
     if(!window) {
         std::cerr << "[ERROR]: window creation failed" << std::endl;
         glfwTerminate();
@@ -108,9 +110,9 @@ int main(int argc, char* args[])
     cosmonaut.initialize(configurations.tune.BPM, configurations.sync.RPB);
     cosmonaut.connectPlayer(configurations.sync.host);
     sync_cb functions;
-    functions.is_playing = (void*)&musicPlaying;
-    functions.pause = (void*)&musicPause;
-    functions.set_row = (void*)&musicSetRow;
+    functions.is_playing = &musicPlaying;
+    functions.pause = &musicPause;
+    functions.set_row = &musicSetRow;
     cosmonaut.setFunctions(&functions);
     cosmonaut.setTracks(configurations.tracks);
     std::list<DemoSystem::Asset> t(configurations.assets);
@@ -124,7 +126,7 @@ int main(int argc, char* args[])
         std::cerr << "[ERROR]: init shaders error" << std::endl;
         return 1;
     }
-    
+
     if(!initGL())
     {
         std::cerr << "[ERROR]: init error" << std::endl;
@@ -159,6 +161,29 @@ int musicPlaying(void* rr) {
     else {
         return 0;
     }
+}
+
+void CheckForGLError()
+{
+	GLenum error;
+	while ((error = glGetError()) != GL_NO_ERROR)
+	{
+		std::cout << "ERROR: 	";
+		if (error == GL_INVALID_ENUM)
+			std::cout << "GL_INVALID_ENUM";
+		if (error == GL_INVALID_VALUE)
+			std::cout << "GL_INVALID_VALUE";
+		if (error == GL_INVALID_OPERATION)
+			std::cout << "GL_INVALID_OPERATION";
+		if (error == GL_INVALID_FRAMEBUFFER_OPERATION)
+			std::cout << "GL_INVALID_FRAMEBUFFER_OPERATION";
+		if (error == GL_OUT_OF_MEMORY)
+			std::cout << "GL_OUT_OF_MEMORY";
+		if (error == GL_STACK_UNDERFLOW)
+			std::cout << "GL_STACK_UNDERFLOW";
+		if (error == GL_STACK_OVERFLOW)
+			std::cout << "GL_STACK_OVERFLOW";
+	}
 }
 
 bool initGL() {
@@ -273,7 +298,7 @@ bool initShaders(bool first)
     {
         program = glCreateProgram();
     }
-   
+
     std::string vertexSource = readShaderSource(vertexPath);
     std::string fragmentSource = readShaderSource(fragmentPath);
 
