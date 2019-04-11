@@ -103,8 +103,6 @@ int main(int argc, char* args[])
     
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
-    
-
     std::cout << "[INFO]: opengl vendor:   " << glGetString(GL_VENDOR) << std::endl; 
     std::cout << "[INFO]: opengl renderer: " << glGetString(GL_RENDERER) << std::endl;
     std::cout << "[INFO]: opengl version:  " << glGetString(GL_VERSION) << std::endl;
@@ -234,7 +232,6 @@ void update(double time)
 
 void render(double time)
 {
-    // Background color
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(program);
@@ -292,7 +289,6 @@ void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int m
                 break;
         }
     }
-
 }
 
 void mainLoop()
