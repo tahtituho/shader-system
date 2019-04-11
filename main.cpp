@@ -255,22 +255,14 @@ void render(double time)
     }
 
     unsigned int textureIndex = 0;
-    // Textures commented for now
-    /*for(std::list<DemoSystem::Textures::Texture>::iterator it = textures.textures.begin(); it != textures.textures.end(); ++it) {
+
+    for(std::list<DemoSystem::Textures::Texture>::iterator it = textures.textures.begin(); it != textures.textures.end(); ++it) {
         glActiveTexture(GL_TEXTURE0 + textureIndex);
         glBindTexture(GL_TEXTURE_2D, it->handle);
         glUniform1i(it->uniform, textureIndex);
         textureIndex++;
-    }*/
+    }
     
-    // Old way of drawing quads. Should be able to draw quads with glDrawElements
-    /*glBegin(GL_QUADS);
-    glVertex2f(-1.0f, -1.0f);
-    glVertex2f( 1.0f, -1.0f);
-    glVertex2f( 1.0f,  1.0f);
-    glVertex2f(-1.0f,  1.0f);
-    glEnd();*/
-    // Use the vertex array to draw the vertices.
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glUseProgram(0);
