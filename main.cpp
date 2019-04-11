@@ -99,7 +99,7 @@ int main(int argc, char* args[])
         std::cerr << "[ERROR]: glew error: " << glewGetErrorString(glewError) << std::endl;
         return false;
     }
-    glViewport(0, 0, 640, 480);
+    glViewport(0, 0, configurations.screen.width, configurations.screen.height);
     
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
