@@ -11,7 +11,6 @@
 const char* VERSION = "1.3";
 #define SYNC_PLAYER
 
-bool initGL();
 void update(double time);
 void render(double time);
 void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -171,15 +170,6 @@ int main(int argc, char* args[])
 
     glBindVertexArray(0); 
 
-    // This is not needed anymore, as GL matrix stacks are deprecated, but this includes the call
-    // to texture enabling, so not removed yet.
-    /*if(!initGL())
-    {
-        std::cerr << "[ERROR]: init error" << std::endl;
-        return 1;
-    }*/
-
-
     music.play();
     mainLoop();
     cleanUp();
@@ -236,27 +226,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }  
-
-bool initGL() {
-    // Decrepated
-    /*glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();*/
-
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-    glEnable(GL_TEXTURE_2D);
-    GLenum error = glGetError();
-    if(error != GL_NO_ERROR)
-    {
-        std::cerr << "[ERROR]: init opengl error: " << glewGetErrorString(error) << std::endl;
-        return false;
-    }
-    return true;
-
-}
 
 void update(double time)
 {
