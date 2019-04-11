@@ -21,7 +21,7 @@ bool compileShader(const GLenum type, const std::string source, bool first);
 void logError(int error, const char* desc);
 void cleanUp();
 void CheckForGLError();
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
 void musicPause(void* c, int flag);
 void musicSetRow(void* c, int row);
@@ -101,7 +101,7 @@ int main(int argc, char* args[])
     }
     glViewport(0, 0, configurations.screen.width, configurations.screen.height);
     
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
     
 
@@ -222,7 +222,7 @@ void CheckForGLError()
 	}
 }
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }  
