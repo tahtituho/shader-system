@@ -4,10 +4,8 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "D:\\development\\glew-2.1.0\\include\\",
                 "${workspaceFolder}\\libs\\json\\*",
-                "${workspaceFolder}\\include\\*",
-                "D:\\development\\bass24\\c"
+                "${workspaceFolder}\\include\\*"
             ],
             "defines": [
                 "_DEBUG",
@@ -15,16 +13,14 @@
                 "WIN32",
                 "GLEW_BUILD"
             ],
-            "compilerPath": "D:\\development\\MinGW\\bin\\gcc.exe",
+            "compilerPath": "C:\\MinGW\\bin\\gcc.exe",
             "intelliSenseMode": "gcc-x64",
             "browse": {
                 "path": [
                     "${workspaceFolder}",
-                    "D:\\development\\glew-2.1.0\\include\\*",
                     "${workspaceFolder}\\libs\\*",
                     "${workspaceFolder}\\include\\*",
-                    "${workspaceFolder}\\src\\*",
-                    "D:\\development\\bass24\\c"
+                    "${workspaceFolder}\\src\\*"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""

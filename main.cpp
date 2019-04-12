@@ -11,7 +11,6 @@
 const char* VERSION = "1.3";
 #define SYNC_PLAYER
 
-bool initGL();
 void update(double time);
 void render(double time);
 void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -21,6 +20,8 @@ std::string readShaderSource(std::string path);
 bool compileShader(const GLenum type, const std::string source, bool first);
 void logError(int error, const char* desc);
 void cleanUp();
+void CheckForGLError();
+void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
 void musicPause(void* c, int flag);
 void musicSetRow(void* c, int row);
@@ -37,6 +38,7 @@ std::string vertexPath;
 GLuint vertexShader;
 std::string fragmentPath;
 GLuint fragmentShader;
+unsigned int VBO, VAO, EBO;
 
 DemoSystem::Configuration configurations;
 DemoSystem::Music music;
@@ -77,9 +79,10 @@ int main(int argc, char* args[])
   
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, configurations.shaders.majorVersion);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, configurations.shaders.minorVersion);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     window = glfwCreateWindow(configurations.screen.width, configurations.screen.height, (configurations.demo.group + " : " + configurations.demo.name).c_str(), NULL, NULL);
-    
+
     if(!window) {
         std::cerr << "[ERROR]: window creation failed" << std::endl;
         glfwTerminate();
@@ -96,6 +99,9 @@ int main(int argc, char* args[])
         std::cerr << "[ERROR]: glew error: " << glewGetErrorString(glewError) << std::endl;
         return false;
     }
+    glViewport(0, 0, configurations.screen.width, configurations.screen.height);
+    
+    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
     std::cout << "[INFO]: opengl vendor:   " << glGetString(GL_VENDOR) << std::endl; 
     std::cout << "[INFO]: opengl renderer: " << glGetString(GL_RENDERER) << std::endl;
@@ -108,9 +114,9 @@ int main(int argc, char* args[])
     cosmonaut.initialize(configurations.tune.BPM, configurations.sync.RPB);
     cosmonaut.connectPlayer(configurations.sync.host);
     sync_cb functions;
-    functions.is_playing = (void*)&musicPlaying;
-    functions.pause = (void*)&musicPause;
-    functions.set_row = (void*)&musicSetRow;
+    functions.is_playing = &musicPlaying;
+    functions.pause = &musicPause;
+    functions.set_row = &musicSetRow;
     cosmonaut.setFunctions(&functions);
     cosmonaut.setTracks(configurations.tracks);
     std::list<DemoSystem::Asset> t(configurations.assets);
@@ -124,13 +130,43 @@ int main(int argc, char* args[])
         std::cerr << "[ERROR]: init shaders error" << std::endl;
         return 1;
     }
-    
-    if(!initGL())
-    {
-        std::cerr << "[ERROR]: init error" << std::endl;
-        return 1;
-    }
-    
+
+    // set up vertex data (and buffer(s)) and configure vertex attributes
+    // ------------------------------------------------------------------
+    // VBO is basically the vertices of the model, VAO is a list of VBO's
+    // We can use the index of the VAO to draw which VBO we want.
+    // In our case, we will be drawing to triangles to cover the screen,
+    // so we have room to show the shader. It should be possible to do 
+    // this with quads, and not mess with the triangles.
+    // Using EBO we can store the vertices in a separate variable,
+    // and then just use these vertices in any order we want.
+    float vertices[] = {
+         1.0f,  1.0f, 0.0f,
+         1.0f, -1.0f, 0.0f,
+        -1.0f, -1.0f, 0.0f,
+        -1.0f,  1.0f, 0.0f
+    };
+    unsigned int indices[] = {
+        0, 1, 3,  // first Triangle
+        1, 2, 3   // second Triangle
+    };
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0); 
+
+    glBindVertexArray(0); 
 
     music.play();
     mainLoop();
@@ -161,26 +197,33 @@ int musicPlaying(void* rr) {
     }
 }
 
-bool initGL() {
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-    glEnable(GL_TEXTURE_2D);
-    GLenum error = glGetError();
-    if(error != GL_NO_ERROR)
-    {
-        std::cerr << "[ERROR]: init opengl error: " << glewGetErrorString(error) << std::endl;
-        return false;
-    }
-    return true;
-
+void CheckForGLError()
+{
+	GLenum error;
+	while ((error = glGetError()) != GL_NO_ERROR)
+	{
+		std::cout << "ERROR: 	";
+		if (error == GL_INVALID_ENUM)
+			std::cout << "GL_INVALID_ENUM";
+		if (error == GL_INVALID_VALUE)
+			std::cout << "GL_INVALID_VALUE";
+		if (error == GL_INVALID_OPERATION)
+			std::cout << "GL_INVALID_OPERATION";
+		if (error == GL_INVALID_FRAMEBUFFER_OPERATION)
+			std::cout << "GL_INVALID_FRAMEBUFFER_OPERATION";
+		if (error == GL_OUT_OF_MEMORY)
+			std::cout << "GL_OUT_OF_MEMORY";
+		if (error == GL_STACK_UNDERFLOW)
+			std::cout << "GL_STACK_UNDERFLOW";
+		if (error == GL_STACK_OVERFLOW)
+			std::cout << "GL_STACK_OVERFLOW";
+	}
 }
+
+void framebufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}  
 
 void update(double time)
 {
@@ -189,6 +232,7 @@ void update(double time)
 
 void render(double time)
 {
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(program);
 
@@ -208,6 +252,7 @@ void render(double time)
     }
 
     unsigned int textureIndex = 0;
+
     for(std::list<DemoSystem::Textures::Texture>::iterator it = textures.textures.begin(); it != textures.textures.end(); ++it) {
         glActiveTexture(GL_TEXTURE0 + textureIndex);
         glBindTexture(GL_TEXTURE_2D, it->handle);
@@ -215,12 +260,8 @@ void render(double time)
         textureIndex++;
     }
     
-    glBegin(GL_QUADS);
-    glVertex2f(-1.0f, -1.0f);
-    glVertex2f( 1.0f, -1.0f);
-    glVertex2f( 1.0f,  1.0f);
-    glVertex2f(-1.0f,  1.0f);
-    glEnd();
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glUseProgram(0);
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -248,7 +289,6 @@ void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int m
                 break;
         }
     }
-
 }
 
 void mainLoop()
@@ -273,7 +313,7 @@ bool initShaders(bool first)
     {
         program = glCreateProgram();
     }
-   
+
     std::string vertexSource = readShaderSource(vertexPath);
     std::string fragmentSource = readShaderSource(fragmentPath);
 
