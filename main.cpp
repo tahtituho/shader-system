@@ -8,7 +8,7 @@
 #include "Cosmonaut.h"
 #include "Textures.h"
 
-const char* VERSION = "1.3";
+const char* VERSION = "1.4";
 #define SYNC_PLAYER
 
 void update(double time);
