@@ -88,6 +88,25 @@ int main(int argc, char* args[])
         glfwTerminate();
         return -1;
     }
+
+    // Setting window icon
+    GLFWimage icons[1];
+    unsigned error;
+    GLFWimage image;
+    std::vector<unsigned char> imageBuffer;
+    unsigned int width;
+    unsigned int height;
+    // Using temp variables, for some reason casting didn't work as expected
+    error = lodepng::decode(imageBuffer, width, height, configurations.demo.icon);
+    if (error == 0) {
+        image.height = height;
+        image.width = width;
+        image.pixels = &imageBuffer[0];
+        icons[0] = image;
+
+        glfwSetWindowIcon(window, 1, icons);
+    }
+
     glfwSetKeyCallback(window, handleKeyboard);
     glfwMakeContextCurrent(window);
     

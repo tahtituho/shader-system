@@ -10,6 +10,7 @@ namespace DemoSystem  {
     struct Demo {
         std::string name;
         std::string group;
+        std::string icon;
     };
 
     struct Screen {

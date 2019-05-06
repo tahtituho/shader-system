@@ -1,7 +1,8 @@
 {
     "demo": {
         "name": "demo",
-        "group": "demogroup"
+        "group": "demogroup",
+        "icon":  "assets\\pics\\tt.png"
     },
     "screen": {
         "width": 640,

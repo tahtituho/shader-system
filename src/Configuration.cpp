@@ -4,6 +4,7 @@
 DemoSystem::Configuration::Configuration() {
     this->demo.name = "demo";
     this->demo.group = "demogroup";
+    this->demo.icon = "assets/pics/tt.png";
 
     this->screen.width = 800;
     this->screen.height = 600;
@@ -33,6 +34,7 @@ bool DemoSystem::Configuration::read(std::string file) {
 
         this->demo.name = c["demo"]["name"].type() != Json::ValueType::nullValue ? c["demo"]["name"].asString() : this->demo.name;
         this->demo.group = c["demo"]["group"].type() != Json::ValueType::nullValue ? c["demo"]["group"].asString() : this->demo.group;
+        this->demo.icon = c["demo"]["icon"].type() != Json::ValueType::nullValue ? c["demo"]["icon"].asString() : this->demo.icon;
 
         this->screen.width = c["screen"]["width"].type() != Json::ValueType::nullValue ? c["screen"]["width"].asInt() : this->screen.width;
         this->screen.height = c["screen"]["height"].type() != Json::ValueType::nullValue ? c["screen"]["height"].asInt() : this->screen.height;
