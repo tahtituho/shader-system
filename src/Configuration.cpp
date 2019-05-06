@@ -2,6 +2,7 @@
 
 
 DemoSystem::Configuration::Configuration() {
+    this->demo.release = true;
     this->demo.name = "demo";
     this->demo.group = "demogroup";
     this->demo.icon = "assets/pics/tt.png";
@@ -32,6 +33,7 @@ bool DemoSystem::Configuration::read(std::string file) {
         Json::Value c;
         r.parse(cifs, c);
 
+        this->demo.release = c["demo"]["release"].type() != Json::ValueType::nullValue ? c["demo"]["release"].asBool() : this->demo.release;
         this->demo.name = c["demo"]["name"].type() != Json::ValueType::nullValue ? c["demo"]["name"].asString() : this->demo.name;
         this->demo.group = c["demo"]["group"].type() != Json::ValueType::nullValue ? c["demo"]["group"].asString() : this->demo.group;
         this->demo.icon = c["demo"]["icon"].type() != Json::ValueType::nullValue ? c["demo"]["icon"].asString() : this->demo.icon;

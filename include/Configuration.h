@@ -8,6 +8,7 @@
 
 namespace DemoSystem  {
     struct Demo {
+        bool release;
         std::string name;
         std::string group;
         std::string icon;

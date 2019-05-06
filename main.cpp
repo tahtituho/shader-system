@@ -21,6 +21,7 @@ bool compileShader(const GLenum type, const std::string source, bool first);
 void logError(int error, const char* desc);
 void cleanUp();
 void CheckForGLError();
+void writeToLogFile( const std::string &text, bool clean);
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
 void musicPause(void* c, int flag);
@@ -48,6 +49,7 @@ DemoSystem::Textures textures;
 int main(int argc, char* args[])
 {
     std::cout << "[INFO]: shader system version " << VERSION << " by tähtituho 2019" << std::endl;
+    writeToLogFile("[INFO]: shader system version " /*+ VERSION +*/ " by tähtituho 2019", true);
     
     std::string confFile = "configuration.json";
     if(argc > 1) {
@@ -81,7 +83,21 @@ int main(int argc, char* args[])
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, configurations.shaders.minorVersion);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(configurations.screen.width, configurations.screen.height, (configurations.demo.group + " : " + configurations.demo.name).c_str(), NULL, NULL);
+    if (configurations.demo.release) {
+        // Two ways to start as fullscreen, need to check which is more suitable
+        // This is true fullscreen!
+        window = glfwCreateWindow(configurations.screen.width, configurations.screen.height, (configurations.demo.group + " : " + configurations.demo.name).c_str(), glfwGetPrimaryMonitor(), NULL);
+        // This is windowed fullscreen!
+        /*const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+        glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+        glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+        glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+        window = glfwCreateWindow(mode->width, mode->height, (configurations.demo.group + " : " + configurations.demo.name).c_str(), glfwGetPrimaryMonitor(), NULL);*/
+    }
+    else {
+        window = glfwCreateWindow(configurations.screen.width, configurations.screen.height, (configurations.demo.group + " : " + configurations.demo.name).c_str(), NULL, NULL);
+    }
 
     if(!window) {
         std::cerr << "[ERROR]: window creation failed" << std::endl;
@@ -105,6 +121,10 @@ int main(int argc, char* args[])
         icons[0] = image;
 
         glfwSetWindowIcon(window, 1, icons);
+    }
+
+    if (configurations.demo.release) {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     }
 
     glfwSetKeyCallback(window, handleKeyboard);
@@ -191,6 +211,18 @@ int main(int argc, char* args[])
     mainLoop();
     cleanUp();
     return 0;
+}
+
+void writeToLogFile( const std::string &text, bool clean)
+{
+    if (clean) {
+        std::ofstream ofs;
+        ofs.open("log.txt", std::ofstream::out | std::ofstream::trunc);
+        ofs.close();
+    }
+    std::ofstream log_file(
+        "log.txt", std::ios_base::out | std::ios_base::app );
+    log_file << text << std::endl;
 }
 
 void musicPause(void* rr, int flag) {
