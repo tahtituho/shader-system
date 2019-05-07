@@ -48,19 +48,18 @@ DemoSystem::Textures textures;
 
 int main(int argc, char* args[])
 {
-    std::cout << "[INFO]: shader system version " << VERSION << " by tähtituho 2019" << std::endl;
-    writeToLogFile("[INFO]: shader system version " /*+ VERSION +*/ " by tähtituho 2019", true);
     
     std::string confFile = "configuration.json";
     if(argc > 1) {
         confFile = std::string(args[1]);
     }
-    else {
-        std::cout << "[INFO]: Use configuration json file as parameter. Defaulting to configuration.json" << std::endl;
-    }
     
-    if(!configurations.read(confFile)) {
-        std::cout << "[INFO]: configuration file " << confFile << " is missing. Using default configuration file configuration.json" << std::endl;
+    configurations.read(confFile);
+    if (!configurations.demo.release) {
+        std::cout << "[INFO]: shader system version " << VERSION << " by tähtituho 2019" << std::endl;
+        writeToLogFile("[INFO]: shader system version " /*+ VERSION +*/ " by tähtituho 2019", true);
+
+        std::cout << "[INFO]: Use configuration json file as parameter. Default is configuration.json" << std::endl;
     }
 
     vertexPath = configurations.shaders.vertex;
@@ -68,12 +67,16 @@ int main(int argc, char* args[])
 
     if(vertexPath.empty() || fragmentPath.empty())
     {
-        std::cerr << "[ERROR]: provide vertex and fragment shader files as parameter .ie -v vertex.glgl -f fragment.glsl" << std::endl;
+        if (!configurations.demo.release) {
+            std::cerr << "[ERROR]: provide vertex and fragment shader files as parameter .ie -v vertex.glgl -f fragment.glsl" << std::endl;
+        }
         return 1;
     }
 
     if (!glfwInit()) {
-        std::cerr << "[ERROR]: glfwInit failed" << std::endl;
+        if (!configurations.demo.release) {
+            std::cerr << "[ERROR]: glfwInit failed" << std::endl;
+        }
         return -1;
     }
 
@@ -100,7 +103,9 @@ int main(int argc, char* args[])
     }
 
     if(!window) {
-        std::cerr << "[ERROR]: window creation failed" << std::endl;
+        if (!configurations.demo.release) {
+            std::cerr << "[ERROR]: window creation failed" << std::endl;
+        }
         glfwTerminate();
         return -1;
     }
@@ -135,19 +140,24 @@ int main(int argc, char* args[])
     GLenum glewError = glewInit();
     if (GLEW_OK != glewError)
     {
-        std::cerr << "[ERROR]: glew error: " << glewGetErrorString(glewError) << std::endl;
+        if (!configurations.demo.release) {
+            std::cerr << "[ERROR]: glew error: " << glewGetErrorString(glewError) << std::endl;
+        }
         return false;
     }
     glViewport(0, 0, configurations.screen.width, configurations.screen.height);
     
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
-    std::cout << "[INFO]: opengl vendor:   " << glGetString(GL_VENDOR) << std::endl; 
-    std::cout << "[INFO]: opengl renderer: " << glGetString(GL_RENDERER) << std::endl;
-    std::cout << "[INFO]: opengl version:  " << glGetString(GL_VERSION) << std::endl;
-    std::cout << "[INFO]: shading version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-    std::cout << "[INFO]: context version  " << configurations.shaders.majorVersion << "." << configurations.shaders.minorVersion << std::endl;
-    std::cout << "[INFO]: bass version:    " << BASS_GetVersion() << std::endl;
+    if (!configurations.demo.release) {
+        std::cout << "[INFO]: opengl vendor:   " << glGetString(GL_VENDOR) << std::endl; 
+        std::cout << "[INFO]: opengl renderer: " << glGetString(GL_RENDERER) << std::endl;
+        std::cout << "[INFO]: opengl version:  " << glGetString(GL_VERSION) << std::endl;
+        std::cout << "[INFO]: shading version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+        std::cout << "[INFO]: context version  " << configurations.shaders.majorVersion << "." << configurations.shaders.minorVersion << std::endl;
+        std::cout << "[INFO]: bass version:    " << BASS_GetVersion() << std::endl;
+    }
+    
 
     music.initialize(configurations.tune.frequency, configurations.tune.file);
     cosmonaut.initialize(configurations.tune.BPM, configurations.sync.RPB);
@@ -166,7 +176,9 @@ int main(int argc, char* args[])
 
     if(!initShaders(true))
     {
-        std::cerr << "[ERROR]: init shaders error" << std::endl;
+        if (!configurations.demo.release) {
+            std::cerr << "[ERROR]: init shaders error" << std::endl;
+        }
         return 1;
     }
 
@@ -220,8 +232,7 @@ void writeToLogFile( const std::string &text, bool clean)
         ofs.open("log.txt", std::ofstream::out | std::ofstream::trunc);
         ofs.close();
     }
-    std::ofstream log_file(
-        "log.txt", std::ios_base::out | std::ios_base::app );
+    std::ofstream log_file("log.txt", std::ios_base::out | std::ios_base::app );
     log_file << text << std::endl;
 }
 
@@ -253,21 +264,23 @@ void CheckForGLError()
 	GLenum error;
 	while ((error = glGetError()) != GL_NO_ERROR)
 	{
-		std::cout << "ERROR: 	";
-		if (error == GL_INVALID_ENUM)
-			std::cout << "GL_INVALID_ENUM";
-		if (error == GL_INVALID_VALUE)
-			std::cout << "GL_INVALID_VALUE";
-		if (error == GL_INVALID_OPERATION)
-			std::cout << "GL_INVALID_OPERATION";
-		if (error == GL_INVALID_FRAMEBUFFER_OPERATION)
-			std::cout << "GL_INVALID_FRAMEBUFFER_OPERATION";
-		if (error == GL_OUT_OF_MEMORY)
-			std::cout << "GL_OUT_OF_MEMORY";
-		if (error == GL_STACK_UNDERFLOW)
-			std::cout << "GL_STACK_UNDERFLOW";
-		if (error == GL_STACK_OVERFLOW)
-			std::cout << "GL_STACK_OVERFLOW";
+        if (!configurations.demo.release) {
+            std::cout << "ERROR: 	";
+		    if (error == GL_INVALID_ENUM)
+			    std::cout << "GL_INVALID_ENUM";
+		    if (error == GL_INVALID_VALUE)
+			    std::cout << "GL_INVALID_VALUE";
+		    if (error == GL_INVALID_OPERATION)
+			    std::cout << "GL_INVALID_OPERATION";
+		    if (error == GL_INVALID_FRAMEBUFFER_OPERATION)
+			    std::cout << "GL_INVALID_FRAMEBUFFER_OPERATION";
+		    if (error == GL_OUT_OF_MEMORY)
+			    std::cout << "GL_OUT_OF_MEMORY";
+		    if (error == GL_STACK_UNDERFLOW)
+			    std::cout << "GL_STACK_UNDERFLOW";
+		    if (error == GL_STACK_OVERFLOW)
+			    std::cout << "GL_STACK_OVERFLOW";
+        }
 	}
 }
 
@@ -396,7 +409,9 @@ bool initShaders(bool first)
         log = new char[logLength];
         GLint infoLogStatus;
         glGetProgramInfoLog(program, logLength, &infoLogStatus, log);
-        std::cerr << "[ERROR]: program linking error: " << log << std::endl; 
+        if (!configurations.demo.release) {
+            std::cerr << "[ERROR]: program linking error: " << log << std::endl; 
+        }
         delete[] log;
         if(first)
         {
@@ -451,11 +466,15 @@ bool compileShader(const GLenum type, std::string source, bool first)
         glGetShaderInfoLog(shader, logLength, &infoLogStatus, log);
         if(type == GL_VERTEX_SHADER)
         {
-            std::cerr << "[ERROR]: vertex shader compile error: " << log << std::endl; 
+            if (!configurations.demo.release) {
+                std::cerr << "[ERROR]: vertex shader compile error: " << log << std::endl;
+            }
         }
         else
         {
-            std::cerr << "[ERROR]: fragment shader compile error: " << log << std::endl; 
+            if (!configurations.demo.release) {
+                std::cerr << "[ERROR]: fragment shader compile error: " << log << std::endl; 
+            }
         }
         
         delete[] log;
@@ -479,7 +498,9 @@ bool compileShader(const GLenum type, std::string source, bool first)
 
 void logError(int error, const char* desc)
 {
-    std::cerr << "[ERROR]: error(" << error << "): " << desc << std::endl; 
+    if (!configurations.demo.release) {
+        std::cerr << "[ERROR]: error(" << error << "): " << desc << std::endl; 
+    }
 }
 
 void cleanUp()
