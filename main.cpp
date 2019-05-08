@@ -161,7 +161,12 @@ int main(int argc, char* args[])
 
     music.initialize(configurations.tune.frequency, configurations.tune.file);
     cosmonaut.initialize(configurations.tune.BPM, configurations.sync.RPB);
-    cosmonaut.connectPlayer(configurations.sync.host);
+    if (!configurations.demo.release) {
+        cosmonaut.connectPlayer(configurations.sync.host);
+    }
+    else {
+        cosmonaut.loadXml(std::wstring(configurations.sync.file.begin(), configurations.sync.file.end()).c_str());
+    }
     sync_cb functions;
     functions.is_playing = &musicPlaying;
     functions.pause = &musicPause;

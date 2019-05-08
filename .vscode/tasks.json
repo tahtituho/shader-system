@@ -79,7 +79,8 @@
             "command": "g++.exe",
             "args": [
                 "libs/device.c",
-                "libs/track.c",          
+                "libs/track.c", 
+                "libs/loadsave.c",          
                 "libs/jsoncpp.cpp",
                 "libs/lodepng.cpp",
                 "src/Cosmonaut.cpp",
@@ -136,7 +137,8 @@
             "command": "g++.exe",
             "args": [
                 "libs/device.c",
-                "libs/track.c",          
+                "libs/track.c",
+                "libs/loadsave.c",          
                 "libs/jsoncpp.cpp",
                 "libs/lodepng.cpp",
                 "src/Cosmonaut.cpp",

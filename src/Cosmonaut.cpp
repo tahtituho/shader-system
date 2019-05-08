@@ -70,6 +70,10 @@ void DemoSystem::Cosmonaut::setTracks(std::list<DemoSystem::Track> tracks) {
     }
 }
 
+void DemoSystem::Cosmonaut::loadXml(const text_t* path) {
+    int i = LoadSave_loadRocketXML(path, this->trackdata);
+}
+
 double DemoSystem::Cosmonaut::getRowRate() {
     return this->rowRate;
 }
