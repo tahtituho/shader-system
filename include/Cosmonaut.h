@@ -6,7 +6,6 @@
 #include <list>
 #include <GL/gl.h>
 #include "Configuration.h"
-#include <loadsave.h>
 #define SYNC_PLAYER
 
 namespace DemoSystem {
@@ -19,7 +18,6 @@ namespace DemoSystem {
             void setFunctions(sync_cb* functions);
             void update(double row);
             void setTracks(std::list<DemoSystem::Track> tracks);
-            void loadXml(const text_t* path);
 
             double getRowRate();
             void cleanUp();
@@ -53,10 +51,7 @@ namespace DemoSystem {
             double rowRate;
           
             sync_device* device;
-            sync_cb* functions;
-            TrackData* trackdata;
-
-            
+            sync_cb* functions;  
         };
 }
 

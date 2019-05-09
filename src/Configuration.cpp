@@ -16,7 +16,6 @@ DemoSystem::Configuration::Configuration() {
     this->tune.frequency = 44000;
 
     this->sync.RPB = 8;
-    this->sync.file = "tune.rocket";
     this->sync.host = "localhost";
 
     this->shaders.vertex = "shaders/vertex.glsl";
@@ -46,7 +45,6 @@ bool DemoSystem::Configuration::read(std::string file) {
         this->tune.BPM = c["music"]["BPM"].type() != Json::ValueType::nullValue ? c["music"]["BPM"].asDouble() : this->tune.BPM;
         this->tune.frequency = c["music"]["frequency"].type() != Json::ValueType::nullValue ? c["music"]["frequency"].asInt() : this->tune.frequency;
 
-        this->sync.file = c["sync"]["file"].type() != Json::ValueType::nullValue ? c["sync"]["file"].asString() : this->sync.file;
         this->sync.host = c["sync"]["host"].type() != Json::ValueType::nullValue ? c["sync"]["host"].asString() : this->sync.host;
         this->sync.RPB = c["sync"]["RPB"].type() != Json::ValueType::nullValue ? c["sync"]["RPB"].asInt() : this->sync.RPB;
 

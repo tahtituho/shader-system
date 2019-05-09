@@ -29,11 +29,14 @@ void DemoSystem::Cosmonaut::setFunctions(sync_cb* functions) {
 }
 
 void DemoSystem::Cosmonaut::update(double row) {
-   if(sync_update(this->device, (int)floor(row), this->functions, &this->rowRate)) {
-       sync_tcp_connect(this->device, host.c_str(), SYNC_DEFAULT_PORT); 
-   }
+    if(sync_update(this->device, (int)floor(row), this->functions, &this->rowRate)) {
+        if(this->player == true) 
+        {
+            sync_tcp_connect(this->device, host.c_str(), SYNC_DEFAULT_PORT); 
+        }   
+    }
 
-       for(std::list<DemoSystem::Cosmonaut::Gateway>::iterator it = this->gateways.begin(); it != this->gateways.end(); ++it) {
+    for(std::list<DemoSystem::Cosmonaut::Gateway>::iterator it = this->gateways.begin(); it != this->gateways.end(); ++it) {
        if(it->type == DemoSystem::Track::FLOAT1) {
            it->value.x = sync_get_val(it->syncTrack.x, row);
        }
@@ -68,10 +71,6 @@ void DemoSystem::Cosmonaut::setTracks(std::list<DemoSystem::Track> tracks) {
         }
         this->gateways.push_back(gateway);
     }
-}
-
-void DemoSystem::Cosmonaut::loadXml(const text_t* path) {
-    int i = LoadSave_loadRocketXML(path, this->trackdata);
 }
 
 double DemoSystem::Cosmonaut::getRowRate() {

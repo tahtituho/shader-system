@@ -17,7 +17,6 @@
     },
     "sync": {
         "RPB": 8,
-        "file": "assets\\music\\demo-release.rocket",
         "host": "localhost"
     },
     "shaders": {

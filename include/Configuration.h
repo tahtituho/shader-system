@@ -28,7 +28,6 @@ namespace DemoSystem  {
     };
 
     struct Sync {
-        std::string file;
         int RPB;
         std::string host;
     };
