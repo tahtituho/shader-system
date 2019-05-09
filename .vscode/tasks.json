@@ -80,8 +80,7 @@
             "command": "g++.exe",
             "args": [
                 "libs/rocket/device.c",
-                "libs/rocket/track.c", 
-                "libs/rocket/loadsave.c",        
+                "libs/rocket/track.c",                         
                 "libs/jsoncpp.cpp",
                 "libs/lodepng.cpp",
                 "src/Cosmonaut.cpp",
@@ -140,8 +139,7 @@
             "command": "g++.exe",
             "args": [
                 "libs/rocket/device.c",
-                "libs/rocket/track.c", 
-                "libs/rocket/loadsave.c",           
+                "libs/rocket/track.c",         
                 "libs/jsoncpp.cpp",
                 "libs/lodepng.cpp",
                 "src/Cosmonaut.cpp",
