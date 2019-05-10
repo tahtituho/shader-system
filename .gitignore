@@ -1,3 +1,4 @@
 bin/*
 *.pdb
 .vscode/settings.json
+.vscode/ipch/*
