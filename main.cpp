@@ -7,6 +7,7 @@
 #include "Music.h"
 #include "Cosmonaut.h"
 #include "Textures.h"
+#include "Logger.h"
 
 const char* VERSION = "1.4";
 #define SYNC_PLAYER
@@ -20,7 +21,6 @@ std::string readShaderSource(std::string path);
 bool compileShader(const GLenum type, const std::string source, bool first);
 void logError(int error, const char* desc);
 void cleanUp();
-void CheckForGLError();
 void writeToLogFile( const std::string &text, bool clean);
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
@@ -45,6 +45,7 @@ DemoSystem::Configuration configurations;
 DemoSystem::Music music;
 DemoSystem::Cosmonaut cosmonaut;
 DemoSystem::Textures textures;
+DemoSystem::Logger logger;
 
 int main(int argc, char* args[])
 {
@@ -55,11 +56,9 @@ int main(int argc, char* args[])
     }
     
     configurations.read(confFile);
-    if (!configurations.demo.release) {
-        std::cout << "[INFO]: shader system version " << VERSION << " by tähtituho 2019" << std::endl;
-        writeToLogFile("[INFO]: shader system version " /*+ VERSION +*/ " by tähtituho 2019", true);
-
-        std::cout << "[INFO]: Use configuration json file as parameter. Default is configuration.json" << std::endl;
+    if (configurations.demo.log) {
+        logger.write(DemoSystem::Logger::INFO, "shader system version "  + std::string(VERSION) + " by tähtituho 2019");
+        logger.write(DemoSystem::Logger::INFO, "use configuration json file as parameter. Default is configuration.json");
     }
 
     vertexPath = configurations.shaders.vertex;
@@ -67,21 +66,23 @@ int main(int argc, char* args[])
 
     if(vertexPath.empty() || fragmentPath.empty())
     {
-        if (!configurations.demo.release) {
-            std::cerr << "[ERROR]: provide vertex and fragment shader files as parameter .ie -v vertex.glgl -f fragment.glsl" << std::endl;
+        if (configurations.demo.log) {
+            logger.write(DemoSystem::Logger::ERR, "provide vertex and fragment shaders in configuration file");
         }
         return 1;
     }
 
     if (!glfwInit()) {
-        if (!configurations.demo.release) {
-            std::cerr << "[ERROR]: glfwInit failed" << std::endl;
+        if (configurations.demo.log) {
+            logger.write(DemoSystem::Logger::ERR, "glfwInit failed");
         }
         return -1;
     }
 
-    glfwSetErrorCallback(logError);
-  
+    if(configurations.demo.log) {
+        glfwSetErrorCallback(logError);
+    }
+
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, configurations.shaders.majorVersion);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, configurations.shaders.minorVersion);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -103,8 +104,8 @@ int main(int argc, char* args[])
     }
 
     if(!window) {
-        if (!configurations.demo.release) {
-            std::cerr << "[ERROR]: window creation failed" << std::endl;
+        if (configurations.demo.log) {
+            logger.write(DemoSystem::Logger::ERR, "window creation failed");
         }
         glfwTerminate();
         return -1;
@@ -140,8 +141,8 @@ int main(int argc, char* args[])
     GLenum glewError = glewInit();
     if (GLEW_OK != glewError)
     {
-        if (!configurations.demo.release) {
-            std::cerr << "[ERROR]: glew error: " << glewGetErrorString(glewError) << std::endl;
+        if (configurations.demo.log) {
+            logger.write(DemoSystem::Logger::ERR, "glew error: " + std::string((const char*)glewGetErrorString(glewError)));
         }
         return false;
     }
@@ -149,16 +150,15 @@ int main(int argc, char* args[])
     
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
-    if (!configurations.demo.release) {
-        std::cout << "[INFO]: opengl vendor:   " << glGetString(GL_VENDOR) << std::endl; 
-        std::cout << "[INFO]: opengl renderer: " << glGetString(GL_RENDERER) << std::endl;
-        std::cout << "[INFO]: opengl version:  " << glGetString(GL_VERSION) << std::endl;
-        std::cout << "[INFO]: shading version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-        std::cout << "[INFO]: context version  " << configurations.shaders.majorVersion << "." << configurations.shaders.minorVersion << std::endl;
-        std::cout << "[INFO]: bass version:    " << BASS_GetVersion() << std::endl;
+    if (configurations.demo.log) {
+        logger.write(DemoSystem::Logger::INFO, "opengl vendor:   " + std::string((const char*)glGetString(GL_VENDOR)));
+        logger.write(DemoSystem::Logger::INFO, "opengl renderer  " + std::string((const char*)glGetString(GL_RENDERER)));
+        logger.write(DemoSystem::Logger::INFO, "opengl version:  " + std::string((const char*)glGetString(GL_VERSION)));
+        logger.write(DemoSystem::Logger::INFO, "shading version: " + std::string((const char*)glGetString(GL_SHADING_LANGUAGE_VERSION)));
+        logger.write(DemoSystem::Logger::INFO, "context version  " + std::to_string(configurations.shaders.majorVersion) + "." + std::to_string(configurations.shaders.minorVersion));
+        logger.write(DemoSystem::Logger::INFO, "bass version:    " + std::to_string(BASS_GetVersion()));
     }
     
-
     music.initialize(configurations.tune.frequency, configurations.tune.file);
     cosmonaut.initialize(configurations.tune.BPM, configurations.sync.RPB);
     if (!configurations.demo.release) {
@@ -178,8 +178,8 @@ int main(int argc, char* args[])
 
     if(!initShaders(true))
     {
-        if (!configurations.demo.release) {
-            std::cerr << "[ERROR]: init shaders error" << std::endl;
+        if (configurations.demo.log) {
+            logger.write(DemoSystem::Logger::ERR, "init shaders error");
         }
         return 1;
     }
@@ -227,17 +227,6 @@ int main(int argc, char* args[])
     return 0;
 }
 
-void writeToLogFile( const std::string &text, bool clean)
-{
-    if (clean) {
-        std::ofstream ofs;
-        ofs.open("log.txt", std::ofstream::out | std::ofstream::trunc);
-        ofs.close();
-    }
-    std::ofstream log_file("log.txt", std::ios_base::out | std::ios_base::app );
-    log_file << text << std::endl;
-}
-
 void musicPause(void* rr, int flag) {
     if(flag == 1) {
         music.pause();
@@ -259,31 +248,6 @@ int musicPlaying(void* rr) {
     else {
         return 0;
     }
-}
-
-void CheckForGLError()
-{
-	GLenum error;
-	while ((error = glGetError()) != GL_NO_ERROR)
-	{
-        if (!configurations.demo.release) {
-            std::cout << "ERROR: 	";
-		    if (error == GL_INVALID_ENUM)
-			    std::cout << "GL_INVALID_ENUM";
-		    if (error == GL_INVALID_VALUE)
-			    std::cout << "GL_INVALID_VALUE";
-		    if (error == GL_INVALID_OPERATION)
-			    std::cout << "GL_INVALID_OPERATION";
-		    if (error == GL_INVALID_FRAMEBUFFER_OPERATION)
-			    std::cout << "GL_INVALID_FRAMEBUFFER_OPERATION";
-		    if (error == GL_OUT_OF_MEMORY)
-			    std::cout << "GL_OUT_OF_MEMORY";
-		    if (error == GL_STACK_UNDERFLOW)
-			    std::cout << "GL_STACK_UNDERFLOW";
-		    if (error == GL_STACK_OVERFLOW)
-			    std::cout << "GL_STACK_OVERFLOW";
-        }
-	}
 }
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height)
@@ -411,8 +375,8 @@ bool initShaders(bool first)
         log = new char[logLength];
         GLint infoLogStatus;
         glGetProgramInfoLog(program, logLength, &infoLogStatus, log);
-        if (!configurations.demo.release) {
-            std::cerr << "[ERROR]: program linking error: " << log << std::endl; 
+        if (configurations.demo.log) {
+            logger.write(DemoSystem::Logger::ERR, "program linking error" + std::string(log));
         }
         delete[] log;
         if(first)
@@ -468,14 +432,14 @@ bool compileShader(const GLenum type, std::string source, bool first)
         glGetShaderInfoLog(shader, logLength, &infoLogStatus, log);
         if(type == GL_VERTEX_SHADER)
         {
-            if (!configurations.demo.release) {
-                std::cerr << "[ERROR]: vertex shader compile error: " << log << std::endl;
+            if (configurations.demo.log) {
+                logger.write(DemoSystem::Logger::ERR, "vertex shader compile error: " + std::string(log));
             }
         }
         else
         {
-            if (!configurations.demo.release) {
-                std::cerr << "[ERROR]: fragment shader compile error: " << log << std::endl; 
+            if (configurations.demo.log) {
+                logger.write(DemoSystem::Logger::ERR, "fragment shader compile error: " + std::string(log));
             }
         }
         
@@ -500,9 +464,7 @@ bool compileShader(const GLenum type, std::string source, bool first)
 
 void logError(int error, const char* desc)
 {
-    if (!configurations.demo.release) {
-        std::cerr << "[ERROR]: error(" << error << "): " << desc << std::endl; 
-    }
+    logger.write(DemoSystem::Logger::ERR, "glfw error: " + std::to_string(error) + std::string(desc));
 }
 
 void cleanUp()
