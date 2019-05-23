@@ -2,3 +2,4 @@ bin/*
 *.pdb
 .vscode/settings.json
 .vscode/ipch/*
+/log.txt
