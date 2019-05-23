@@ -114,6 +114,7 @@
                 "-static-libgcc",
                 "-static-libstdc++",
                 "-fpermissive",
+                "-mwindows",
                 "-o",
                 "bin\\debug\\shader-system.exe"
             ],
@@ -172,6 +173,7 @@
                 "-static-libgcc",
                 "-static-libstdc++",
                 "-fpermissive",
+                "-mwindows",
                 "-o",
                 "bin\\release\\shader-system.exe"
             ],        
