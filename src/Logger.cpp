@@ -1,8 +1,7 @@
 #include "Logger.h"
 
 DemoSystem::Logger::Logger() {
-    this->stream = std::ofstream("log.txt", std::ios_base::out | std::ios_base::app);
-    this->stream.open("log.txt", std::ofstream::out | std::ofstream::trunc);
+    this->stream = std::ofstream("log.txt", std::ios_base::out | std::ios_base::trunc);
 }
 
 DemoSystem::Logger::~Logger() {
