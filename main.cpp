@@ -5,7 +5,7 @@
 #include "Configuration.h"
 #include "Music.h"
 #include "Cosmonaut.h"
-#include "Textures.h"
+#include "ResourceManager.h"
 #include "Logger.h"
 
 const char* VERSION = "1.4";
@@ -43,7 +43,7 @@ unsigned int VBO, VAO, EBO;
 DemoSystem::Configuration configurations;
 DemoSystem::Music music;
 DemoSystem::Cosmonaut cosmonaut;
-DemoSystem::Textures textures;
+DemoSystem::ResourceManager resourceManager;
 DemoSystem::Logger logger;
 
 int main(int argc, char* args[])
@@ -169,11 +169,7 @@ int main(int argc, char* args[])
     functions.set_row = &musicSetRow;
     cosmonaut.setFunctions(&functions);
     cosmonaut.setTracks(configurations.tracks);
-    std::list<DemoSystem::Asset> t(configurations.assets);
-    t.remove_if([](DemoSystem::Asset a) {
-        return a.type != DemoSystem::Asset::AssetType::TEXTURE;
-    });
-    textures.setTextures(t);
+    resourceManager.setResources(configurations.assets);
 
     if(!initShaders(true))
     {
@@ -280,13 +276,11 @@ void render(double time)
         }
     }
 
-    unsigned int textureIndex = 0;
-
-    for(std::list<DemoSystem::Textures::Texture>::iterator it = textures.textures.begin(); it != textures.textures.end(); ++it) {
-        glActiveTexture(GL_TEXTURE0 + textureIndex);
-        glBindTexture(GL_TEXTURE_2D, it->handle);
-        glUniform1i(it->uniform, textureIndex);
-        textureIndex++;
+    for(int i = 0; i < resourceManager.textures.size(); i++) {
+        DemoSystem::Texture texture = resourceManager.textures[i]; 
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, texture.handle);
+        glUniform1i(texture.uniform, i);
     }
     
     glBindVertexArray(VAO);
@@ -395,18 +389,19 @@ bool initShaders(bool first)
     for(std::list<DemoSystem::Cosmonaut::Gateway>::iterator it = cosmonaut.gateways.begin(); it != cosmonaut.gateways.end(); ++it) {
         it->uniform = glGetUniformLocation(program, it->name.c_str());
     }
-
-    for(std::list<DemoSystem::Textures::Texture>::iterator it = textures.textures.begin(); it != textures.textures.end(); ++it) {
-        glGenTextures(1, &it->handle);
-        glBindTexture(GL_TEXTURE_2D, it->handle);
+    
+    for(int i = 0; i < resourceManager.textures.size(); i++) {
+        DemoSystem::Texture texture = resourceManager.textures[i];
+        glGenTextures(1, &texture.handle);
+        glBindTexture(GL_TEXTURE_2D, texture.handle);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, it->width, it->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &it->image[0]);
-        it->uniform = glGetUniformLocation(program, it->name.c_str());
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture.width, texture.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &texture.image[0]);
+        texture.uniform = glGetUniformLocation(program, texture.name.c_str());    
     }
-    
+  
     return true;
 
 }

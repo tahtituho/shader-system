@@ -54,12 +54,17 @@ namespace DemoSystem  {
 
     struct Asset {
         enum AssetType {
-            TEXTURE
+            TEXTURE,
+            DYNAMIC_TEXTURE
         };
 
+        //Common for all types
         AssetType type;
         std::string file;
         std::string name;
+
+        //For dynamic texture
+        std::list<std::string> variables;
     };
 
     class Configuration {

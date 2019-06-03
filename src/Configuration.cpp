@@ -83,6 +83,13 @@ bool DemoSystem::Configuration::read(std::string file) {
                 if(type == "texture") {
                     a.type = DemoSystem::Asset::AssetType::TEXTURE;
                 }
+                else if(type == "dynamicTexture") {
+                    a.type = DemoSystem::Asset::AssetType::DYNAMIC_TEXTURE;
+                    for(int j = 0; j < c["assets"][i]["variables"].size(); j++) {
+                        a.variables.push_back(c["assets"][i]["variables"][j].asString());
+                    }
+
+                }
                 
                 this->assets.push_back(a);
             }
