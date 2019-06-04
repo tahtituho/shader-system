@@ -80,8 +80,8 @@ bool DemoSystem::Configuration::read(std::string file) {
                 a.name = c["assets"][i]["name"].asString();
                 a.file = c["assets"][i]["file"].asString();
                 std::string type = c["assets"][i]["type"].asString();
-                if(type == "texture") {
-                    a.type = DemoSystem::Asset::AssetType::TEXTURE;
+                if(type == "staticTexture") {
+                    a.type = DemoSystem::Asset::AssetType::STATIC_TEXTURE;
                 }
                 else if(type == "dynamicTexture") {
                     a.type = DemoSystem::Asset::AssetType::DYNAMIC_TEXTURE;

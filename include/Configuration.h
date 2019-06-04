@@ -54,7 +54,7 @@ namespace DemoSystem  {
 
     struct Asset {
         enum AssetType {
-            TEXTURE,
+            STATIC_TEXTURE,
             DYNAMIC_TEXTURE
         };
 

@@ -7,7 +7,7 @@ DemoSystem::ResourceManager::ResourceManager() {
 
 void DemoSystem::ResourceManager::setResources(std::list<DemoSystem::Asset> assets) {
     for(DemoSystem::Asset asset : assets) {
-        if(asset.type == DemoSystem::Asset::AssetType::TEXTURE) {
+        if(asset.type == DemoSystem::Asset::AssetType::STATIC_TEXTURE) {
             DemoSystem::StaticTexture t;
             t.name = asset.name;
             std::vector<unsigned char> buffer;

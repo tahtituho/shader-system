@@ -28,12 +28,12 @@
     },
     "assets": [
         {
-            "type": "texture",
+            "type": "staticTexture",
             "name": "texture01",
             "file": "assets\\textures\\texture01.png"
         },
         {
-            "type": "texture",
+            "type": "staticTexture",
             "name": "texture02",
             "file": "assets\\textures\\texture02.png"
         }
