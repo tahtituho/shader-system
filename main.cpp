@@ -277,10 +277,10 @@ void render(double time)
     }
 
     for(int i = 0; i < resourceManager.textures.size(); i++) {
-        DemoSystem::Texture texture = resourceManager.textures[i]; 
+        DemoSystem::Texture* texture = &resourceManager.textures[i]; 
         glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(GL_TEXTURE_2D, texture.handle);
-        glUniform1i(texture.uniform, i);
+        glBindTexture(GL_TEXTURE_2D, texture->handle);
+        glUniform1i(texture->uniform, i);
     }
     
     glBindVertexArray(VAO);
@@ -391,15 +391,15 @@ bool initShaders(bool first)
     }
     
     for(int i = 0; i < resourceManager.textures.size(); i++) {
-        DemoSystem::Texture texture = resourceManager.textures[i];
-        glGenTextures(1, &texture.handle);
-        glBindTexture(GL_TEXTURE_2D, texture.handle);
+        DemoSystem::Texture* texture = &resourceManager.textures[i];
+        glGenTextures(1, &texture->handle);
+        glBindTexture(GL_TEXTURE_2D, texture->handle);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture.width, texture.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &texture.image[0]);
-        texture.uniform = glGetUniformLocation(program, texture.name.c_str());    
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture->width, texture->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &texture->image[0]);
+        texture->uniform = glGetUniformLocation(program, texture->name.c_str());    
     }
   
     return true;
