@@ -7,9 +7,8 @@ namespace DemoSystem {
     class Texture : public Resource {
         public:
             Texture();    
-            ~Texture();
+            virtual ~Texture() = default;
 
-            std::vector<unsigned char> image;
             unsigned int width;
             unsigned int height;
             unsigned int handle;

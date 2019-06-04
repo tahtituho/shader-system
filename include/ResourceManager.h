@@ -5,7 +5,7 @@
 #include <list>
 #include <vector>
 #include "Configuration.h"
-#include "Texture.h"
+#include "StaticTexture.h"
 
 namespace DemoSystem  {
     class ResourceManager {
@@ -14,7 +14,7 @@ namespace DemoSystem  {
             ~ResourceManager();
 
             void setResources(std::list<DemoSystem::Asset> assets);
-            std::vector<DemoSystem::Texture> textures;
+            std::vector<DemoSystem::StaticTexture> staticTextures;
     };
 
 }

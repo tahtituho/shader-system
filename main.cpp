@@ -276,8 +276,8 @@ void render(double time)
         }
     }
 
-    for(int i = 0; i < resourceManager.textures.size(); i++) {
-        DemoSystem::Texture* texture = &resourceManager.textures[i]; 
+    for(int i = 0; i < resourceManager.staticTextures.size(); i++) {
+        DemoSystem::StaticTexture* texture = &resourceManager.staticTextures[i]; 
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, texture->handle);
         glUniform1i(texture->uniform, i);
@@ -390,8 +390,8 @@ bool initShaders(bool first)
         it->uniform = glGetUniformLocation(program, it->name.c_str());
     }
     
-    for(int i = 0; i < resourceManager.textures.size(); i++) {
-        DemoSystem::Texture* texture = &resourceManager.textures[i];
+    for(int i = 0; i < resourceManager.staticTextures.size(); i++) {
+        DemoSystem::StaticTexture* texture = &resourceManager.staticTextures[i];
         glGenTextures(1, &texture->handle);
         glBindTexture(GL_TEXTURE_2D, texture->handle);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	

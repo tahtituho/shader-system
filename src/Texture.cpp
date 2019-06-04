@@ -2,8 +2,3 @@
 
 DemoSystem::Texture::Texture() {
 }
-
-DemoSystem::Texture::~Texture() {
-}
-
-

@@ -19,6 +19,7 @@
                 "src/Logger.cpp",
                 "src/Resource.cpp",
                 "src/Texture.cpp",
+                "src/StaticTexture.cpp",
                 "src/ResourceManager.cpp",
                 "main.cpp",
                 "-w",
@@ -63,6 +64,7 @@
                 "src/Logger.cpp",
                 "src/Resource.cpp",
                 "src/Texture.cpp",
+                "src/StaticTexture.cpp",
                 "src/ResourceManager.cpp",
                 "main.cpp",
                 "-w",
@@ -95,6 +97,7 @@
                 "src/Logger.cpp",
                 "src/Resource.cpp",
                 "src/Texture.cpp",
+                "src/StaticTexture.cpp",
                 "src/ResourceManager.cpp",
                 "main.cpp",
                 "-D_WIN32_WINNT=0x501", //For getting rocket socket communication work on windows
@@ -158,6 +161,7 @@
                 "src/Logger.cpp",
                 "src/Resource.cpp",
                 "src/Texture.cpp",
+                "src/StaticTexture.cpp",
                 "src/ResourceManager.cpp",
                 "main.cpp",
                 "-D_WIN32_WINNT=0x501", //For getting rocket socket communication work on windows
