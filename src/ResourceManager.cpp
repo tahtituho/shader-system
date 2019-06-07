@@ -21,8 +21,9 @@ void DemoSystem::ResourceManager::setResources(std::list<DemoSystem::Asset> asse
             DemoSystem::DynamicTexture t;
             t.name = asset.name;
             t.once = asset.once;
-            t.source = asset.file;
-            
+            t.source = "";
+            t.width = asset.width;
+            t.height = asset.height;
             this->dynamicTextures.push_back(t);
         }
 

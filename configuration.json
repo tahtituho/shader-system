@@ -42,6 +42,8 @@
             "name": "dynamicTexture01",
             "file": "assets\\dynamicTextures\\texture01.frag",
             "once": true,
+            "width": 512,
+            "height": 512,
             "variables": ["time"]
         }
     ],
