@@ -65,6 +65,7 @@ namespace DemoSystem  {
 
         //For dynamic texture
         std::list<std::string> variables;
+        bool once;
     };
 
     class Configuration {
