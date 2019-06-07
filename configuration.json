@@ -1,6 +1,6 @@
 {
     "demo": {
-        "release": true,
+        "release": false,
         "name": "demo",
         "group": "demogroup",
         "icon":  "assets\\pics\\tt.png",
@@ -36,6 +36,13 @@
             "type": "staticTexture",
             "name": "texture02",
             "file": "assets\\textures\\texture02.png"
+        },
+        {
+            "type": "dynamicTexture",
+            "name": "dynamicTexture01",
+            "file": "assets\\dynamicTextures\\texture01.frag",
+            "once": true,
+            "variables": ["time"]
         }
     ],
     "tracks": [
