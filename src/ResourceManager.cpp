@@ -17,6 +17,14 @@ void DemoSystem::ResourceManager::setResources(std::list<DemoSystem::Asset> asse
                 this->staticTextures.push_back(t);
             }
         }
+        else if(asset.type == DemoSystem::Asset::AssetType::DYNAMIC_TEXTURE) {
+            DemoSystem::DynamicTexture t;
+            t.name = asset.name;
+            t.once = asset.once;
+            t.source = asset.file;
+            
+            this->dynamicTextures.push_back(t);
+        }
 
     }
 }
