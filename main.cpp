@@ -15,9 +15,7 @@ void update(double time);
 void render(double time);
 void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int mods);
 void mainLoop();
-bool initShaders(bool first);
-std::string readShaderSource(std::string path);
-bool compileShader(const GLenum type, const std::string source, bool first);
+bool initTextureShaders(bool first);
 void logError(int error, const char* desc);
 void cleanUp();
 void writeToLogFile( const std::string &text, bool clean);
@@ -34,10 +32,6 @@ GLuint program;
 GLint timeUniform;
 GLint resolutionUniform;
 
-std::string vertexPath;
-GLuint vertexShader;
-std::string fragmentPath;
-GLuint fragmentShader;
 unsigned int VBO, VAO, EBO;
 
 DemoSystem::Configuration configurations;
@@ -60,10 +54,7 @@ int main(int argc, char* args[])
         logger.write(DemoSystem::Logger::INFO, "use configuration json file as parameter. Default is configuration.json");
     }
 
-    vertexPath = configurations.shaders.vertex;
-    fragmentPath = configurations.shaders.fragment;
-
-    if(vertexPath.empty() || fragmentPath.empty())
+    if(configurations.shaders.vertex.empty() || configurations.shaders.fragment.empty())
     {
         if (configurations.demo.log) {
             logger.write(DemoSystem::Logger::ERR, "provide vertex and fragment shaders in configuration file");
@@ -171,14 +162,11 @@ int main(int argc, char* args[])
     cosmonaut.setTracks(configurations.tracks);
     resourceManager.setResources(configurations.assets);
 
-    if(!initShaders(true))
-    {
-        if (configurations.demo.log) {
-            logger.write(DemoSystem::Logger::ERR, "init shaders error");
-        }
-        return 1;
+    resourceManager.primaryShader = DemoSystem::Shader(configurations.shaders.vertex, configurations.shaders.fragment);
+    DemoSystem::Logger::Message primaryShaderMessage = resourceManager.primaryShader.initShader();
+    if(primaryShaderMessage.failure == true) {
+        logger.write(DemoSystem::Logger::ERR, primaryShaderMessage.content);
     }
-
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     // VBO is basically the vertices of the model, VAO is a list of VBO's
@@ -305,7 +293,7 @@ void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int m
                 fullscreen = !fullscreen;
                 break;
             case GLFW_KEY_R:
-                initShaders(false);
+                //initShaders(false);
                 break;
             case GLFW_KEY_ESCAPE:
                 glfwSetWindowShouldClose(window, GLFW_TRUE);
@@ -323,64 +311,13 @@ void mainLoop()
     }
 }
 
-std::string readShaderSource(std::string path)
-{
-    std::ifstream ifs(path);
-    std::string content = std::string((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
-    return content;
-}
-
-bool initShaders(bool first)
+bool initShaders(bool first = false)
 {
     if(first) 
     {
         program = glCreateProgram();
     }
 
-    std::string vertexSource = readShaderSource(vertexPath);
-    std::string fragmentSource = readShaderSource(fragmentPath);
-
-    if(compileShader(GL_VERTEX_SHADER, vertexSource, first) == false) 
-    {
-        return false;
-    }
-    if(compileShader(GL_FRAGMENT_SHADER, fragmentSource, first) == false)
-    {
-        return false;
-    }
-    if(first == false)
-    {
-        glDeleteProgram(program);
-        program = glCreateProgram();
-    }
-    glAttachShader(program, vertexShader);
-    glAttachShader(program, fragmentShader);
-   
-    GLint linkStatus;
-    glLinkProgram(program);
-    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
-    if(linkStatus == GL_FALSE)
-    {
-        GLint logLength;
-        char* log;
-
-        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
-        log = new char[logLength];
-        GLint infoLogStatus;
-        glGetProgramInfoLog(program, logLength, &infoLogStatus, log);
-        if (configurations.demo.log) {
-            logger.write(DemoSystem::Logger::ERR, "program linking error" + std::string(log));
-        }
-        delete[] log;
-        if(first)
-        {
-            glDeleteProgram(program);
-            program = 0;
-        }
-        
-        return false;
-
-    }
     timeUniform = glGetUniformLocation(program, "time");
     resolutionUniform = glGetUniformLocation(program, "resolution");
 
@@ -406,56 +343,6 @@ bool initShaders(bool first)
 
 }
 
-bool compileShader(const GLenum type, std::string source, bool first)
-{
-    GLuint shader = glCreateShader(type);
-    const GLchar* sourceChar = (const GLchar*)source.c_str();
-    glShaderSource(shader, 1, &sourceChar, 0);
-    glCompileShader(shader);
-
-    GLint compileResult;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &compileResult);
-    if(compileResult == GL_FALSE)
-    {
-        GLint logLength;
-        char* log;
-
-        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
-        log = new char[logLength];
-        GLint infoLogStatus;
-        glGetShaderInfoLog(shader, logLength, &infoLogStatus, log);
-        if(type == GL_VERTEX_SHADER)
-        {
-            if (configurations.demo.log) {
-                logger.write(DemoSystem::Logger::ERR, "vertex shader compile error: " + std::string(log));
-            }
-        }
-        else
-        {
-            if (configurations.demo.log) {
-                logger.write(DemoSystem::Logger::ERR, "fragment shader compile error: " + std::string(log));
-            }
-        }
-        
-        delete[] log;
-        
-        glDeleteShader(shader);
-        program = 0;
-
-        return false;
-    }
-    if(type == GL_VERTEX_SHADER)
-    {      
-        vertexShader = shader;
-    }
-    else
-    {
-        fragmentShader = shader;
-    }
-
-    return true;
-}
-
 void logError(int error, const char* desc)
 {
     logger.write(DemoSystem::Logger::ERR, "glfw error: " + std::to_string(error) + std::string(desc));
@@ -465,6 +352,7 @@ void cleanUp()
 {
     glDeleteProgram(program);
     program = 0;
+
 
     glfwDestroyWindow(window);
     cosmonaut.cleanUp();

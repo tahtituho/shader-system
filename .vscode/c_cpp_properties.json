@@ -4,8 +4,8 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}\\libs\\json\\*",
-                "${workspaceFolder}\\include\\*"
+                "${workspaceFolder}\\\\libs\\\\json\\\\*",
+                "${workspaceFolder}\\\\include\\\\*"
             ],
             "defines": [
                 "_DEBUG",
@@ -13,18 +13,20 @@
                 "WIN32",
                 "GLEW_BUILD"
             ],
-            "compilerPath": "C:\\MinGW\\bin\\gcc.exe",
+            "compilerPath": "D:\\\\development\\\\MinGW\\\\bin\\\\gcc.exe",
             "intelliSenseMode": "gcc-x64",
             "browse": {
                 "path": [
                     "${workspaceFolder}",
-                    "${workspaceFolder}\\libs\\*",
-                    "${workspaceFolder}\\include\\*",
-                    "${workspaceFolder}\\src\\*"
+                    "${workspaceFolder}\\\\libs\\\\*",
+                    "${workspaceFolder}\\\\include\\\\*",
+                    "${workspaceFolder}\\\\src\\\\*"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
-            }
+            },
+            "cppStandard": "c++14",
+            "cStandard": "c11"
         }
     ],
     "version": 4

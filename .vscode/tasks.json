@@ -22,6 +22,7 @@
                 "src/StaticTexture.cpp",
                 "src/DynamicTexture.cpp",
                 "src/ResourceManager.cpp",
+                "src/Shader.cpp",
                 "main.cpp",
                 "-w",
                 "-g",
@@ -68,6 +69,7 @@
                 "src/StaticTexture.cpp",
                 "src/DynamicTexture.cpp",
                 "src/ResourceManager.cpp",
+                "src/Shader.cpp",
                 "main.cpp",
                 "-w",
                 "-L${workspaceFolder}/libs",
@@ -102,6 +104,7 @@
                 "src/StaticTexture.cpp",
                 "src/DynamicTexture.cpp",
                 "src/ResourceManager.cpp",
+                "src/Shader.cpp",
                 "main.cpp",
                 "-D_WIN32_WINNT=0x501", //For getting rocket socket communication work on windows
                 "-w",
@@ -167,6 +170,7 @@
                 "src/StaticTexture.cpp",
                 "src/DynamicTexture.cpp",
                 "src/ResourceManager.cpp",
+                "src/Shader.cpp",
                 "main.cpp",
                 "-D_WIN32_WINNT=0x501", //For getting rocket socket communication work on windows
                 "-w",

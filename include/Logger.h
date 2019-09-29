@@ -13,6 +13,13 @@ namespace DemoSystem {
                 INFO,
                 ERR
             };
+
+            struct Message {
+                bool failure;
+                std::string content;
+                Message() : failure() {}
+            };
+            
             void write(LOG_LEVEL level, std::string text);
 
         private:

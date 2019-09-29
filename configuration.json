@@ -45,6 +45,15 @@
             "width": 512,
             "height": 512,
             "variables": ["time"]
+        },
+        {
+            "type": "dynamicTexture",
+            "name": "dynamicTexture02",
+            "file": "assets\\dynamicTextures\\texture02.frag",
+            "once": false,
+            "width": 256,
+            "height": 256,
+            "variables": ["time"]
         }
     ],
     "tracks": [
