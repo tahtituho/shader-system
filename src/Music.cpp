@@ -2,6 +2,7 @@
 
 DemoSystem::Music::Music() {
     this->playing = false;
+    this->silent = false;
 }
 
 DemoSystem::Music::~Music() {
@@ -51,6 +52,11 @@ double DemoSystem::Music::position() {
 void DemoSystem::Music::seek(double row) {
     QWORD bytePosition = BASS_ChannelSeconds2Bytes(this->stream, row);
     BASS_ChannelSetPosition(this->stream, bytePosition, BASS_POS_BYTE);
+}
+
+void DemoSystem::Music::silence() {
+    this->silent = !this->silent;
+    BASS_ChannelSetAttribute(this->stream, BASS_ATTRIB_VOL, this->silent ? 1.0 : 0.0);
 }
 
 void DemoSystem::Music::cleanUp() {

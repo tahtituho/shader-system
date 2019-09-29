@@ -16,11 +16,13 @@ namespace DemoSystem {
             bool isPlaying();
             double position();
             void seek(double row);
+            void silence();
             void cleanUp();
 
         private:
             HSTREAM stream;
             bool playing;
+            bool silent;
     };
 }
 #endif
