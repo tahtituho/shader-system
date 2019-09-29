@@ -16,11 +16,14 @@ namespace DemoSystem {
             bool isPlaying();
             double position();
             void seek(double row);
+            bool hasMusicEnded();
             void cleanUp();
 
         private:
             HSTREAM stream;
             bool playing;
+            bool hasEnded;
+            void static CALLBACK musicEndCallback(HSYNC handle, DWORD channel, DWORD data, void* user);
     };
 }
 #endif
