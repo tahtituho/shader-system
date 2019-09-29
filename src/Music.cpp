@@ -3,6 +3,7 @@
 DemoSystem::Music::Music() {
     this->playing = false;
     this->hasEnded = false;
+    this->silent = false;
 }
 
 DemoSystem::Music::~Music() {
@@ -62,6 +63,11 @@ void CALLBACK DemoSystem::Music::musicEndCallback(HSYNC handle, DWORD channel, D
 
 bool DemoSystem::Music::hasMusicEnded() {
     return this->hasEnded;
+}
+
+void DemoSystem::Music::silence() {
+    this->silent = !this->silent;
+    BASS_ChannelSetAttribute(this->stream, BASS_ATTRIB_VOL, this->silent ? 1.0 : 0.0);
 }
 
 void DemoSystem::Music::cleanUp() {

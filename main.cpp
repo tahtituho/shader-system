@@ -313,6 +313,11 @@ void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int m
             case GLFW_KEY_R:
                 initShaders(false);
                 break;
+            case GLFW_KEY_S:
+                if(configurations.demo.release == false) {
+                    music.silence();
+                }          
+                break;
             case GLFW_KEY_ESCAPE:
                 glfwSetWindowShouldClose(window, GLFW_TRUE);
                 break;
