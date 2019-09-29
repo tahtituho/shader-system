@@ -32,4 +32,4 @@ if configuration file is non existing, system default to default values, which a
 be sure that shaders, music and textures defined in configuration json exist.
 
 # usage
-first start rocket client and after that shader-system.exe. tracks defined in configuration json will appear on rocket. open fragment shader defined in configuration json and verify that uniform variables corresponding to rocket tracks are present. when changes have been made to fragment shader press r to reload shader. if syntax errors are present some kind of notice will be visible in console. otherwise changes are applied.
+first start rocket client and after that shader-system.exe. tracks defined in configuration json will appear on rocket. open fragment shader defined in configuration json and verify that uniform variables corresponding to rocket tracks are present. when changes have been made to fragment shader press r to reload shader. if syntax errors are present and loging is set to true, error messages will be printed to log.txt. 
