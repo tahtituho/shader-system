@@ -2,6 +2,7 @@
 
 DemoSystem::Music::Music() {
     this->playing = false;
+    this->hasEnded = false;
     this->silent = false;
 }
 
@@ -17,6 +18,8 @@ bool DemoSystem::Music::initialize(int frequency, std::string file) {
         int error = BASS_ErrorGetCode();
         return false;
     }
+
+    BASS_ChannelSetSync(this->stream, BASS_SYNC_END, 0, &this->musicEndCallback, this);
 
     return true;
 }
@@ -52,6 +55,14 @@ double DemoSystem::Music::position() {
 void DemoSystem::Music::seek(double row) {
     QWORD bytePosition = BASS_ChannelSeconds2Bytes(this->stream, row);
     BASS_ChannelSetPosition(this->stream, bytePosition, BASS_POS_BYTE);
+}
+
+void CALLBACK DemoSystem::Music::musicEndCallback(HSYNC handle, DWORD channel, DWORD data, void* music) {
+    static_cast<DemoSystem::Music*>(music)->hasEnded = true;
+}
+
+bool DemoSystem::Music::hasMusicEnded() {
+    return this->hasEnded;
 }
 
 void DemoSystem::Music::silence() {

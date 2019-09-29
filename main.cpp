@@ -331,6 +331,9 @@ void mainLoop()
         double position = music.position();
         update(position);
         render(position);
+        if(configurations.demo.release == true && music.hasMusicEnded() == true) {
+           glfwSetWindowShouldClose(window, GLFW_TRUE); 
+        }
     }
 }
 
