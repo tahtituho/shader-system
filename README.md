@@ -18,6 +18,11 @@ c++ compiler is needed, and on linux g++ can found easily from package managemen
 - http://www.mingw.org/
  
 make sure that include and library folders in tasks.json are correct for you configuration. and check c_cpp_configuration.json that folder are correct as well, to ensure that intellisense is working correctly.
+
+at least these packages are needed for MinGW from Basic stup
+- mingw32-base-bin
+- mingw32-gcc-g++-bin
+- msys-base-bin
   
 # notes on compiling
 ### windows/linux
@@ -26,6 +31,13 @@ create output folder for executable(ie. bin/debug) it cannot create folders by i
 ### windows
 make sure that mingw is available, easy way to handle this is to add mingw folder to PATH variable
 copy glfw3.dll, glew32.dll and bass.dll into output folder.
+
+### visual studio code
+visual studio code suits greatly to compile this, https://code.visualstudio.com/ just make sure that paths are correct for your setup in tasks.json. paths for following folders needs to be set to comply your setup:
+- glew lib 
+- glew include
+- bass lib
+- bass include
 
 # executing
 when demo system is executed without parameters, it defaults configuration file to "configuration.json".
