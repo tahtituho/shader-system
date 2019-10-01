@@ -2,7 +2,7 @@
 attempt to create simple shader demo system with support for rocket and png textures. 
 
 # requirements
-glfw, rocket, jsoncpp, bass, glew and lodepng are included in project.
+glfw, rocket, jsoncpp, bass, glew, lodepng and glText are included in project.
 
 - glfw version 3.2.1 https://www.glfw.org/
 - rocket https://github.com/emoon/rocket
@@ -10,7 +10,8 @@ glfw, rocket, jsoncpp, bass, glew and lodepng are included in project.
 - bass version 2.4.13.8 http://www.un4seen.com/bass.html
 - glew version 2.1.0 http://glew.sourceforge.net/
 - lodepng https://lodev.org/lodepng/
-
+- glText https://github.com/vallentin/glText
+- 
 all libraries are 32-bit.
 
 c++ compiler is needed, and on linux g++ can found easily from package management, but on windows mingw works well
