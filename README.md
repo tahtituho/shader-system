@@ -31,6 +31,13 @@ create output folder for executable(ie. bin/debug) it cannot create folders by i
 make sure that mingw is available, easy way to handle this is to add mingw folder to PATH variable
 copy glfw3.dll, glew32.dll and bass.dll into output folder.
 
+### visual studio code
+visual studio code suits greatly to compile this, https://code.visualstudio.com/ just make sure that paths are correct for your setup in tasks.json. paths for following folders needs to be set to comply your setup:
+- glew lib 
+- glew include
+- bass lib
+- bass include
+
 # executing
 when demo system is executed without parameters, it defaults configuration file to "configuration.json".
 if configuration file is non existing, system default to default values, which are defined in Configuration class constructor
