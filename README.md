@@ -17,6 +17,11 @@ c++ compiler is needed, and on linux g++ can found easily from package managemen
 - http://www.mingw.org/
  
 make sure that include and library folders in tasks.json are correct for you configuration. and check c_cpp_configuration.json that folder are correct as well, to ensure that intellisense is working correctly.
+
+at least these packages are needed for MinGW from Basic stup
+- mingw32-base-bin
+- mingw32-gcc-g++-bin
+- msys-base-bin
   
 # notes on compiling
 ### windows/linux
