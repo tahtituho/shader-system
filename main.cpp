@@ -56,8 +56,8 @@ int main(int argc, char* args[])
     
     configurations.read(confFile);
     if (configurations.demo.log) {
-        logger.write(DemoSystem::Logger::INFO, "shader system version "  + std::string(VERSION) + " by tähtituho 2019");
-        logger.write(DemoSystem::Logger::INFO, "use configuration json file as parameter. Default is configuration.json");
+        //logger.write(DemoSystem::Logger::INFO, "shader system version "  + std::string(VERSION) + " by tähtituho 2019");
+        //logger.write(DemoSystem::Logger::INFO, "use configuration json file as parameter. Default is configuration.json");
     }
 
     vertexPath = configurations.shaders.vertex;
@@ -66,14 +66,14 @@ int main(int argc, char* args[])
     if(vertexPath.empty() || fragmentPath.empty())
     {
         if (configurations.demo.log) {
-            logger.write(DemoSystem::Logger::ERR, "provide vertex and fragment shaders in configuration file");
+            //logger.write(DemoSystem::Logger::ERR, "provide vertex and fragment shaders in configuration file");
         }
         return 1;
     }
 
     if (!glfwInit()) {
         if (configurations.demo.log) {
-            logger.write(DemoSystem::Logger::ERR, "glfwInit failed");
+            //logger.write(DemoSystem::Logger::ERR, "glfwInit failed");
         }
         return -1;
     }
@@ -145,11 +145,14 @@ int main(int argc, char* args[])
         }
         return false;
     }
-    glViewport(0, 0, configurations.screen.width, configurations.screen.height);
     
+    glViewport(0, 0, configurations.screen.width, configurations.screen.height);
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
+    logger.initialize(25, 0.0, configurations.screen.height);
+
     if (configurations.demo.log) {
+        logger.write(DemoSystem::Logger::INFO, "shader system version "  + std::string(VERSION) + " by tähtituho 2019");
         logger.write(DemoSystem::Logger::INFO, "opengl vendor:   " + std::string((const char*)glGetString(GL_VENDOR)));
         logger.write(DemoSystem::Logger::INFO, "opengl renderer  " + std::string((const char*)glGetString(GL_RENDERER)));
         logger.write(DemoSystem::Logger::INFO, "opengl version:  " + std::string((const char*)glGetString(GL_VERSION)));
@@ -291,6 +294,7 @@ void render(double time)
     
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    logger.render();
     glUseProgram(0);
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -331,6 +335,7 @@ void mainLoop()
         double position = music.position();
         update(position);
         render(position);
+        
         if(configurations.demo.release == true && music.hasMusicEnded() == true) {
            glfwSetWindowShouldClose(window, GLFW_TRUE); 
         }
@@ -437,17 +442,9 @@ bool compileShader(const GLenum type, std::string source, bool first)
         log = new char[logLength];
         GLint infoLogStatus;
         glGetShaderInfoLog(shader, logLength, &infoLogStatus, log);
-        if(type == GL_VERTEX_SHADER)
-        {
-            if (configurations.demo.log) {
-                logger.write(DemoSystem::Logger::ERR, "vertex shader compile error: " + std::string(log));
-            }
-        }
-        else
-        {
-            if (configurations.demo.log) {
-                logger.write(DemoSystem::Logger::ERR, "fragment shader compile error: " + std::string(log));
-            }
+      
+        if (configurations.demo.log) {
+            logger.write(DemoSystem::Logger::ERR, std::string(log));
         }
         
         delete[] log;
