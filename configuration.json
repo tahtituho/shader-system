@@ -1,6 +1,6 @@
 {
     "demo": {
-        "release": true,
+        "release": false,
         "name": "demo",
         "group": "demogroup",
         "icon":  "assets\\pics\\tt.png",
