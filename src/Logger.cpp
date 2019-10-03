@@ -11,10 +11,11 @@ DemoSystem::Logger::~Logger() {
     gltTerminate();
 }
 
-void DemoSystem::Logger::initialize(int size, float x, float y) {
+void DemoSystem::Logger::initialize(int size, float x, float y, bool e) {
     this->size = size;
     this->x = x;
     this->y = y;
+    this->enabled = e;
 
     gltInit();
 }
@@ -41,13 +42,23 @@ void DemoSystem::Logger::write(DemoSystem::Logger::LOG_LEVEL level, std::string 
 }
 
 void DemoSystem::Logger::render() {
-    gltBeginDraw();
-    gltColor(1.0f, 1.0f, 1.0f, 1.0f);
+    if(this->enabled) {
+        gltBeginDraw();
+        gltColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-    float runningY = y - 15.0;
-    for(GLTtext* text : this->buffer) {
-        gltDrawText2D(text, this->x, runningY, 1.0);
-        runningY -= 15.0;
+        float runningY = y - 15.0;
+        for(GLTtext* text : this->buffer) {
+            gltDrawText2D(text, this->x, runningY, 1.0);
+            runningY -= 15.0;
+        }
+        gltEndDraw();
     }
-    gltEndDraw();
+}
+
+bool DemoSystem::Logger::isEnabled() {
+    return this->enabled;
+}
+
+void DemoSystem::Logger::toggleEnable() {
+    this->enabled = !this->enabled;
 }

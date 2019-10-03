@@ -18,15 +18,18 @@ namespace DemoSystem {
                 INFO,
                 ERR
             };
-            void initialize(int size, float x, float y);
+            void initialize(int size, float x, float y, bool e);
             void write(LOG_LEVEL level, std::string text);
             void render();
+            bool isEnabled();
+            void toggleEnable(); 
 
         private:
             std::list<GLTtext*> buffer;
             int size;
             float x;
             float y;
+            bool enabled;
     };
 }
 #endif
