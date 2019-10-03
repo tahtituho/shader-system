@@ -12,7 +12,6 @@ namespace DemoSystem  {
         std::string name;
         std::string group;
         std::string icon;
-        bool log;
     };
 
     struct Screen {
