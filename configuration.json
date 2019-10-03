@@ -3,8 +3,7 @@
         "release": false,
         "name": "demo",
         "group": "demogroup",
-        "icon":  "assets\\pics\\tt.png",
-        "log": true
+        "icon":  "assets\\pics\\tt.png"
     },
     "screen": {
         "width": 640,
