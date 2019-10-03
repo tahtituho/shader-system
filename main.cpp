@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 #include <fstream>
 #include <GL/glew.h>
@@ -49,29 +50,19 @@ int main(int argc, char* args[])
     }
     
     configurations.read(confFile);
-    if (configurations.demo.log) {
-        logger.write(DemoSystem::Logger::INFO, "shader system version "  + std::string(VERSION) + " by tähtituho 2019");
-        logger.write(DemoSystem::Logger::INFO, "use configuration json file as parameter. Default is configuration.json");
-    }
 
     if(configurations.shaders.vertex.empty() || configurations.shaders.fragment.empty())
     {
-        if (configurations.demo.log) {
-            logger.write(DemoSystem::Logger::ERR, "provide vertex and fragment shaders in configuration file");
-        }
+        std::cout << "provide vertex and fragment shaders in configuration file";
         return 1;
     }
 
     if (!glfwInit()) {
-        if (configurations.demo.log) {
-            logger.write(DemoSystem::Logger::ERR, "glfwInit failed");
-        }
+        std::cout << "glfwInit failed";
         return -1;
     }
 
-    if(configurations.demo.log) {
-        glfwSetErrorCallback(logError);
-    }
+    glfwSetErrorCallback(logError);
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, configurations.shaders.majorVersion);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, configurations.shaders.minorVersion);
@@ -94,9 +85,7 @@ int main(int argc, char* args[])
     }
 
     if(!window) {
-        if (configurations.demo.log) {
-            logger.write(DemoSystem::Logger::ERR, "window creation failed");
-        }
+        std::cout << "window creation failed";
         glfwTerminate();
         return -1;
     }
@@ -131,24 +120,23 @@ int main(int argc, char* args[])
     GLenum glewError = glewInit();
     if (GLEW_OK != glewError)
     {
-        if (configurations.demo.log) {
-            logger.write(DemoSystem::Logger::ERR, "glew error: " + std::string((const char*)glewGetErrorString(glewError)));
-        }
+        std::cout << "glew error: " << std::string((const char*)glewGetErrorString(glewError));
         return false;
     }
-    glViewport(0, 0, configurations.screen.width, configurations.screen.height);
     
+    glViewport(0, 0, configurations.screen.width, configurations.screen.height);
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
-    if (configurations.demo.log) {
-        logger.write(DemoSystem::Logger::INFO, "opengl vendor:   " + std::string((const char*)glGetString(GL_VENDOR)));
-        logger.write(DemoSystem::Logger::INFO, "opengl renderer  " + std::string((const char*)glGetString(GL_RENDERER)));
-        logger.write(DemoSystem::Logger::INFO, "opengl version:  " + std::string((const char*)glGetString(GL_VERSION)));
-        logger.write(DemoSystem::Logger::INFO, "shading version: " + std::string((const char*)glGetString(GL_SHADING_LANGUAGE_VERSION)));
-        logger.write(DemoSystem::Logger::INFO, "context version  " + std::to_string(configurations.shaders.majorVersion) + "." + std::to_string(configurations.shaders.minorVersion));
-        logger.write(DemoSystem::Logger::INFO, "bass version:    " + std::to_string(BASS_GetVersion()));
-    }
-    
+    logger.initialize(25, 0.0, configurations.screen.height, !configurations.demo.release);
+
+    logger.write(DemoSystem::Logger::INFO, "shader system version "  + std::string(VERSION) + " by tähtituho 2019");
+    logger.write(DemoSystem::Logger::INFO, "opengl vendor:   " + std::string((const char*)glGetString(GL_VENDOR)));
+    logger.write(DemoSystem::Logger::INFO, "opengl renderer  " + std::string((const char*)glGetString(GL_RENDERER)));
+    logger.write(DemoSystem::Logger::INFO, "opengl version:  " + std::string((const char*)glGetString(GL_VERSION)));
+    logger.write(DemoSystem::Logger::INFO, "shading version: " + std::string((const char*)glGetString(GL_SHADING_LANGUAGE_VERSION)));
+    logger.write(DemoSystem::Logger::INFO, "context version  " + std::to_string(configurations.shaders.majorVersion) + "." + std::to_string(configurations.shaders.minorVersion));
+    logger.write(DemoSystem::Logger::INFO, "bass version:    " + std::to_string(BASS_GetVersion()));
+
     music.initialize(configurations.tune.frequency, configurations.tune.file);
     cosmonaut.initialize(configurations.tune.BPM, configurations.sync.RPB);
     if (!configurations.demo.release) {
@@ -273,6 +261,7 @@ void render(double time)
     
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    logger.render();
     glUseProgram(0);
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -284,16 +273,30 @@ void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int m
         switch(key)
         {
             case GLFW_KEY_F:
-                if(fullscreen) {
-                    glfwRestoreWindow(window);
+                if(configurations.demo.release == false) {
+                    if(fullscreen) {
+                        glfwRestoreWindow(window);
+                    }
+                    else {
+                        glfwMaximizeWindow(window);
+                    }
+                    fullscreen = !fullscreen;
                 }
-                else {
-                    glfwMaximizeWindow(window);
-                }
-                fullscreen = !fullscreen;
                 break;
             case GLFW_KEY_R:
-                //initShaders(false);
+                if(configurations.demo.release == false) {
+                    //initShaders(false);
+                }
+                break;
+            case GLFW_KEY_S:
+                if(configurations.demo.release == false) {
+                    music.silence();
+                }          
+                break;
+            case GLFW_KEY_C:
+                if(configurations.demo.release == false) {
+                    logger.toggleEnable();
+                }          
                 break;
             case GLFW_KEY_ESCAPE:
                 glfwSetWindowShouldClose(window, GLFW_TRUE);
@@ -308,6 +311,10 @@ void mainLoop()
         double position = music.position();
         update(position);
         render(position);
+        
+        if(configurations.demo.release == true && music.hasMusicEnded() == true) {
+           glfwSetWindowShouldClose(window, GLFW_TRUE); 
+        }
     }
 }
 
@@ -345,7 +352,7 @@ bool initShaders(bool first = false)
 
 void logError(int error, const char* desc)
 {
-    logger.write(DemoSystem::Logger::ERR, "glfw error: " + std::to_string(error) + std::string(desc));
+    std::cout << "glfw error: " << std::to_string(error) << " " << std::string(desc);
 }
 
 void cleanUp()
