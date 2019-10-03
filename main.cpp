@@ -288,16 +288,20 @@ void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int m
         switch(key)
         {
             case GLFW_KEY_F:
-                if(fullscreen) {
-                    glfwRestoreWindow(window);
+                if(configurations.demo.release == false) {
+                    if(fullscreen) {
+                        glfwRestoreWindow(window);
+                    }
+                    else {
+                        glfwMaximizeWindow(window);
+                    }
+                    fullscreen = !fullscreen;
                 }
-                else {
-                    glfwMaximizeWindow(window);
-                }
-                fullscreen = !fullscreen;
                 break;
             case GLFW_KEY_R:
-                initShaders(false);
+                if(configurations.demo.release == false) {
+                    initShaders(false);
+                }
                 break;
             case GLFW_KEY_S:
                 if(configurations.demo.release == false) {
