@@ -3,11 +3,13 @@
 #include <fstream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include "lodepng.h"
 #include "Configuration.h"
 #include "Music.h"
 #include "Cosmonaut.h"
-#include "ResourceManager.h"
+#include "Shader.h"
 #include "Logger.h"
+#include "Helpers.h"
 
 const char* VERSION = "1.4";
 #define SYNC_PLAYER
@@ -33,7 +35,7 @@ GLFWwindow* window;
 DemoSystem::Configuration configurations;
 DemoSystem::Music music;
 DemoSystem::Cosmonaut cosmonaut;
-DemoSystem::ResourceManager resourceManager;
+DemoSystem::Shader shader;
 DemoSystem::Logger logger;
 
 int main(int argc, char* args[])
@@ -132,10 +134,9 @@ int main(int argc, char* args[])
     logger.write(DemoSystem::Logger::INFO, "context version  " + std::to_string(configurations.shaders.majorVersion) + "." + std::to_string(configurations.shaders.minorVersion));
     logger.write(DemoSystem::Logger::INFO, "bass version:    " + std::to_string(BASS_GetVersion()));
 
-    resourceManager.primaryShader = DemoSystem::Shader(configurations.shaders.vertex, configurations.shaders.fragment, configurations.screen.width, configurations.screen.height);
-    resourceManager.primaryShader.initialize();
- 
-    DemoSystem::Logger::Message primaryShaderMessage = resourceManager.primaryShader.initShader();
+    shader.initialize(configurations.screen.width, configurations.screen.height);
+    shader.setSources(DemoSystem::Helpers::readFile(configurations.shaders.vertex), DemoSystem::Helpers::readFile(configurations.shaders.fragment));
+    shader.initShader();
     
     music.initialize(configurations.tune.frequency, configurations.tune.file);
     cosmonaut.initialize(configurations.tune.BPM, configurations.sync.RPB);
@@ -148,11 +149,6 @@ int main(int argc, char* args[])
     functions.set_row = &musicSetRow;
     cosmonaut.setFunctions(&functions);
     cosmonaut.setTracks(configurations.tracks);
-    resourceManager.setResources(configurations.assets);
-
-    if(primaryShaderMessage.failure == true) {
-        logger.write(DemoSystem::Logger::ERR, primaryShaderMessage.content);
-    }
 
     music.play();
     mainLoop();
@@ -211,7 +207,8 @@ void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int m
                 break;
             case GLFW_KEY_R:
                 if(configurations.demo.release == false) {
-                    resourceManager.primaryShader.initShader();
+                    shader.setSources(DemoSystem::Helpers::readFile(configurations.shaders.vertex), DemoSystem::Helpers::readFile(configurations.shaders.fragment));
+                    shader.initShader();
                 }
                 break;
             case GLFW_KEY_S:
@@ -237,7 +234,7 @@ void mainLoop()
         double position = music.position();
         update(position);
 
-        resourceManager.primaryShader.render(position);
+        shader.render(position);
         glfwSwapBuffers(window);
         glfwPollEvents();
         if(configurations.demo.release == true && music.hasMusicEnded() == true) {

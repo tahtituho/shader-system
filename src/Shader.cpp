@@ -4,20 +4,16 @@ DemoSystem::Shader::Shader() {
 
 }
 
-DemoSystem::Shader::Shader(std::string vertexFile, std::string fragmentFile, unsigned int width, unsigned int height) {
-    this->vertexFile = vertexFile;
-    this->fragmentFile = fragmentFile;
-    this->width = width;
-    this->height = height;
-}
-
 DemoSystem::Shader::~Shader() {
     glDeleteShader(this->vertex);
     glDeleteShader(this->fragment);
     glDeleteProgram(this->program);
 }
 
-void DemoSystem::Shader::initialize() {
+void DemoSystem::Shader::initialize(unsigned int width, unsigned int height) {
+    this->width = width;
+    this->height = height;
+
     this->program = glCreateProgram();
     this->vertex = glCreateShader(GL_VERTEX_SHADER);
     this->fragment = glCreateShader(GL_FRAGMENT_SHADER);
@@ -43,9 +39,9 @@ void DemoSystem::Shader::initialize() {
     this->initShader();
 }
 
-std::string DemoSystem::Shader::readSource(std::string file) {
-    std::ifstream ifs(file);
-    return std::string((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
+void DemoSystem::Shader::setSources(std::string vertexSource, std::string fragmentSource) {
+    this->vertexSource = vertexSource;
+    this->fragmentSource = fragmentSource;
 }
 
 DemoSystem::Logger::Message DemoSystem::Shader::initShader()
@@ -97,7 +93,7 @@ DemoSystem::Logger::Message DemoSystem::Shader::compileShader(GLenum type)
 {
     DemoSystem::Logger::Message m;
     GLuint shader = glCreateShader(type);
-    std::string source = type == GL_VERTEX_SHADER ? this->readSource(this->vertexFile) : this->readSource(this->fragmentFile);
+    std::string source = type == GL_VERTEX_SHADER ? this->vertexSource : this->fragmentSource;
     const GLchar* sourceChar = (const GLchar*)source.c_str();
     glShaderSource(shader, 1, &sourceChar, 0);
     delete sourceChar;

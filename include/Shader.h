@@ -2,23 +2,21 @@
 #define SHADER_H
 #include <GL/glew.h>
 #include <string>
-#include <fstream>
 #include <map> 
 #include "Logger.h"
 
 namespace DemoSystem {
     class Shader {
         public:
-            Shader();
-            Shader(std::string vertexFile, std::string fragmentFile, unsigned int width, unsigned int height);    
+            Shader();   
             ~Shader();
             struct Uniform {
                 std::string name;
                 GLint handle;
             };
 
-            void initialize();
-           
+            void initialize(unsigned int width, unsigned int height);
+            void setSources(std::string vertec, std::string fragment);
             DemoSystem::Logger::Message initShader();
             DemoSystem::Logger::Message compileShader(GLenum type);
             void render(double time);
@@ -29,10 +27,10 @@ namespace DemoSystem {
             unsigned int width;
             unsigned int height;
 
-            std::string vertexFile;
+            std::string vertexSource;
             GLuint vertex;
 
-            std::string fragmentFile;
+            std::string fragmentSource;
             GLuint fragment;
 
             GLuint program;
