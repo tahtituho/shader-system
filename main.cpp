@@ -29,11 +29,6 @@ int musicPlaying(void* c);
 bool fullscreen;
 
 GLFWwindow* window;
-GLuint program;
-GLint timeUniform;
-GLint resolutionUniform;
-
-unsigned int VBO, VAO, EBO;
 
 DemoSystem::Configuration configurations;
 DemoSystem::Music music;
@@ -137,6 +132,11 @@ int main(int argc, char* args[])
     logger.write(DemoSystem::Logger::INFO, "context version  " + std::to_string(configurations.shaders.majorVersion) + "." + std::to_string(configurations.shaders.minorVersion));
     logger.write(DemoSystem::Logger::INFO, "bass version:    " + std::to_string(BASS_GetVersion()));
 
+    resourceManager.primaryShader = DemoSystem::Shader(configurations.shaders.vertex, configurations.shaders.fragment, configurations.screen.width, configurations.screen.height);
+    resourceManager.primaryShader.initialize();
+ 
+    DemoSystem::Logger::Message primaryShaderMessage = resourceManager.primaryShader.initShader();
+    
     music.initialize(configurations.tune.frequency, configurations.tune.file);
     cosmonaut.initialize(configurations.tune.BPM, configurations.sync.RPB);
     if (!configurations.demo.release) {
@@ -150,47 +150,9 @@ int main(int argc, char* args[])
     cosmonaut.setTracks(configurations.tracks);
     resourceManager.setResources(configurations.assets);
 
-    resourceManager.primaryShader = DemoSystem::Shader(configurations.shaders.vertex, configurations.shaders.fragment);
-    DemoSystem::Logger::Message primaryShaderMessage = resourceManager.primaryShader.initShader();
     if(primaryShaderMessage.failure == true) {
         logger.write(DemoSystem::Logger::ERR, primaryShaderMessage.content);
     }
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
-    // VBO is basically the vertices of the model, VAO is a list of VBO's
-    // We can use the index of the VAO to draw which VBO we want.
-    // In our case, we will be drawing to triangles to cover the screen,
-    // so we have room to show the shader. It should be possible to do 
-    // this with quads, and not mess with the triangles.
-    // Using EBO we can store the vertices in a separate variable,
-    // and then just use these vertices in any order we want.
-    float vertices[] = {
-         1.0f,  1.0f, 0.0f,
-         1.0f, -1.0f, 0.0f,
-        -1.0f, -1.0f, 0.0f,
-        -1.0f,  1.0f, 0.0f
-    };
-    unsigned int indices[] = {
-        0, 1, 3,  // first Triangle
-        1, 2, 3   // second Triangle
-    };
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0); 
-
-    glBindVertexArray(0); 
 
     music.play();
     mainLoop();
@@ -231,42 +193,6 @@ void update(double time)
     cosmonaut.update(time * cosmonaut.getRowRate());
 }
 
-void render(double time)
-{
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glUseProgram(program);
-
-    glUniform1f(timeUniform, (GLfloat)time);
-    glUniform2f(resolutionUniform, (GLfloat)configurations.screen.width, (GLfloat)configurations.screen.height);
- 
-    for(std::list<DemoSystem::Cosmonaut::Gateway>::iterator it = cosmonaut.gateways.begin(); it != cosmonaut.gateways.end(); ++it) {
-        if(it->type == DemoSystem::Track::FLOAT1) {
-            glUniform1f(it->uniform, (GLfloat)it->value.x);
-        }
-        else if(it->type == DemoSystem::Track::FLOAT2) {
-            glUniform2f(it->uniform, (GLfloat)it->value.x, (GLfloat)it->value.y);
-        }
-        else if(it->type == DemoSystem::Track::FLOAT3) {
-            glUniform3f(it->uniform, (GLfloat)it->value.x, (GLfloat)it->value.y, (GLfloat)it->value.z);
-        }
-    }
-
-    for(int i = 0; i < resourceManager.staticTextures.size(); i++) {
-        DemoSystem::StaticTexture* texture = &resourceManager.staticTextures[i]; 
-        glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(GL_TEXTURE_2D, texture->handle);
-        glUniform1i(texture->uniform, i);
-    }
-    
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    logger.render();
-    glUseProgram(0);
-    glfwSwapBuffers(window);
-    glfwPollEvents();
-}
-
 void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if(action == GLFW_PRESS) {
@@ -285,7 +211,7 @@ void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int m
                 break;
             case GLFW_KEY_R:
                 if(configurations.demo.release == false) {
-                    //initShaders(false);
+                    resourceManager.primaryShader.initShader();
                 }
                 break;
             case GLFW_KEY_S:
@@ -310,44 +236,14 @@ void mainLoop()
     while(!glfwWindowShouldClose(window)) {
         double position = music.position();
         update(position);
-        render(position);
-        
+
+        resourceManager.primaryShader.render(position);
+        glfwSwapBuffers(window);
+        glfwPollEvents();
         if(configurations.demo.release == true && music.hasMusicEnded() == true) {
            glfwSetWindowShouldClose(window, GLFW_TRUE); 
         }
     }
-}
-
-bool initShaders(bool first = false)
-{
-    if(first) 
-    {
-        program = glCreateProgram();
-    }
-
-    timeUniform = glGetUniformLocation(program, "time");
-    resolutionUniform = glGetUniformLocation(program, "resolution");
-
-    //This should be done inside of cosmonaut
-    //Find a way to fix this
-    for(std::list<DemoSystem::Cosmonaut::Gateway>::iterator it = cosmonaut.gateways.begin(); it != cosmonaut.gateways.end(); ++it) {
-        it->uniform = glGetUniformLocation(program, it->name.c_str());
-    }
-    
-    for(int i = 0; i < resourceManager.staticTextures.size(); i++) {
-        DemoSystem::StaticTexture* texture = &resourceManager.staticTextures[i];
-        glGenTextures(1, &texture->handle);
-        glBindTexture(GL_TEXTURE_2D, texture->handle);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture->width, texture->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &texture->image[0]);
-        texture->uniform = glGetUniformLocation(program, texture->name.c_str());    
-    }
-  
-    return true;
-
 }
 
 void logError(int error, const char* desc)
@@ -357,10 +253,6 @@ void logError(int error, const char* desc)
 
 void cleanUp()
 {
-    glDeleteProgram(program);
-    program = 0;
-
-
     glfwDestroyWindow(window);
     cosmonaut.cleanUp();
     music.cleanUp();
