@@ -14,8 +14,6 @@
 const char* VERSION = "1.4";
 #define SYNC_PLAYER
 
-void update(double time);
-void render(double time);
 void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int mods);
 void mainLoop();
 bool initTextureShaders(bool first);
@@ -184,11 +182,6 @@ void framebufferSizeCallback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }  
 
-void update(double time)
-{
-    cosmonaut.update(time * cosmonaut.getRowRate());
-}
-
 void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if(action == GLFW_PRESS) {
@@ -233,7 +226,7 @@ void mainLoop()
     while(!glfwWindowShouldClose(window)) {
         double position = music.position();
         update(position);
-
+        cosmonaut.update(position * cosmonaut.getRowRate());
         shader.render(position);
         glfwSwapBuffers(window);
         glfwPollEvents();
