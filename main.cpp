@@ -225,9 +225,9 @@ void mainLoop()
 {
     while(!glfwWindowShouldClose(window)) {
         double position = music.position();
-        update(position);
-        cosmonaut.update(position * cosmonaut.getRowRate());
+        cosmonaut.update(position);
         shader.render(position);
+        
         glfwSwapBuffers(window);
         glfwPollEvents();
         if(configurations.demo.release == true && music.hasMusicEnded() == true) {

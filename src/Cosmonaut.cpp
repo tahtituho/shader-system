@@ -29,7 +29,7 @@ void DemoSystem::Cosmonaut::setFunctions(sync_cb* functions) {
 }
 
 void DemoSystem::Cosmonaut::update(double row) {
-    if(sync_update(this->device, (int)floor(row), this->functions, &this->rowRate)) {
+    if(sync_update(this->device, (int)floor(row * this->getRowRate()), this->functions, &this->rowRate)) {
         if(this->player == true) 
         {
             sync_tcp_connect(this->device, host.c_str(), SYNC_DEFAULT_PORT); 
