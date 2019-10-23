@@ -2,24 +2,32 @@
 #define SHADER_H
 #include <GL/glew.h>
 #include <string>
-#include <map> 
+#include <list>
 #include "Logger.h"
+#include "Cosmonaut.h"
+#include "Common.h"
 
 namespace DemoSystem {
     class Shader {
         public:
             Shader();   
             ~Shader();
-            struct Uniform {
-                std::string name;
-                GLint handle;
+
+           struct UniformVariable {
+                GLuint uniform;
+                std::string track;
             };
 
             void initialize(unsigned int width, unsigned int height);
-            void setSources(std::string vertec, std::string fragment);
+            void initializeUniform(std::string variable, std::string track);
+            void initializeUniforms(std::list<DemoSystem::Common::TrackVariableBond> trackVariablesBonds);
+            void setSources(std::string vertex, std::string fragment);
+            void setCosmonaut(DemoSystem::Cosmonaut* cosmonaut);
             DemoSystem::Logger::Message initShader();
             DemoSystem::Logger::Message compileShader(GLenum type);
             void render(double time);
+
+ 
 
         private:
             std::string readSource(std::string file);
@@ -34,7 +42,7 @@ namespace DemoSystem {
             GLuint fragment;
 
             GLuint program;
-            std::map<std::string, DemoSystem::Shader::Uniform> uniforms;
+            std::list<UniformVariable> uniforms;
 
             float vertices[12] = {
                 1.0f,  1.0f, 0.0f,
@@ -50,8 +58,7 @@ namespace DemoSystem {
 
             unsigned int VBO, VAO, EBO;
 
-            GLint timeUniform;
-            GLint resolutionUniform;
+            DemoSystem::Cosmonaut* cosmonaut;
     };
 }
 #endif

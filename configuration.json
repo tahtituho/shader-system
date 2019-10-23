@@ -23,7 +23,21 @@
         "vertex": "shaders\\vertex.glsl",
         "fragment": "shaders\\fragment.glsl",
         "majorVersion": 3,
-        "minorVersion": 3
+        "minorVersion": 3,
+        "uniforms": [
+            {
+                "variable": "time",
+                "track": "time"
+            },
+            {
+                "variable": "resolution",
+                "track": "resolution"
+            },
+            {
+                "variable": "baseColor",
+                "track": "scene1.color"
+            }
+        ]
     },
     "assets": [
         {
@@ -58,10 +72,7 @@
     "tracks": [
         {
             "type": "float3",
-            "name": {
-                "track": "scene1.color",
-                "variable": "baseColor"
-            }
+            "track": "scene1.color"
         }
     ]
 }

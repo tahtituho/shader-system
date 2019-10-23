@@ -135,7 +135,10 @@ int main(int argc, char* args[])
     shader.initialize(configurations.screen.width, configurations.screen.height);
     shader.setSources(DemoSystem::Helpers::readFile(configurations.shaders.vertex), DemoSystem::Helpers::readFile(configurations.shaders.fragment));
     shader.initShader();
-    
+    shader.initializeUniform("time", "time");
+    shader.initializeUniform("resolution", "resolution");
+    shader.initializeUniforms(configurations.shaders.trackVariableBonds);
+
     music.initialize(configurations.tune.frequency, configurations.tune.file);
     cosmonaut.initialize(configurations.tune.BPM, configurations.sync.RPB);
     if (!configurations.demo.release) {
@@ -148,6 +151,7 @@ int main(int argc, char* args[])
     cosmonaut.setFunctions(&functions);
     cosmonaut.setTracks(configurations.tracks);
 
+    shader.setCosmonaut(&cosmonaut);
     music.play();
     mainLoop();
     cleanUp();

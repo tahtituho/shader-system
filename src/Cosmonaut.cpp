@@ -36,45 +36,48 @@ void DemoSystem::Cosmonaut::update(double row) {
         }   
     }
 
-    for(std::list<DemoSystem::Cosmonaut::Gateway>::iterator it = this->gateways.begin(); it != this->gateways.end(); ++it) {
-       if(it->type == DemoSystem::Track::FLOAT1) {
-           it->value.x = sync_get_val(it->syncTrack.x, row);
+    for(std::map<std::string, DemoSystem::Common::Gateway>::iterator it = this->gateways.begin(); it != this->gateways.end(); ++it) {
+       if(it->second.type == DemoSystem::Common::Track::FLOAT1) {
+           it->second.value.x = sync_get_val(it->second.syncTrack.x, row);
        }
-       else if(it->type == DemoSystem::Track::FLOAT2) {
-           it->value.x = sync_get_val(it->syncTrack.x, row);
-           it->value.y = sync_get_val(it->syncTrack.y, row);
+       else if(it->second.type == DemoSystem::Common::Track::FLOAT2) {
+           it->second.value.x = sync_get_val(it->second.syncTrack.x, row);
+           it->second.value.y = sync_get_val(it->second.syncTrack.y, row);
        }
-       else if(it->type == DemoSystem::Track::FLOAT3) {
-           it->value.x = sync_get_val(it->syncTrack.x, row);
-           it->value.y = sync_get_val(it->syncTrack.y, row);
-           it->value.z = sync_get_val(it->syncTrack.z, row);
+       else if(it->second.type == DemoSystem::Common::Track::FLOAT3) {
+           it->second.value.x = sync_get_val(it->second.syncTrack.x, row);
+           it->second.value.y = sync_get_val(it->second.syncTrack.y, row);
+           it->second.value.z = sync_get_val(it->second.syncTrack.z, row);
        }
    }
 }
 
-void DemoSystem::Cosmonaut::setTracks(std::list<DemoSystem::Track> tracks) {
-    for(DemoSystem::Track track : tracks) {
-        Gateway gateway;
+void DemoSystem::Cosmonaut::setTracks(std::list<DemoSystem::Common::Track> tracks) {
+    for(DemoSystem::Common::Track track : tracks) {
+        DemoSystem::Common::Gateway gateway;
         gateway.type = track.type;
-        gateway.name = track.variableName;
-        if(track.type == DemoSystem::Track::FLOAT1) {
+        if(track.type == DemoSystem::Common::Track::FLOAT1) {
             gateway.syncTrack.x = sync_get_track(this->device, track.trackName.c_str());  
         }
-        else if(track.type == DemoSystem::Track::FLOAT2) {
+        else if(track.type == DemoSystem::Common::Track::FLOAT2) {
             gateway.syncTrack.x = sync_get_track(this->device, (track.trackName + ".x").c_str());
             gateway.syncTrack.y = sync_get_track(this->device, (track.trackName + ".y").c_str());
         }
-        else if(track.type == DemoSystem::Track::FLOAT3) {
+        else if(track.type == DemoSystem::Common::Track::FLOAT3) {
             gateway.syncTrack.x = sync_get_track(this->device, (track.trackName + ".x").c_str());
             gateway.syncTrack.y = sync_get_track(this->device, (track.trackName + ".y").c_str());
             gateway.syncTrack.z = sync_get_track(this->device, (track.trackName + ".z").c_str());
         }
-        this->gateways.push_back(gateway);
+        this->gateways[track.trackName] = gateway;
     }
 }
 
 double DemoSystem::Cosmonaut::getRowRate() {
     return this->rowRate;
+}
+
+DemoSystem::Common::Gateway DemoSystem::Cosmonaut::getTrack(std::string name) {
+    return this->gateways[name];
 }
 
 void DemoSystem::Cosmonaut::cleanUp() {

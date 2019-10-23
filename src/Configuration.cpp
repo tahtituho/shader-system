@@ -52,21 +52,25 @@ bool DemoSystem::Configuration::read(std::string file) {
         this->shaders.fragment = c["shaders"]["fragment"].type() != Json::ValueType::nullValue ? c["shaders"]["fragment"].asString() : this->shaders.fragment;
         this->shaders.majorVersion = c["shaders"]["majorVersion"].type() != Json::ValueType::nullValue ? c["shaders"]["majorVersion"].asInt() : this->shaders.majorVersion;
         this->shaders.minorVersion = c["shaders"]["minorVersion"].type() != Json::ValueType::nullValue ? c["shaders"]["minorVersion"].asInt() : this->shaders.minorVersion;
-
+        for(int i = 0; i < c["shaders"]["uniforms"].size(); i++) {
+            DemoSystem::Common::TrackVariableBond tvb;
+            tvb.track = c["shaders"]["uniforms"][i]["track"].asString();
+            tvb.variable = c["shaders"]["uniforms"][i]["variable"].asString();
+            this->shaders.trackVariableBonds.push_back(tvb);
+        }
         if(c["tracks"].type() != Json::ValueType::nullValue) {
             for(int i = 0; i < c["tracks"].size(); i++) {
-                Track t;
-                t.variableName = c["tracks"][i]["name"]["variable"].asString();
-                t.trackName = c["tracks"][i]["name"]["track"].asString();
+                DemoSystem::Common::Track t;
+                t.trackName = c["tracks"][i]["track"].asString();
                 std::string type = c["tracks"][i]["type"].asString();
                 if(type == "float1") {
-                    t.type = DemoSystem::Track::FLOAT1;
+                    t.type = DemoSystem::Common::Track::FLOAT1;
                 }
                 else if(type == "float2") {
-                    t.type = DemoSystem::Track::FLOAT2;
+                    t.type = DemoSystem::Common::Track::FLOAT2;
                 }
                 else if(type == "float3") {
-                    t.type = DemoSystem::Track::FLOAT3;
+                    t.type = DemoSystem::Common::Track::FLOAT3;
                 }
                 this->tracks.push_back(t);
             }
@@ -74,15 +78,15 @@ bool DemoSystem::Configuration::read(std::string file) {
 
         if(c["assets"].type() != Json::ValueType::nullValue) {
             for(int i = 0; i < c["assets"].size(); i++) {
-                Asset a;
+                DemoSystem::Common::Asset a;
                 a.name = c["assets"][i]["name"].asString();
                 a.file = c["assets"][i]["file"].asString();
                 std::string type = c["assets"][i]["type"].asString();
                 if(type == "staticTexture") {
-                    a.type = DemoSystem::Asset::AssetType::STATIC_TEXTURE;
+                    a.type = DemoSystem::Common::Asset::AssetType::STATIC_TEXTURE;
                 }
                 else if(type == "dynamicTexture") {
-                    a.type = DemoSystem::Asset::AssetType::DYNAMIC_TEXTURE;
+                    a.type = DemoSystem::Common::Asset::AssetType::DYNAMIC_TEXTURE;
                     a.once = c["assets"][i]["once"].asBool();
                     a.width = c["assets"][i]["width"].asInt();
                     a.height = c["assets"][i]["height"].asInt();

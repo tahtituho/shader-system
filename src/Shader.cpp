@@ -39,11 +39,26 @@ void DemoSystem::Shader::initialize(unsigned int width, unsigned int height) {
     this->initShader();
 }
 
+void DemoSystem::Shader::initializeUniform(std::string variable, std::string track) {
+    DemoSystem::Shader::UniformVariable uv;
+    uv.uniform = glGetUniformLocation(this->program, variable.c_str());
+    uv.track = track;
+    this->uniforms.push_back(uv);
+}
+
+void DemoSystem::Shader::initializeUniforms(std::list<DemoSystem::Common::TrackVariableBond> trackVariableBonds) {
+    for(DemoSystem::Common::TrackVariableBond trackVariable : trackVariableBonds) {
+        this->initializeUniform(trackVariable.variable, trackVariable.track);
+    }
+}
 void DemoSystem::Shader::setSources(std::string vertexSource, std::string fragmentSource) {
     this->vertexSource = vertexSource;
     this->fragmentSource = fragmentSource;
 }
 
+void DemoSystem::Shader::setCosmonaut(DemoSystem::Cosmonaut* cosmonaut) {
+    this->cosmonaut = cosmonaut;
+}
 DemoSystem::Logger::Message DemoSystem::Shader::initShader()
 {
     DemoSystem::Logger::Message m;
@@ -84,8 +99,6 @@ DemoSystem::Logger::Message DemoSystem::Shader::initShader()
         return m;
     }
 
-    timeUniform = glGetUniformLocation(program, "time");
-    resolutionUniform = glGetUniformLocation(program, "resolution");
     return m;
 }
 
@@ -133,9 +146,28 @@ void DemoSystem::Shader::render(double time) {
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(this->program);
 
-    glUniform1f(this->timeUniform, (GLfloat)time);
-    glUniform2f(this->resolutionUniform, (GLfloat)this->width, (GLfloat)this->height);
- 
+    for(const DemoSystem::Shader::UniformVariable uv : this->uniforms) {
+        if(uv.track == "time") {
+            glUniform1f(uv.uniform, (GLfloat)time);
+            continue;
+        }
+        else if(uv.track == "resolution") {
+            glUniform2f(uv.uniform, (GLfloat)this->width, (GLfloat)this->height);
+            continue;
+        }
+        DemoSystem::Common::Gateway gateway = this->cosmonaut->getTrack(uv.track);
+        switch(gateway.type) {
+            case DemoSystem::Common::Track::FLOAT1:
+                glUniform1f(uv.uniform, (GLfloat)gateway.value.x);
+                break;
+            case DemoSystem::Common::Track::FLOAT2:
+                glUniform2f(uv.uniform, (GLfloat)gateway.value.x, (GLfloat)gateway.value.y);
+                break;
+            case DemoSystem::Common::Track::FLOAT3:
+                glUniform3f(uv.uniform, (GLfloat)gateway.value.x, (GLfloat)gateway.value.y, (GLfloat)gateway.value.z);
+                break;
+        }
+    }
     glBindVertexArray(this->VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

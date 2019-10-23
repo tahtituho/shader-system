@@ -8,6 +8,7 @@
 #include "StaticTexture.h"
 #include "DynamicTexture.h"
 #include "Shader.h"
+#include "Common.h"
 
 namespace DemoSystem  {
     class ResourceManager {
@@ -15,7 +16,7 @@ namespace DemoSystem  {
             ResourceManager();
             ~ResourceManager();
 
-            void setResources(std::list<DemoSystem::Asset> assets);
+            void setResources(std::list<DemoSystem::Common::Asset> assets);
             std::vector<DemoSystem::StaticTexture> staticTextures;
             std::vector<DemoSystem::DynamicTexture> dynamicTextures;
 
