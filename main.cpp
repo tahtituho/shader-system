@@ -156,8 +156,10 @@ int main(int argc, char* args[])
     shader.initializeUniforms(configurations.shaders.trackVariableBonds);
     shader.setCosmonaut(&cosmonaut);
     shader.setTextureManager(&textureManager);
-    shader.initShader();
-
+    DemoSystem::Logger::Message m = shader.initShader();
+    if(m.failure) {
+        logger.write(DemoSystem::Logger::ERR, m.content);
+    }
     music.play();
     mainLoop();
     cleanUp();
@@ -212,7 +214,10 @@ void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int m
                 if(configurations.demo.release == false) {
                     shader.cleanShader();
                     shader.setSources(DemoSystem::Helpers::readFile(configurations.shaders.vertex), DemoSystem::Helpers::readFile(configurations.shaders.fragment));
-                    shader.initShader();
+                    DemoSystem::Logger::Message m = shader.initShader();
+                    if(m.failure) {
+                        logger.write(DemoSystem::Logger::ERR, m.content);
+                    }
                 }
                 break;
             case GLFW_KEY_S:
@@ -238,7 +243,7 @@ void mainLoop()
         double time = music.position();
         cosmonaut.update(time);
         shader.render(time);
-        
+        logger.render();
         glfwSwapBuffers(window);
         glfwPollEvents();
         if(configurations.demo.release == true && music.hasMusicEnded() == true) {
