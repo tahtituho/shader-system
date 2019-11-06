@@ -58,6 +58,10 @@ bool DemoSystem::Configuration::read(std::string file) {
             tvb.variable = c["shaders"]["uniforms"][i]["variable"].asString();
             this->shaders.trackVariableBonds.push_back(tvb);
         }
+        for(int i = 0; i < c["shaders"]["textures"].size(); i++) {
+            std::string n = c["shaders"]["textures"][i]["name"].asString();
+            this->shaders.textures.push_back(n);
+        }
         if(c["tracks"].type() != Json::ValueType::nullValue) {
             for(int i = 0; i < c["tracks"].size(); i++) {
                 DemoSystem::Common::Track t;

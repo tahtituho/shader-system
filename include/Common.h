@@ -43,6 +43,7 @@ namespace DemoSystem {
             int majorVersion;
             int minorVersion;
             std::list<TrackVariableBond> trackVariableBonds;
+            std::list<std::string> textures;
         };
 
         struct Track {

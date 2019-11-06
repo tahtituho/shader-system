@@ -1,22 +1,15 @@
 #include "Shader.h"
 
 DemoSystem::Shader::Shader() {
-
 }
 
 DemoSystem::Shader::~Shader() {
-    glDeleteShader(this->vertex);
-    glDeleteShader(this->fragment);
-    glDeleteProgram(this->program);
+    this->cleanShader();
 }
 
 void DemoSystem::Shader::initialize(unsigned int width, unsigned int height) {
     this->width = width;
     this->height = height;
-
-    this->program = glCreateProgram();
-    this->vertex = glCreateShader(GL_VERTEX_SHADER);
-    this->fragment = glCreateShader(GL_FRAGMENT_SHADER);
 
     glGenVertexArrays(1, &this->VAO);
     glGenBuffers(1, &this->VBO);
@@ -35,14 +28,13 @@ void DemoSystem::Shader::initialize(unsigned int width, unsigned int height) {
     glBindBuffer(GL_ARRAY_BUFFER, 0); 
 
     glBindVertexArray(0); 
-
-    this->initShader();
 }
 
 void DemoSystem::Shader::initializeUniform(std::string variable, std::string track) {
-    DemoSystem::Shader::UniformVariable uv;
-    uv.uniform = glGetUniformLocation(this->program, variable.c_str());
-    uv.track = track;
+    UniformVariable* uv = new UniformVariable();
+    uv->track = track;
+    uv->name = variable;
+    uv->uniform = -1;
     this->uniforms.push_back(uv);
 }
 
@@ -51,6 +43,20 @@ void DemoSystem::Shader::initializeUniforms(std::list<DemoSystem::Common::TrackV
         this->initializeUniform(trackVariable.variable, trackVariable.track);
     }
 }
+
+void DemoSystem::Shader::initializeTexture(std::string texture) {
+    UniformTexture* ut = new UniformTexture();
+    ut->name = texture;
+    ut->uniform = -1;
+    this->textures.push_back(ut);
+}
+
+void DemoSystem::Shader::initializeTextures(std::list<std::string> textures) {
+    for(std::string texture : textures) {
+        this->initializeTexture(texture);
+    }
+}
+
 void DemoSystem::Shader::setSources(std::string vertexSource, std::string fragmentSource) {
     this->vertexSource = vertexSource;
     this->fragmentSource = fragmentSource;
@@ -59,9 +65,19 @@ void DemoSystem::Shader::setSources(std::string vertexSource, std::string fragme
 void DemoSystem::Shader::setCosmonaut(DemoSystem::Cosmonaut* cosmonaut) {
     this->cosmonaut = cosmonaut;
 }
+
+void DemoSystem::Shader::setTextureManager(DemoSystem::TextureManager* textureManager) {
+    this->textureManager = textureManager;
+}
+
 DemoSystem::Logger::Message DemoSystem::Shader::initShader()
 {
     DemoSystem::Logger::Message m;
+   
+    this->program = glCreateProgram();
+    this->vertex = glCreateShader(GL_VERTEX_SHADER);
+    this->fragment = glCreateShader(GL_FRAGMENT_SHADER);
+    
     m = this->compileShader(GL_VERTEX_SHADER);
     if(m.failure == true) {
         return m;
@@ -72,15 +88,9 @@ DemoSystem::Logger::Message DemoSystem::Shader::initShader()
         return m;
     }
 
-    if(program != 0)
-    {
-        glDeleteProgram(program);
-        program = glCreateProgram();
-    }
     glAttachShader(program, this->vertex);
     glAttachShader(program, this->fragment);
    
-    
     GLint linkStatus = 0;
     glLinkProgram(this->program);
     glGetProgramiv(this->program, GL_LINK_STATUS, &linkStatus);
@@ -98,7 +108,7 @@ DemoSystem::Logger::Message DemoSystem::Shader::initShader()
         delete[] log;
         return m;
     }
-
+    this->refreshUniforms();  
     return m;
 }
 
@@ -138,7 +148,16 @@ DemoSystem::Logger::Message DemoSystem::Shader::compileShader(GLenum type)
     {
         this->fragment = shader;
     }
+  
     return m;
+}
+
+void DemoSystem::Shader::cleanShader() {
+    glDetachShader(this->program, this->vertex);
+    glDetachShader(this->program, this->fragment);
+    glDeleteShader(this->vertex);
+    glDeleteShader(this->fragment);
+    glDeleteProgram(this->program);
 }
 
 void DemoSystem::Shader::render(double time) {
@@ -146,27 +165,35 @@ void DemoSystem::Shader::render(double time) {
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(this->program);
 
-    for(const DemoSystem::Shader::UniformVariable uv : this->uniforms) {
-        if(uv.track == "time") {
-            glUniform1f(uv.uniform, (GLfloat)time);
+    for(const DemoSystem::Shader::UniformVariable* uv : this->uniforms) {
+        if(uv->track == "time") {
+            glUniform1f(uv->uniform, (GLfloat)time);
             continue;
         }
-        else if(uv.track == "resolution") {
-            glUniform2f(uv.uniform, (GLfloat)this->width, (GLfloat)this->height);
+        else if(uv->track == "resolution") {
+            glUniform2f(uv->uniform, (GLfloat)this->width, (GLfloat)this->height);
             continue;
         }
-        DemoSystem::Common::Gateway gateway = this->cosmonaut->getTrack(uv.track);
+        DemoSystem::Common::Gateway gateway = this->cosmonaut->getTrack(uv->track);
         switch(gateway.type) {
             case DemoSystem::Common::Track::FLOAT1:
-                glUniform1f(uv.uniform, (GLfloat)gateway.value.x);
+                glUniform1f(uv->uniform, (GLfloat)gateway.value.x);
                 break;
             case DemoSystem::Common::Track::FLOAT2:
-                glUniform2f(uv.uniform, (GLfloat)gateway.value.x, (GLfloat)gateway.value.y);
+                glUniform2f(uv->uniform, (GLfloat)gateway.value.x, (GLfloat)gateway.value.y);
                 break;
             case DemoSystem::Common::Track::FLOAT3:
-                glUniform3f(uv.uniform, (GLfloat)gateway.value.x, (GLfloat)gateway.value.y, (GLfloat)gateway.value.z);
+                glUniform3f(uv->uniform, (GLfloat)gateway.value.x, (GLfloat)gateway.value.y, (GLfloat)gateway.value.z);
                 break;
         }
+    }
+    int index = 0;
+    for(const DemoSystem::Shader::UniformTexture* ut : this->textures) {
+        DemoSystem::Texture* t = this->textureManager->getTexture(ut->name);
+        glActiveTexture(GL_TEXTURE0 + index);
+        glBindTexture(GL_TEXTURE_2D, t->handle);
+        glUniform1i(ut->uniform, index);
+        index++;
     }
     glBindVertexArray(this->VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -174,3 +201,12 @@ void DemoSystem::Shader::render(double time) {
     glUseProgram(0);
 }
 
+void DemoSystem::Shader::refreshUniforms() {
+    for(UniformVariable* uv : this->uniforms) {
+        uv->uniform = glGetUniformLocation(this->program, uv->name.c_str());
+    }
+    for(UniformTexture* ut : this->textures) {
+        this->textureManager->initializeTexture(ut->name);
+        ut->uniform = glGetUniformLocation(this->program, ut->name.c_str());
+    }
+}

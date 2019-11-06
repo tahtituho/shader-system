@@ -37,6 +37,14 @@
                 "variable": "baseColor",
                 "track": "scene1.color"
             }
+        ],
+        "textures": [
+            {
+                "name": "texture01"
+            },
+            {
+                "name": "texture02"
+            }
         ]
     },
     "assets": [

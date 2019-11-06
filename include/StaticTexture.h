@@ -8,7 +8,7 @@ namespace DemoSystem {
         public:
             StaticTexture();    
             ~StaticTexture();
-
+            void initialize();
             std::vector<unsigned char> image;
     };
 }

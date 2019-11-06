@@ -6,6 +6,7 @@
 #include "Logger.h"
 #include "Cosmonaut.h"
 #include "Common.h"
+#include "TextureManager.h"
 
 namespace DemoSystem {
     class Shader {
@@ -16,22 +17,30 @@ namespace DemoSystem {
            struct UniformVariable {
                 GLuint uniform;
                 std::string track;
+                std::string name;
             };
+
+            struct UniformTexture {
+                GLuint uniform;
+                GLuint handle;
+                std::string name;
+            };            
 
             void initialize(unsigned int width, unsigned int height);
             void initializeUniform(std::string variable, std::string track);
             void initializeUniforms(std::list<DemoSystem::Common::TrackVariableBond> trackVariablesBonds);
+            void initializeTexture(std::string texture);
+            void initializeTextures(std::list<std::string> textures);
             void setSources(std::string vertex, std::string fragment);
             void setCosmonaut(DemoSystem::Cosmonaut* cosmonaut);
+            void setTextureManager(DemoSystem::TextureManager* textureManager);
             DemoSystem::Logger::Message initShader();
-            DemoSystem::Logger::Message compileShader(GLenum type);
+            void cleanShader();
             void render(double time);
 
- 
-
         private:
-            std::string readSource(std::string file);
-
+            void refreshUniforms();
+            DemoSystem::Logger::Message compileShader(GLenum type);
             unsigned int width;
             unsigned int height;
 
@@ -42,7 +51,8 @@ namespace DemoSystem {
             GLuint fragment;
 
             GLuint program;
-            std::list<UniformVariable> uniforms;
+            std::list<UniformVariable*> uniforms;
+            std::list<UniformTexture*> textures;
 
             float vertices[12] = {
                 1.0f,  1.0f, 0.0f,
@@ -59,6 +69,7 @@ namespace DemoSystem {
             unsigned int VBO, VAO, EBO;
 
             DemoSystem::Cosmonaut* cosmonaut;
+            DemoSystem::TextureManager* textureManager;
     };
 }
 #endif

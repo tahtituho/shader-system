@@ -8,7 +8,7 @@ namespace DemoSystem {
         public:
             DynamicTexture();    
             ~DynamicTexture();
-
+            void initialize();
             std::string source;
             bool once;
     };

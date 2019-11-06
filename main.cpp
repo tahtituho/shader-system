@@ -10,6 +10,7 @@
 #include "Shader.h"
 #include "Logger.h"
 #include "Helpers.h"
+#include "TextureManager.h"
 
 const char* VERSION = "1.4";
 #define SYNC_PLAYER
@@ -35,6 +36,7 @@ DemoSystem::Music music;
 DemoSystem::Cosmonaut cosmonaut;
 DemoSystem::Shader shader;
 DemoSystem::Logger logger;
+DemoSystem::TextureManager textureManager;
 
 int main(int argc, char* args[])
 {
@@ -122,6 +124,7 @@ int main(int argc, char* args[])
     glViewport(0, 0, configurations.screen.width, configurations.screen.height);
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
+    
     logger.initialize(25, 0.0, configurations.screen.height, !configurations.demo.release);
 
     logger.write(DemoSystem::Logger::INFO, "shader system version "  + std::string(VERSION) + " by tähtituho 2019");
@@ -132,13 +135,9 @@ int main(int argc, char* args[])
     logger.write(DemoSystem::Logger::INFO, "context version  " + std::to_string(configurations.shaders.majorVersion) + "." + std::to_string(configurations.shaders.minorVersion));
     logger.write(DemoSystem::Logger::INFO, "bass version:    " + std::to_string(BASS_GetVersion()));
 
-    shader.initialize(configurations.screen.width, configurations.screen.height);
-    shader.setSources(DemoSystem::Helpers::readFile(configurations.shaders.vertex), DemoSystem::Helpers::readFile(configurations.shaders.fragment));
-    shader.initShader();
-    shader.initializeUniform("time", "time");
-    shader.initializeUniform("resolution", "resolution");
-    shader.initializeUniforms(configurations.shaders.trackVariableBonds);
-
+    textureManager.setTextures(configurations.assets);
+    textureManager.initializeTextures();
+    
     music.initialize(configurations.tune.frequency, configurations.tune.file);
     cosmonaut.initialize(configurations.tune.BPM, configurations.sync.RPB);
     if (!configurations.demo.release) {
@@ -151,7 +150,14 @@ int main(int argc, char* args[])
     cosmonaut.setFunctions(&functions);
     cosmonaut.setTracks(configurations.tracks);
 
+    shader.initialize(configurations.screen.width, configurations.screen.height);
+    shader.setSources(DemoSystem::Helpers::readFile(configurations.shaders.vertex), DemoSystem::Helpers::readFile(configurations.shaders.fragment));
+    shader.initializeTextures(configurations.shaders.textures);
+    shader.initializeUniforms(configurations.shaders.trackVariableBonds);
     shader.setCosmonaut(&cosmonaut);
+    shader.setTextureManager(&textureManager);
+    shader.initShader();
+
     music.play();
     mainLoop();
     cleanUp();
@@ -204,6 +210,7 @@ void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int m
                 break;
             case GLFW_KEY_R:
                 if(configurations.demo.release == false) {
+                    shader.cleanShader();
                     shader.setSources(DemoSystem::Helpers::readFile(configurations.shaders.vertex), DemoSystem::Helpers::readFile(configurations.shaders.fragment));
                     shader.initShader();
                 }
@@ -228,9 +235,9 @@ void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int m
 void mainLoop()
 {
     while(!glfwWindowShouldClose(window)) {
-        double position = music.position();
-        cosmonaut.update(position);
-        shader.render(position);
+        double time = music.position();
+        cosmonaut.update(time);
+        shader.render(time);
         
         glfwSwapBuffers(window);
         glfwPollEvents();
