@@ -96,10 +96,8 @@ DemoSystem::Logger::Message DemoSystem::Shader::initShader()
     glGetProgramiv(this->program, GL_LINK_STATUS, &linkStatus);
     if(linkStatus == GL_FALSE)
     {
-        GLint logLength = 0;
+        GLint logLength = 1024;
         char* log;
-
-        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
         log = new char[logLength];
         GLint infoLogStatus = 0;
         glGetProgramInfoLog(program, logLength, &infoLogStatus, log);
@@ -126,10 +124,8 @@ DemoSystem::Logger::Message DemoSystem::Shader::compileShader(GLenum type)
     glGetShaderiv(shader, GL_COMPILE_STATUS, &compileResult);
     if(compileResult == GL_FALSE)
     {
-        GLint logLength = 0;
+        GLint logLength = 1024;
         char* log;
-
-        glGetShaderiv(program, GL_INFO_LOG_LENGTH, &logLength);
         log = new char[logLength];
         GLint infoLogStatus = 0;
         glGetShaderInfoLog(shader, logLength, &infoLogStatus, log);
