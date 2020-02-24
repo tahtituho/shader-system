@@ -11,6 +11,7 @@
 #include "Logger.h"
 #include "Helpers.h"
 #include "TextureManager.h"
+#include "Framebuffer.h"
 
 const char* VERSION = "1.4";
 #define SYNC_PLAYER
@@ -37,6 +38,8 @@ DemoSystem::Cosmonaut cosmonaut;
 DemoSystem::Shader shader;
 DemoSystem::Logger logger;
 DemoSystem::TextureManager textureManager;
+DemoSystem::Framebuffer framebuffer;
+
 
 int main(int argc, char* args[])
 {
@@ -124,6 +127,7 @@ int main(int argc, char* args[])
     glViewport(0, 0, configurations.screen.width, configurations.screen.height);
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
+
     
     logger.initialize(25, 0.0, configurations.screen.height, !configurations.demo.release);
 
@@ -160,6 +164,14 @@ int main(int argc, char* args[])
     if(m.failure) {
         logger.write(DemoSystem::Logger::ERR, m.content);
     }
+    
+    // CONFIG POST-PROS FILES HERE
+    framebuffer.setSources(DemoSystem::Helpers::readFile("shaders\\post_fragment.glsl"), DemoSystem::Helpers::readFile("shaders\\post_fragment.glsl"));
+    // DO WE NEED OTHER SETTINGS?
+    DemoSystem::Logger::Message me = framebuffer.initShader();
+    if(me.failure) {
+        logger.write(DemoSystem::Logger::ERR, me.content);
+    }
     music.play();
     mainLoop();
     cleanUp();
@@ -192,6 +204,7 @@ int musicPlaying(void* rr) {
 void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
+    framebuffer.resizeFBO(width, height);
 }  
 
 void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -240,12 +253,16 @@ void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int m
 void mainLoop()
 {
     while(!glfwWindowShouldClose(window)) {
+        framebuffer.bind();
         double time = music.position();
         cosmonaut.update(time);
         shader.render(time);
         logger.render();
-        glfwSwapBuffers(window);
+        //glfwSwapBuffers(window);
         glfwPollEvents();
+        framebuffer.unBind();
+        //framebuffer.drawFBO();
+        glfwSwapBuffers(window);
         if(configurations.demo.release == true && music.hasMusicEnded() == true) {
            glfwSetWindowShouldClose(window, GLFW_TRUE); 
         }

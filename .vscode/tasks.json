@@ -105,6 +105,7 @@
                 "src/TextureManager.cpp",
                 "src/Shader.cpp",
                 "src/Helpers.cpp",
+                "src/Framebuffer.cpp",
                 "main.cpp",
                 "-D_WIN32_WINNT=0x501", //For getting rocket socket communication work on windows
                 "-w",

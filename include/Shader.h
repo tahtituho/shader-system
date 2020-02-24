@@ -38,7 +38,7 @@ namespace DemoSystem {
             void cleanShader();
             void render(double time);
 
-        private:
+        protected:
             void refreshUniforms();
             DemoSystem::Logger::Message compileShader(GLenum type);
             unsigned int width;
