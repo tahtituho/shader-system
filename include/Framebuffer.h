@@ -2,6 +2,7 @@
 #define FRAMEBUFFER_H
 #include <GL/glew.h>
 #include "Shader.h"
+#include "Logger.h"
 
 namespace DemoSystem {
     class Framebuffer: public DemoSystem::Shader {
@@ -11,7 +12,7 @@ namespace DemoSystem {
             GLuint getFBO();
 
             void cleanFramebuffer();
-            void generateFBO(unsigned int width, unsigned int height);
+            DemoSystem::Logger::Message generateFBO(unsigned int width, unsigned int height);
             void resizeFBO(unsigned int width, unsigned int height);
             void drawFBO();
             void bind();

@@ -166,12 +166,17 @@ int main(int argc, char* args[])
     }
     
     // CONFIG POST-PROS FILES HERE
-    framebuffer.setSources(DemoSystem::Helpers::readFile("shaders\\post_fragment.glsl"), DemoSystem::Helpers::readFile("shaders\\post_fragment.glsl"));
+    // Not sure is this init necessary, as most needed variables are inited at generateFBO
+    framebuffer.initialize(configurations.screen.width, configurations.screen.height);
+    framebuffer.setSources(DemoSystem::Helpers::readFile("shaders\\post_vertex.glsl"), DemoSystem::Helpers::readFile("shaders\\post_fragment.glsl"));
     // DO WE NEED OTHER SETTINGS?
     DemoSystem::Logger::Message me = framebuffer.initShader();
     if(me.failure) {
         logger.write(DemoSystem::Logger::ERR, me.content);
     }
+    DemoSystem::Logger::Message mes = framebuffer.generateFBO(configurations.screen.width, configurations.screen.height);
+    logger.write(DemoSystem::Logger::INFO, mes.content);
+
     music.play();
     mainLoop();
     cleanUp();
@@ -261,7 +266,8 @@ void mainLoop()
         //glfwSwapBuffers(window);
         glfwPollEvents();
         framebuffer.unBind();
-        //framebuffer.drawFBO();
+        // THIS SHOULD DRAW THE RENDERED TEXTURE, BUT IT CRASHES
+        framebuffer.drawFBO();
         glfwSwapBuffers(window);
         if(configurations.demo.release == true && music.hasMusicEnded() == true) {
            glfwSetWindowShouldClose(window, GLFW_TRUE); 

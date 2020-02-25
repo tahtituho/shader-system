@@ -25,16 +25,19 @@ void DemoSystem::Framebuffer::drawFBO() {
 
     glUseProgram(this->program);
     glBindTexture(GL_TEXTURE_2D, this->fbo_texture);
-    //glUniform1i(uniform_fbo_texture, /*GL_TEXTURE*/0);
+    glUniform1i(uniform_fbo_texture, /*GL_TEXTURE*/0);
     //glEnableVertexAttribArray(attribute_v_coord_postproc);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo_fbo_vertices);
     glBindVertexArray(this->vto);
+    // This crashes the program. Maybe the drawing is incorrect? Is it trying to draw something wrong?
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glUseProgram(0);
 }
 
-void DemoSystem::Framebuffer::generateFBO(unsigned int width, unsigned int height) {
+DemoSystem::Logger::Message DemoSystem::Framebuffer::generateFBO(unsigned int width, unsigned int height) {
     /* Texture */
+    DemoSystem::Logger::Message m;
     glActiveTexture(GL_TEXTURE0);
     glGenTextures(1, &this->fbo_texture);
     glBindTexture(GL_TEXTURE_2D, this->fbo_texture);
@@ -46,10 +49,12 @@ void DemoSystem::Framebuffer::generateFBO(unsigned int width, unsigned int heigh
     glBindTexture(GL_TEXTURE_2D, 0);
 
     /* Depth buffer */
+    /*
     glGenRenderbuffers(1, &this->rbo_depth);
     glBindRenderbuffer(GL_RENDERBUFFER, this->rbo_depth);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    */
 
     /* Framebuffer to link everything together */
     glGenFramebuffers(1, &this->fbo);
@@ -58,7 +63,8 @@ void DemoSystem::Framebuffer::generateFBO(unsigned int width, unsigned int heigh
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, this->rbo_depth);
     GLenum status;
     if ((status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE) {
-        // Handle error, framebuffer creation failed
+        m.content = "FBO failure";
+        return m;
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -69,6 +75,8 @@ void DemoSystem::Framebuffer::generateFBO(unsigned int width, unsigned int heigh
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glGenVertexArrays(1, &this->vto);
 	glBindVertexArray(this->vto);
+    m.content = "FBO success";
+    return m;
 }
 
 void DemoSystem::Framebuffer::resizeFBO(unsigned int width, unsigned int height) {
