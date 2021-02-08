@@ -1,7 +1,7 @@
 #include "Configuration.h"
 
-
-DemoSystem::Configuration::Configuration() {
+DemoSystem::Configuration::Configuration()
+{
     this->demo.release = true;
     this->demo.name = "demo";
     this->demo.group = "demogroup";
@@ -24,10 +24,12 @@ DemoSystem::Configuration::Configuration() {
     this->shaders.minorVersion = 1;
 }
 
-bool DemoSystem::Configuration::read(std::string file) {
+bool DemoSystem::Configuration::read(std::string file)
+{
     std::ifstream cifs(file);
 
-    if(!cifs.fail()) {
+    if (!cifs.fail())
+    {
         Json::Reader r;
         Json::Value c;
         r.parse(cifs, c);
@@ -53,45 +55,54 @@ bool DemoSystem::Configuration::read(std::string file) {
         this->shaders.majorVersion = c["shaders"]["majorVersion"].type() != Json::ValueType::nullValue ? c["shaders"]["majorVersion"].asInt() : this->shaders.majorVersion;
         this->shaders.minorVersion = c["shaders"]["minorVersion"].type() != Json::ValueType::nullValue ? c["shaders"]["minorVersion"].asInt() : this->shaders.minorVersion;
 
-        if(c["tracks"].type() != Json::ValueType::nullValue) {
-            for(int i = 0; i < c["tracks"].size(); i++) {
+        if (c["tracks"].type() != Json::ValueType::nullValue)
+        {
+            for (int i = 0; i < c["tracks"].size(); i++)
+            {
                 Track t;
                 t.variableName = c["tracks"][i]["name"]["variable"].asString();
                 t.trackName = c["tracks"][i]["name"]["track"].asString();
                 std::string type = c["tracks"][i]["type"].asString();
-                if(type == "float1") {
+                if (type == "float1")
+                {
                     t.type = DemoSystem::Track::FLOAT1;
                 }
-                else if(type == "float2") {
+                else if (type == "float2")
+                {
                     t.type = DemoSystem::Track::FLOAT2;
                 }
-                else if(type == "float3") {
+                else if (type == "float3")
+                {
                     t.type = DemoSystem::Track::FLOAT3;
                 }
                 this->tracks.push_back(t);
             }
         }
 
-        if(c["assets"].type() != Json::ValueType::nullValue) {
-            for(int i = 0; i < c["assets"].size(); i++) {
+        if (c["assets"].type() != Json::ValueType::nullValue)
+        {
+            for (int i = 0; i < c["assets"].size(); i++)
+            {
                 Asset a;
                 a.name = c["assets"][i]["name"].asString();
                 a.file = c["assets"][i]["file"].asString();
                 std::string type = c["assets"][i]["type"].asString();
-                if(type == "texture") {
+                if (type == "texture")
+                {
                     a.type = DemoSystem::Asset::AssetType::TEXTURE;
                 }
-                
+
                 this->assets.push_back(a);
             }
         }
         return true;
     }
-    else {
+    else
+    {
         return false;
     }
 }
 
-DemoSystem::Configuration::~Configuration() {
-
+DemoSystem::Configuration::~Configuration()
+{
 }

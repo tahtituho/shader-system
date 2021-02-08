@@ -9,28 +9,28 @@
 #include "Textures.h"
 #include "Logger.h"
 
-const char* VERSION = "1.4";
+const char *VERSION = "1.4";
 #define SYNC_PLAYER
 
 void update(double time);
 void render(double time);
-void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int mods);
+void handleKeyboard(GLFWwindow *window, int key, int scancode, int action, int mods);
 void mainLoop();
 bool initShaders(bool first);
 std::string readShaderSource(std::string path);
 bool compileShader(const GLenum type, const std::string source, bool first);
-void logError(int error, const char* desc);
+void logError(int error, const char *desc);
 void cleanUp();
-void writeToLogFile( const std::string &text, bool clean);
-void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+void writeToLogFile(const std::string &text, bool clean);
+void framebufferSizeCallback(GLFWwindow *window, int width, int height);
 
-void musicPause(void* c, int flag);
-void musicSetRow(void* c, int row);
-int musicPlaying(void* c);
+void musicPause(void *c, int flag);
+void musicSetRow(void *c, int row);
+int musicPlaying(void *c);
 
 bool fullscreen;
 
-GLFWwindow* window;
+GLFWwindow *window;
 GLuint program;
 GLint timeUniform;
 GLint resolutionUniform;
@@ -47,26 +47,28 @@ DemoSystem::Cosmonaut cosmonaut;
 DemoSystem::Textures textures;
 DemoSystem::Logger logger;
 
-int main(int argc, char* args[])
+int main(int argc, char *args[])
 {
-    
+
     std::string confFile = "configuration.json";
-    if(argc > 1) {
+    if (argc > 1)
+    {
         confFile = std::string(args[1]);
     }
-    
+
     configurations.read(confFile);
 
     vertexPath = configurations.shaders.vertex;
     fragmentPath = configurations.shaders.fragment;
 
-    if(vertexPath.empty() || fragmentPath.empty())
+    if (vertexPath.empty() || fragmentPath.empty())
     {
         std::cout << "provide vertex and fragment shaders in configuration file";
         return 1;
     }
 
-    if (!glfwInit()) {
+    if (!glfwInit())
+    {
         std::cout << "glfwInit failed";
         return -1;
     }
@@ -77,7 +79,8 @@ int main(int argc, char* args[])
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, configurations.shaders.minorVersion);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    if (configurations.demo.release) {
+    if (configurations.demo.release)
+    {
         // Two ways to start as fullscreen, need to check which is more suitable
         // This is true fullscreen!
         window = glfwCreateWindow(configurations.screen.width, configurations.screen.height, (configurations.demo.group + " : " + configurations.demo.name).c_str(), glfwGetPrimaryMonitor(), NULL);
@@ -89,11 +92,13 @@ int main(int argc, char* args[])
         glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
         window = glfwCreateWindow(mode->width, mode->height, (configurations.demo.group + " : " + configurations.demo.name).c_str(), glfwGetPrimaryMonitor(), NULL);*/
     }
-    else {
+    else
+    {
         window = glfwCreateWindow(configurations.screen.width, configurations.screen.height, (configurations.demo.group + " : " + configurations.demo.name).c_str(), NULL, NULL);
     }
 
-    if(!window) {
+    if (!window)
+    {
         std::cout << "window creation failed";
         glfwTerminate();
         return -1;
@@ -108,7 +113,8 @@ int main(int argc, char* args[])
     unsigned int height;
     // Using temp variables, for some reason casting didn't work as expected
     error = lodepng::decode(imageBuffer, width, height, configurations.demo.icon);
-    if (error == 0) {
+    if (error == 0)
+    {
         image.height = height;
         image.width = width;
         image.pixels = &imageBuffer[0];
@@ -117,38 +123,40 @@ int main(int argc, char* args[])
         glfwSetWindowIcon(window, 1, icons);
     }
 
-    if (configurations.demo.release) {
+    if (configurations.demo.release)
+    {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     }
 
     glfwSetKeyCallback(window, handleKeyboard);
     glfwMakeContextCurrent(window);
-    
+
     glfwSwapInterval(1);
 
     GLenum glewError = glewInit();
     if (GLEW_OK != glewError)
     {
-        std::cout << "glew error: " << std::string((const char*)glewGetErrorString(glewError));
+        std::cout << "glew error: " << std::string((const char *)glewGetErrorString(glewError));
         return false;
     }
-    
+
     glViewport(0, 0, configurations.screen.width, configurations.screen.height);
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
     logger.initialize(25, 0.0, configurations.screen.height, !configurations.demo.release);
 
-    logger.write(DemoSystem::Logger::INFO, "shader system version "  + std::string(VERSION) + " by tähtituho 2019");
-    logger.write(DemoSystem::Logger::INFO, "opengl vendor:   " + std::string((const char*)glGetString(GL_VENDOR)));
-    logger.write(DemoSystem::Logger::INFO, "opengl renderer  " + std::string((const char*)glGetString(GL_RENDERER)));
-    logger.write(DemoSystem::Logger::INFO, "opengl version:  " + std::string((const char*)glGetString(GL_VERSION)));
-    logger.write(DemoSystem::Logger::INFO, "shading version: " + std::string((const char*)glGetString(GL_SHADING_LANGUAGE_VERSION)));
+    logger.write(DemoSystem::Logger::INFO, "shader system version " + std::string(VERSION) + " by tähtituho 2019");
+    logger.write(DemoSystem::Logger::INFO, "opengl vendor:   " + std::string((const char *)glGetString(GL_VENDOR)));
+    logger.write(DemoSystem::Logger::INFO, "opengl renderer  " + std::string((const char *)glGetString(GL_RENDERER)));
+    logger.write(DemoSystem::Logger::INFO, "opengl version:  " + std::string((const char *)glGetString(GL_VERSION)));
+    logger.write(DemoSystem::Logger::INFO, "shading version: " + std::string((const char *)glGetString(GL_SHADING_LANGUAGE_VERSION)));
     logger.write(DemoSystem::Logger::INFO, "context version  " + std::to_string(configurations.shaders.majorVersion) + "." + std::to_string(configurations.shaders.minorVersion));
     logger.write(DemoSystem::Logger::INFO, "bass version:    " + std::to_string(BASS_GetVersion()));
 
     music.initialize(configurations.tune.frequency, configurations.tune.file);
     cosmonaut.initialize(configurations.tune.BPM, configurations.sync.RPB);
-    if (!configurations.demo.release) {
+    if (!configurations.demo.release)
+    {
         cosmonaut.connectPlayer(configurations.sync.host);
     }
     sync_cb functions;
@@ -163,7 +171,7 @@ int main(int argc, char* args[])
     });
     textures.setTextures(t);
 
-    if(!initShaders(true))
+    if (!initShaders(true))
     {
         logger.write(DemoSystem::Logger::ERR, "init shaders error");
     }
@@ -173,19 +181,18 @@ int main(int argc, char* args[])
     // VBO is basically the vertices of the model, VAO is a list of VBO's
     // We can use the index of the VAO to draw which VBO we want.
     // In our case, we will be drawing to triangles to cover the screen,
-    // so we have room to show the shader. It should be possible to do 
+    // so we have room to show the shader. It should be possible to do
     // this with quads, and not mess with the triangles.
     // Using EBO we can store the vertices in a separate variable,
     // and then just use these vertices in any order we want.
     float vertices[] = {
-         1.0f,  1.0f, 0.0f,
-         1.0f, -1.0f, 0.0f,
+        1.0f, 1.0f, 0.0f,
+        1.0f, -1.0f, 0.0f,
         -1.0f, -1.0f, 0.0f,
-        -1.0f,  1.0f, 0.0f
-    };
+        -1.0f, 1.0f, 0.0f};
     unsigned int indices[] = {
-        0, 1, 3,  // first Triangle
-        1, 2, 3   // second Triangle
+        0, 1, 3, // first Triangle
+        1, 2, 3  // second Triangle
     };
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -198,12 +205,12 @@ int main(int argc, char* args[])
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0); 
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    glBindVertexArray(0); 
+    glBindVertexArray(0);
 
     music.play();
     mainLoop();
@@ -211,33 +218,40 @@ int main(int argc, char* args[])
     return 0;
 }
 
-void musicPause(void* rr, int flag) {
-    if(flag == 1) {
+void musicPause(void *rr, int flag)
+{
+    if (flag == 1)
+    {
         music.pause();
     }
-    else {
+    else
+    {
         music.play();
     }
 }
 
-void musicSetRow(void* rr, int row) {
+void musicSetRow(void *rr, int row)
+{
     double rowRate = *((double *)rr);
     music.seek(row / rowRate);
 }
 
-int musicPlaying(void* rr) {
-    if(music.isPlaying()) {
+int musicPlaying(void *rr)
+{
+    if (music.isPlaying())
+    {
         return 1;
     }
-    else {
+    else
+    {
         return 0;
     }
 }
 
-void framebufferSizeCallback(GLFWwindow* window, int width, int height)
+void framebufferSizeCallback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
-}  
+}
 
 void update(double time)
 {
@@ -252,28 +266,33 @@ void render(double time)
 
     glUniform1f(timeUniform, (GLfloat)time);
     glUniform2f(resolutionUniform, (GLfloat)configurations.screen.width, (GLfloat)configurations.screen.height);
- 
-    for(std::list<DemoSystem::Cosmonaut::Gateway>::iterator it = cosmonaut.gateways.begin(); it != cosmonaut.gateways.end(); ++it) {
-        if(it->type == DemoSystem::Track::FLOAT1) {
+
+    for (std::list<DemoSystem::Cosmonaut::Gateway>::iterator it = cosmonaut.gateways.begin(); it != cosmonaut.gateways.end(); ++it)
+    {
+        if (it->type == DemoSystem::Track::FLOAT1)
+        {
             glUniform1f(it->uniform, (GLfloat)it->value.x);
         }
-        else if(it->type == DemoSystem::Track::FLOAT2) {
+        else if (it->type == DemoSystem::Track::FLOAT2)
+        {
             glUniform2f(it->uniform, (GLfloat)it->value.x, (GLfloat)it->value.y);
         }
-        else if(it->type == DemoSystem::Track::FLOAT3) {
+        else if (it->type == DemoSystem::Track::FLOAT3)
+        {
             glUniform3f(it->uniform, (GLfloat)it->value.x, (GLfloat)it->value.y, (GLfloat)it->value.z);
         }
     }
 
     unsigned int textureIndex = 0;
 
-    for(std::list<DemoSystem::Textures::Texture>::iterator it = textures.textures.begin(); it != textures.textures.end(); ++it) {
+    for (std::list<DemoSystem::Textures::Texture>::iterator it = textures.textures.begin(); it != textures.textures.end(); ++it)
+    {
         glActiveTexture(GL_TEXTURE0 + textureIndex);
         glBindTexture(GL_TEXTURE_2D, it->handle);
         glUniform1i(it->uniform, textureIndex);
         textureIndex++;
     }
-    
+
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     logger.render();
@@ -282,53 +301,62 @@ void render(double time)
     glfwPollEvents();
 }
 
-void handleKeyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
+void handleKeyboard(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
-    if(action == GLFW_PRESS) {
-        switch(key)
+    if (action == GLFW_PRESS)
+    {
+        switch (key)
         {
-            case GLFW_KEY_F:
-                if(configurations.demo.release == false) {
-                    if(fullscreen) {
-                        glfwRestoreWindow(window);
-                    }
-                    else {
-                        glfwMaximizeWindow(window);
-                    }
-                    fullscreen = !fullscreen;
+        case GLFW_KEY_F:
+            if (configurations.demo.release == false)
+            {
+                if (fullscreen)
+                {
+                    glfwRestoreWindow(window);
                 }
-                break;
-            case GLFW_KEY_R:
-                if(configurations.demo.release == false) {
-                    initShaders(false);
+                else
+                {
+                    glfwMaximizeWindow(window);
                 }
-                break;
-            case GLFW_KEY_S:
-                if(configurations.demo.release == false) {
-                    music.silence();
-                }          
-                break;
-            case GLFW_KEY_C:
-                if(configurations.demo.release == false) {
-                    logger.toggleEnable();
-                }          
-                break;
-            case GLFW_KEY_ESCAPE:
-                glfwSetWindowShouldClose(window, GLFW_TRUE);
-                break;
+                fullscreen = !fullscreen;
+            }
+            break;
+        case GLFW_KEY_R:
+            if (configurations.demo.release == false)
+            {
+                initShaders(false);
+            }
+            break;
+        case GLFW_KEY_S:
+            if (configurations.demo.release == false)
+            {
+                music.silence();
+            }
+            break;
+        case GLFW_KEY_C:
+            if (configurations.demo.release == false)
+            {
+                logger.toggleEnable();
+            }
+            break;
+        case GLFW_KEY_ESCAPE:
+            glfwSetWindowShouldClose(window, GLFW_TRUE);
+            break;
         }
     }
 }
 
 void mainLoop()
 {
-    while(!glfwWindowShouldClose(window)) {
+    while (!glfwWindowShouldClose(window))
+    {
         double position = music.position();
         update(position);
         render(position);
-        
-        if(configurations.demo.release == true && music.hasMusicEnded() == true) {
-           glfwSetWindowShouldClose(window, GLFW_TRUE); 
+
+        if (configurations.demo.release == true && music.hasMusicEnded() == true)
+        {
+            glfwSetWindowShouldClose(window, GLFW_TRUE);
         }
     }
 }
@@ -342,7 +370,7 @@ std::string readShaderSource(std::string path)
 
 bool initShaders(bool first)
 {
-    if(first) 
+    if (first)
     {
         program = glCreateProgram();
     }
@@ -350,82 +378,82 @@ bool initShaders(bool first)
     std::string vertexSource = readShaderSource(vertexPath);
     std::string fragmentSource = readShaderSource(fragmentPath);
 
-    if(compileShader(GL_VERTEX_SHADER, vertexSource, first) == false) 
+    if (compileShader(GL_VERTEX_SHADER, vertexSource, first) == false)
     {
         return false;
     }
-    if(compileShader(GL_FRAGMENT_SHADER, fragmentSource, first) == false)
+    if (compileShader(GL_FRAGMENT_SHADER, fragmentSource, first) == false)
     {
         return false;
     }
-    if(first == false)
+    if (first == false)
     {
         glDeleteProgram(program);
         program = glCreateProgram();
     }
     glAttachShader(program, vertexShader);
     glAttachShader(program, fragmentShader);
-   
+
     GLint linkStatus;
     glLinkProgram(program);
     glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
-    if(linkStatus == GL_FALSE)
+    if (linkStatus == GL_FALSE)
     {
         GLint logLength;
-        char* log;
+        char *log;
 
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
         log = new char[logLength];
         GLint infoLogStatus;
         glGetProgramInfoLog(program, logLength, &infoLogStatus, log);
-        logger.write(DemoSystem::Logger::ERR, "program linking error" + std::string(log));    
+        logger.write(DemoSystem::Logger::ERR, "program linking error" + std::string(log));
         delete[] log;
-        if(first)
+        if (first)
         {
             glDeleteProgram(program);
             program = 0;
         }
-        
-        return false;
 
+        return false;
     }
     timeUniform = glGetUniformLocation(program, "time");
     resolutionUniform = glGetUniformLocation(program, "resolution");
 
     //This should be done inside of cosmonaut
     //Find a way to fix this
-    for(std::list<DemoSystem::Cosmonaut::Gateway>::iterator it = cosmonaut.gateways.begin(); it != cosmonaut.gateways.end(); ++it) {
+    for (std::list<DemoSystem::Cosmonaut::Gateway>::iterator it = cosmonaut.gateways.begin(); it != cosmonaut.gateways.end(); ++it)
+    {
         it->uniform = glGetUniformLocation(program, it->name.c_str());
     }
 
-    for(std::list<DemoSystem::Textures::Texture>::iterator it = textures.textures.begin(); it != textures.textures.end(); ++it) {
+    for (std::list<DemoSystem::Textures::Texture>::iterator it = textures.textures.begin(); it != textures.textures.end(); ++it)
+    {
         glGenTextures(1, &it->handle);
         glBindTexture(GL_TEXTURE_2D, it->handle);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, it->width, it->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &it->image[0]);
         it->uniform = glGetUniformLocation(program, it->name.c_str());
     }
-    
-    return true;
 
+    return true;
 }
 
 bool compileShader(const GLenum type, std::string source, bool first)
 {
     GLuint shader = glCreateShader(type);
-    const GLchar* sourceChar = (const GLchar*)source.c_str();
+    const GLchar *sourceChar = (const GLchar *)source.c_str();
     glShaderSource(shader, 1, &sourceChar, 0);
     glCompileShader(shader);
 
     GLint compileResult;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &compileResult);
-    if(compileResult == GL_FALSE)
+    if (compileResult == GL_FALSE)
     {
         GLint logLength;
-        char* log;
+        char *log;
 
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
         log = new char[logLength];
@@ -433,14 +461,14 @@ bool compileShader(const GLenum type, std::string source, bool first)
         glGetShaderInfoLog(shader, logLength, &infoLogStatus, log);
         logger.write(DemoSystem::Logger::ERR, std::string(log));
         delete[] log;
-        
+
         glDeleteShader(shader);
         program = 0;
 
         return false;
     }
-    if(type == GL_VERTEX_SHADER)
-    {      
+    if (type == GL_VERTEX_SHADER)
+    {
         vertexShader = shader;
     }
     else
@@ -451,7 +479,7 @@ bool compileShader(const GLenum type, std::string source, bool first)
     return true;
 }
 
-void logError(int error, const char* desc)
+void logError(int error, const char *desc)
 {
     std::cout << "glfw error: " << std::to_string(error) << " " << std::string(desc);
 }

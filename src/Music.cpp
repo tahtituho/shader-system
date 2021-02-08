@@ -1,20 +1,25 @@
 #include "Music.h"
 
-DemoSystem::Music::Music() {
+DemoSystem::Music::Music()
+{
     this->playing = false;
     this->hasEnded = false;
     this->silent = false;
 }
 
-DemoSystem::Music::~Music() {
+DemoSystem::Music::~Music()
+{
 }
 
-bool DemoSystem::Music::initialize(int frequency, std::string file) {
-    if(!BASS_Init(-1, frequency, BASS_DEVICE_STEREO, 0, NULL)) {
+bool DemoSystem::Music::initialize(int frequency, std::string file)
+{
+    if (!BASS_Init(-1, frequency, BASS_DEVICE_STEREO, 0, NULL))
+    {
         return false;
     }
     this->stream = BASS_StreamCreateFile(FALSE, file.c_str(), 0, 0, BASS_STREAM_PRESCAN);
-    if(this->stream == 0) {
+    if (this->stream == 0)
+    {
         int error = BASS_ErrorGetCode();
         return false;
     }
@@ -24,53 +29,66 @@ bool DemoSystem::Music::initialize(int frequency, std::string file) {
     return true;
 }
 
-void DemoSystem::Music::play() {
-    if(this->playing == false) {
+void DemoSystem::Music::play()
+{
+    if (this->playing == false)
+    {
         BASS_ChannelPlay(this->stream, false);
     }
     this->playing = true;
 }
 
-void DemoSystem::Music::pause() {
-    if(this->playing == true) {
+void DemoSystem::Music::pause()
+{
+    if (this->playing == true)
+    {
         BASS_ChannelPause(this->stream);
         this->playing = false;
     }
 }
 
-bool DemoSystem::Music::isPlaying() {
-    if(this->playing) {
+bool DemoSystem::Music::isPlaying()
+{
+    if (this->playing)
+    {
         return 1;
     }
-    else {
+    else
+    {
         return 0;
     }
 }
 
-double DemoSystem::Music::position() {
+double DemoSystem::Music::position()
+{
     QWORD bytePosition = BASS_ChannelGetPosition(this->stream, BASS_POS_BYTE);
     return BASS_ChannelBytes2Seconds(this->stream, bytePosition);
 }
 
-void DemoSystem::Music::seek(double row) {
+void DemoSystem::Music::seek(double row)
+{
     QWORD bytePosition = BASS_ChannelSeconds2Bytes(this->stream, row);
     BASS_ChannelSetPosition(this->stream, bytePosition, BASS_POS_BYTE);
 }
 
-void CALLBACK DemoSystem::Music::musicEndCallback(HSYNC handle, DWORD channel, DWORD data, void* music) {
-    static_cast<DemoSystem::Music*>(music)->hasEnded = true;
+void CALLBACK DemoSystem::Music::musicEndCallback(HSYNC handle, DWORD channel, DWORD data, void *music)
+{
+    static_cast<DemoSystem::Music *>(music)->hasEnded = true;
 }
 
-bool DemoSystem::Music::hasMusicEnded() {
+bool DemoSystem::Music::hasMusicEnded()
+{
     return this->hasEnded;
 }
 
-void DemoSystem::Music::silence() {
+void DemoSystem::Music::silence()
+{
     this->silent = !this->silent;
     BASS_ChannelSetAttribute(this->stream, BASS_ATTRIB_VOL, this->silent ? 1.0 : 0.0);
 }
 
-void DemoSystem::Music::cleanUp() {
+void DemoSystem::Music::cleanUp()
+{
     BASS_SampleFree(this->stream);
     BASS_Free();
 }
