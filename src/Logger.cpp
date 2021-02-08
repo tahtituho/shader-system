@@ -1,17 +1,20 @@
 #include "Logger.h"
 
-DemoSystem::Logger::Logger() {
-    
+DemoSystem::Logger::Logger()
+{
 }
 
-DemoSystem::Logger::~Logger() {
-    for(GLTtext* text : this->buffer) {
+DemoSystem::Logger::~Logger()
+{
+    for (GLTtext *text : this->buffer)
+    {
         gltDeleteText(text);
     }
     gltTerminate();
 }
 
-void DemoSystem::Logger::initialize(int size, float x, float y, bool e) {
+void DemoSystem::Logger::initialize(int size, float x, float y, bool e)
+{
     this->size = size;
     this->x = x;
     this->y = y;
@@ -20,19 +23,22 @@ void DemoSystem::Logger::initialize(int size, float x, float y, bool e) {
     gltInit();
 }
 
-void DemoSystem::Logger::write(DemoSystem::Logger::LOG_LEVEL level, std::string text) {
+void DemoSystem::Logger::write(DemoSystem::Logger::LOG_LEVEL level, std::string text)
+{
     std::ostringstream stream;
-    switch(level) {
-        case INFO:
-            stream << "[INFO] ";
+    switch (level)
+    {
+    case INFO:
+        stream << "[INFO] ";
         break;
-        case ERR:
-            stream << "[ERROR] ";
+    case ERR:
+        stream << "[ERROR] ";
         break;
     }
     stream << text;
 
-    if(this->buffer.size() >= this->size) {
+    if (this->buffer.size() >= this->size)
+    {
         gltDeleteText(this->buffer.back());
         this->buffer.pop_back();
     }
@@ -41,13 +47,16 @@ void DemoSystem::Logger::write(DemoSystem::Logger::LOG_LEVEL level, std::string 
     this->buffer.push_front(t);
 }
 
-void DemoSystem::Logger::render() {
-    if(this->enabled) {
+void DemoSystem::Logger::render()
+{
+    if (this->enabled)
+    {
         gltBeginDraw();
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
 
         float runningY = y - 15.0;
-        for(GLTtext* text : this->buffer) {
+        for (GLTtext *text : this->buffer)
+        {
             gltDrawText2D(text, this->x, runningY, 1.0);
             runningY -= 15.0;
         }
@@ -55,10 +64,12 @@ void DemoSystem::Logger::render() {
     }
 }
 
-bool DemoSystem::Logger::isEnabled() {
+bool DemoSystem::Logger::isEnabled()
+{
     return this->enabled;
 }
 
-void DemoSystem::Logger::toggleEnable() {
+void DemoSystem::Logger::toggleEnable()
+{
     this->enabled = !this->enabled;
 }

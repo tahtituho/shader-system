@@ -8,28 +8,31 @@
 #define GLT_IMPLEMENTATION
 #include "gltext.h"
 
-namespace DemoSystem {
-    class Logger {
-        public:
-            Logger();    
-            ~Logger();
+namespace DemoSystem
+{
+    class Logger
+    {
+    public:
+        Logger();
+        ~Logger();
 
-            enum LOG_LEVEL {
-                INFO,
-                ERR
-            };
-            void initialize(int size, float x, float y, bool e);
-            void write(LOG_LEVEL level, std::string text);
-            void render();
-            bool isEnabled();
-            void toggleEnable(); 
+        enum LOG_LEVEL
+        {
+            INFO,
+            ERR
+        };
+        void initialize(int size, float x, float y, bool e);
+        void write(LOG_LEVEL level, std::string text);
+        void render();
+        bool isEnabled();
+        void toggleEnable();
 
-        private:
-            std::list<GLTtext*> buffer;
-            int size;
-            float x;
-            float y;
-            bool enabled;
+    private:
+        std::list<GLTtext *> buffer;
+        int size;
+        float x;
+        float y;
+        bool enabled;
     };
-}
+} // namespace DemoSystem
 #endif
