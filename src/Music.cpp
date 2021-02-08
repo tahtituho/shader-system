@@ -83,8 +83,8 @@ bool DemoSystem::Music::hasMusicEnded()
 
 void DemoSystem::Music::silence()
 {
-    this->silent = !this->silent;
     BASS_ChannelSetAttribute(this->stream, BASS_ATTRIB_VOL, this->silent ? 1.0 : 0.0);
+    this->silent = !this->silent;
 }
 
 void DemoSystem::Music::cleanUp()
