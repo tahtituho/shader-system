@@ -8,33 +8,38 @@
 #include "Configuration.h"
 #define SYNC_PLAYER
 
-namespace DemoSystem {
-    class Cosmonaut {
-        public:
-            Cosmonaut();
-            ~Cosmonaut();
-            void initialize(double bpm, int rpb);
-            bool connectPlayer(std::string host);
-            void setFunctions(sync_cb* functions);
-            void update(double row);
-            void setTracks(std::list<DemoSystem::Track> tracks);
+namespace DemoSystem
+{
+    class Cosmonaut
+    {
+    public:
+        Cosmonaut();
+        ~Cosmonaut();
+        void initialize(double bpm, int rpb);
+        bool connectPlayer(std::string host);
+        void setFunctions(sync_cb *functions);
+        void update(double row);
+        void setTracks(std::list<DemoSystem::Track> tracks);
 
-            double getRowRate();
-            void cleanUp();
+        double getRowRate();
+        void cleanUp();
 
-        struct SyncTrack {
-            const sync_track* x;
-            const sync_track* y;
-            const sync_track* z;
+        struct SyncTrack
+        {
+            const sync_track *x;
+            const sync_track *y;
+            const sync_track *z;
         };
 
-        struct Vector3 {
+        struct Vector3
+        {
             double x;
             double y;
             double z;
         };
 
-        struct Gateway {
+        struct Gateway
+        {
             SyncTrack syncTrack;
             Vector3 value;
             DemoSystem::Track::TrackType type;
@@ -43,17 +48,17 @@ namespace DemoSystem {
         };
 
         std::list<Gateway> gateways;
-        private:
-            bool player;
-            std::string host;
-            double BPM;
-            int RPB;
-            double rowRate;
-          
-            sync_device* device;
-            sync_cb* functions;  
-        };
-}
 
+    private:
+        bool player;
+        std::string host;
+        double BPM;
+        int RPB;
+        double rowRate;
+
+        sync_device *device;
+        sync_cb *functions;
+    };
+} // namespace DemoSystem
 
 #endif
