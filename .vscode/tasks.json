@@ -4,20 +4,23 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "debug build shader system (Linux)",
+            "label": "debug build (Linux)",
             "type": "shell",
             "command": "g++",
             "args": [
                 "libs/rocket/device.c",
-                "libs/rocket/track.c", 
-                "libs/rocket/loadsave.c",       
+                "libs/rocket/track.c",
+                "libs/rocket/loadsave.c",
                 "libs/jsoncpp.cpp",
                 "libs/lodepng.cpp",
-                "src/Cosmonaut.cpp",
+                "src/Synchronizer.cpp",
                 "src/Configuration.cpp",
                 "src/Music.cpp",
                 "src/Textures.cpp",
                 "src/Logger.cpp",
+                "src/Graphics.cpp",
+                "src/Keyboard.cpp",
+                "src/Helpers.cpp",
                 "main.cpp",
                 "-w",
                 "-g",
@@ -42,24 +45,25 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "problemMatcher": [
-                "$eslint-compact"
-            ]
+            "problemMatcher": "$gcc"
         },
         {
-            "label": "release build shader system (Linux)",
+            "label": "release build (Linux)",
             "type": "shell",
             "command": "g++",
             "args": [
                 "libs/rocket/device.c",
-                "libs/rocket/track.c", 
-                "libs/rocket/loadsave.c",  
+                "libs/rocket/track.c",
+                "libs/rocket/loadsave.c",
                 "libs/lodepng.cpp",
-                "src/Cosmonaut.cpp",
+                "src/Synchronizer.cpp",
                 "src/Configuration.cpp",
                 "src/Music.cpp",
                 "src/Textures.cpp",
                 "src/Logger.cpp",
+                "src/Graphics.cpp",
+                "src/Keyboard.cpp",
+                "src/Helpers.cpp",
                 "main.cpp",
                 "-w",
                 "-L${workspaceFolder}/libs",
@@ -74,24 +78,34 @@
                 "-fpermissive",
                 "-o",
                 "bin/release/shader-system"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
             ]
         },
         {
-            "label": "debug build shader system (Windows)",
+            "label": "debug build (Windows)",
             "type": "shell",
             "command": "g++.exe",
             "args": [
                 "libs/rocket/device.c",
-                "libs/rocket/track.c",                         
+                "libs/rocket/track.c",
                 "libs/jsoncpp.cpp",
                 "libs/lodepng.cpp",
-                "src/Cosmonaut.cpp",
+                "src/Synchronizer.cpp",
                 "src/Configuration.cpp",
                 "src/Music.cpp",
                 "src/Textures.cpp",
                 "src/Logger.cpp",
+                "src/Graphics.cpp",
+                "src/Keyboard.cpp",
+                "src/Helpers.cpp",
                 "main.cpp",
-                "-D_WIN32_WINNT=0x501", //For getting rocket socket communication work on windows
+                "-D_WIN32_WINNT=0x501",
                 "-w",
                 "-g",
                 "-ggdb",
@@ -111,7 +125,6 @@
                 "-I${workspaceFolder}\\libs\\rocket\\mxml",
                 "-I${workspaceFolder}\\include",
                 "-I${workspaceFolder}\\libs\\bass24\\c",
-                "-static-libgcc",
                 "-static-libstdc++",
                 "-fpermissive",
                 "-mwindows",
@@ -122,37 +135,29 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "problemMatcher": {
-                "owner": "cpp",
-                "fileLocation": [
-                    "absolute"
-                ],
-                "pattern": {
-                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
-                    "file": 1,
-                    "line": 2,
-                    "column": 3,
-                    "severity": 4,
-                    "message": 5
-                }
-            }
+            "problemMatcher": [
+                "$gcc"
+            ],
         },
         {
-            "label": "release build shader system (Windows)",
+            "label": "release build (Windows)",
             "type": "shell",
             "command": "g++.exe",
             "args": [
                 "libs/rocket/device.c",
-                "libs/rocket/track.c",         
+                "libs/rocket/track.c",
                 "libs/jsoncpp.cpp",
                 "libs/lodepng.cpp",
-                "src/Cosmonaut.cpp",
+                "src/Synchronizer.cpp",
                 "src/Configuration.cpp",
                 "src/Music.cpp",
                 "src/Textures.cpp",
                 "src/Logger.cpp",
+                "src/Graphics.cpp",
+                "src/Keyboard.cpp",
+                "src/Helpers.cpp",
                 "main.cpp",
-                "-D_WIN32_WINNT=0x501", //For getting rocket socket communication work on windows
+                "-D_WIN32_WINNT=0x501",
                 "-w",
                 "-LD:\\development\\glew-2.1.0\\lib\\Release\\Win32",
                 "-L${workspaceFolder}\\libs",
@@ -168,31 +173,22 @@
                 "-I${workspaceFolder}\\libs\\json",
                 "-I${workspaceFolder}\\libs\\rocket",
                 "-I${workspaceFolder}\\libs\\rocket\\mxml",
+                "-I${workspaceFolder}\\libs\\bass24\\c",
                 "-I${workspaceFolder}\\include",
-                "-ID:\\development\\bass24\\c",
                 "-static-libgcc",
                 "-static-libstdc++",
                 "-fpermissive",
                 "-mwindows",
                 "-o",
                 "bin\\release\\shader-system.exe"
-            ],        
+            ],
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
-            "problemMatcher": {
-                "owner": "cpp",
-                "fileLocation": ["absolute"],
-                "pattern": {
-                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
-                    "file": 1,
-                    "line": 2,
-                    "column": 3,
-                    "severity": 4,
-                    "message": 5
-                }
-            }
-        }    
+            "problemMatcher": [
+                "$gcc"
+            ],
+        }
     ]
 }

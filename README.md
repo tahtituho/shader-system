@@ -25,7 +25,7 @@ At least these packages are needed for MinGW from Basic Setup
 - additionally:
  - mingw32-libmingwex-dev
  - mingw32-libmingwex-dll
-  
+
 # Notes on compiling
 ### Windows/Linux
 Create output folder for executable(ie. bin/debug) it cannot create folders by itself.
@@ -49,4 +49,4 @@ Be sure that shaders, music and textures defined in "configuration.json" exist.
 # usage
 1. start rocket client
 2. start "shader-system.exe"
-Tracks defined in "configuration.json" will appear on rocket. Open fragment shader defined in "configuration.json" and verify that uniform variables corresponding to rocket tracks are present. When changes have been made to fragment shader press "r" to reload shader. if syntax errors are present and logging is set to true, error messages will be printed to log.txt. 
+Tracks defined in "configuration.json" will appear on rocket. Open fragment shader defined in "configuration.json" and verify that uniform variables corresponding to rocket tracks are present. When changes have been made to fragment shader press "r" to reload shader. 

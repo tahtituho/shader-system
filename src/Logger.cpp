@@ -6,11 +6,6 @@ DemoSystem::Logger::Logger()
 
 DemoSystem::Logger::~Logger()
 {
-    for (GLTtext *text : this->buffer)
-    {
-        gltDeleteText(text);
-    }
-    gltTerminate();
 }
 
 void DemoSystem::Logger::initialize(int size, float x, float y, bool e)
@@ -72,4 +67,13 @@ bool DemoSystem::Logger::isEnabled()
 void DemoSystem::Logger::toggleEnable()
 {
     this->enabled = !this->enabled;
+}
+
+void DemoSystem::Logger::cleanUp()
+{
+    for (GLTtext *text : this->buffer)
+    {
+        gltDeleteText(text);
+    }
+    gltTerminate();
 }

@@ -4,9 +4,14 @@ DemoSystem::Textures::Textures()
 {
 }
 
-void DemoSystem::Textures::setTextures(std::list<DemoSystem::Asset> textures)
+void DemoSystem::Textures::setTextures(std::list<Configuration::Asset> assets)
 {
-    for (DemoSystem::Asset asset : textures)
+    std::list<Configuration::Asset> assetTextures(assets);
+    assetTextures.remove_if([](Configuration::Asset a) {
+        return a.type != Configuration::Asset::AssetType::TEXTURE;
+    });
+
+    for (Configuration::Asset asset : assetTextures)
     {
         DemoSystem::Textures::Texture t;
         t.name = asset.name;

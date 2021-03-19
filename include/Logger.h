@@ -26,6 +26,7 @@ namespace DemoSystem
         void render();
         bool isEnabled();
         void toggleEnable();
+        void cleanUp();
 
     private:
         std::list<GLTtext *> buffer;

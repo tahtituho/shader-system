@@ -8,73 +8,72 @@
 
 namespace DemoSystem
 {
-    struct Demo
-    {
-        bool release;
-        std::string name;
-        std::string group;
-        std::string icon;
-    };
-
-    struct Screen
-    {
-        int width;
-        int height;
-        int FPS;
-    };
-
-    struct Tune
-    {
-        std::string file;
-        double BPM;
-        int RPB;
-        int frequency;
-    };
-
-    struct Sync
-    {
-        int RPB;
-        std::string host;
-    };
-
-    struct Shaders
-    {
-        std::string vertex;
-        std::string fragment;
-        int majorVersion;
-        int minorVersion;
-    };
-
-    struct Track
-    {
-        enum TrackType
-        {
-            FLOAT1,
-            FLOAT2,
-            FLOAT3
-        };
-
-        TrackType type;
-        std::string trackName;
-        std::string variableName;
-    };
-
-    struct Asset
-    {
-        enum AssetType
-        {
-            TEXTURE
-        };
-
-        AssetType type;
-        std::string file;
-        std::string name;
-    };
-
     class Configuration
     {
     public:
-        Configuration();
+        struct Demo
+        {
+            bool release;
+            std::string name;
+            std::string group;
+            std::string icon;
+        };
+
+        struct Screen
+        {
+            int width;
+            int height;
+            int FPS;
+        };
+
+        struct Tune
+        {
+            std::string file;
+            double BPM;
+            int RPB;
+            int frequency;
+        };
+
+        struct Sync
+        {
+            int RPB;
+            std::string host;
+        };
+
+        struct Shaders
+        {
+            std::string vertex;
+            std::string fragment;
+            int majorVersion;
+            int minorVersion;
+        };
+
+        struct Track
+        {
+            enum TrackType
+            {
+                FLOAT1,
+                FLOAT2,
+                FLOAT3
+            };
+
+            TrackType type;
+            std::string trackName;
+            std::string variableName;
+        };
+
+        struct Asset
+        {
+            enum AssetType
+            {
+                TEXTURE
+            };
+
+            AssetType type;
+            std::string file;
+            std::string name;
+        };
+        static Configuration *getInstance();
         ~Configuration();
         bool read(std::string file);
         Demo demo;
@@ -82,8 +81,12 @@ namespace DemoSystem
         Tune tune;
         Sync sync;
         Shaders shaders;
-        std::list<DemoSystem::Track> tracks;
-        std::list<DemoSystem::Asset> assets;
+        std::list<Configuration::Track> tracks;
+        std::list<Configuration::Asset> assets;
+
+    private:
+        static Configuration *instance;
+        Configuration();
     };
 
 } // namespace DemoSystem

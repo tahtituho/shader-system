@@ -1,5 +1,15 @@
 #include "Configuration.h"
 
+DemoSystem::Configuration *DemoSystem::Configuration::instance = 0;
+DemoSystem::Configuration *DemoSystem::Configuration::getInstance()
+{
+    if (!instance)
+    {
+        instance = new Configuration();
+    }
+    return instance;
+}
+
 DemoSystem::Configuration::Configuration()
 {
     this->demo.release = true;
@@ -65,15 +75,15 @@ bool DemoSystem::Configuration::read(std::string file)
                 std::string type = c["tracks"][i]["type"].asString();
                 if (type == "float1")
                 {
-                    t.type = DemoSystem::Track::FLOAT1;
+                    t.type = DemoSystem::Configuration::Track::FLOAT1;
                 }
                 else if (type == "float2")
                 {
-                    t.type = DemoSystem::Track::FLOAT2;
+                    t.type = Track::TrackType::FLOAT2;
                 }
                 else if (type == "float3")
                 {
-                    t.type = DemoSystem::Track::FLOAT3;
+                    t.type = Track::TrackType::FLOAT3;
                 }
                 this->tracks.push_back(t);
             }
@@ -89,7 +99,7 @@ bool DemoSystem::Configuration::read(std::string file)
                 std::string type = c["assets"][i]["type"].asString();
                 if (type == "texture")
                 {
-                    a.type = DemoSystem::Asset::AssetType::TEXTURE;
+                    a.type = Configuration::Asset::AssetType::TEXTURE;
                 }
 
                 this->assets.push_back(a);
@@ -105,4 +115,8 @@ bool DemoSystem::Configuration::read(std::string file)
 
 DemoSystem::Configuration::~Configuration()
 {
+    if (instance)
+    {
+        delete instance;
+    }
 }

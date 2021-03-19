@@ -87,6 +87,17 @@ void DemoSystem::Music::silence()
     this->silent = !this->silent;
 }
 
+std::string DemoSystem::Music::version()
+{
+    byte version1 = (BASSVERSION >> 0) & 0xFF;
+    byte version2 = (BASSVERSION >> 8) & 0xFF;
+
+    std::stringstream stream;
+    stream << std::hex << version1 << "." << std::hex << version2;
+    std::string result(stream.str());
+    return result;
+}
+
 void DemoSystem::Music::cleanUp()
 {
     BASS_SampleFree(this->stream);
