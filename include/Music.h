@@ -3,7 +3,7 @@
 #include <string>
 #include <fstream>
 #include <bass.h>
-#include "Cosmonaut.h"
+#include "Synchronizer.h"
 
 namespace DemoSystem
 {
@@ -20,6 +20,7 @@ namespace DemoSystem
         void seek(double row);
         void silence();
         bool hasMusicEnded();
+        std::string version();
         void cleanUp();
 
     private:

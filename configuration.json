@@ -3,7 +3,7 @@
         "release": false,
         "name": "demo",
         "group": "demogroup",
-        "icon":  "assets\\pics\\tt.png"
+        "icon": "assets\\pics\\tt.png"
     },
     "screen": {
         "width": 640,
@@ -11,7 +11,7 @@
         "FPS": 60
     },
     "music": {
-        "file": "assets\\music\\demo-release.mp3",
+        "file": "assets\\music\\Monplaisir_-_Feet_Gone_Wild_Speed_Version.mp3",
         "BPM": 120.0,
         "frequency": 44000
     },
@@ -20,8 +20,8 @@
         "host": "localhost"
     },
     "shaders": {
-        "vertex": "shaders\\vertex.glsl",
-        "fragment": "shaders\\fragment.glsl",
+        "vertex": "assets\\shaders\\vertex.glsl",
+        "fragment": "assets\\shaders\\fragment.glsl",
         "majorVersion": 3,
         "minorVersion": 3
     },
@@ -42,7 +42,7 @@
             "type": "float3",
             "name": {
                 "track": "scene1.color",
-                "variable": "baseColor"
+                "variable": "scene1Color"
             }
         }
     ]

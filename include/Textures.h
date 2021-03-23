@@ -5,7 +5,6 @@
 #include <list>
 #include <vector>
 #include "Configuration.h"
-
 namespace DemoSystem
 {
     class Textures
@@ -24,8 +23,8 @@ namespace DemoSystem
         Textures();
         ~Textures();
         std::string add(std::string file, std::string name);
-        void setTextures(std::list<DemoSystem::Asset> textures);
-        std::list<DemoSystem::Textures::Texture> textures;
+        void setTextures(std::list<Configuration::Asset> textures);
+        std::list<Textures::Texture> textures;
     };
 
 } // namespace DemoSystem
