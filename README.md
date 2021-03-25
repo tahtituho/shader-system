@@ -11,10 +11,11 @@ glfw, rocket, jsoncpp, bass, glew, lodepng and glText are included in project.
 - glew version 2.1.0 http://glew.sourceforge.net/
 - lodepng https://lodev.org/lodepng/
 - glText https://github.com/vallentin/glText
-- 
 
-C++ compiler is needed, and on linux g++ can found easily from package management, but on windows mingw works well
+
+C++ compiler is needed, and on linux g++ can found easily from package management, but on windows mingw or mingw-64 works well. Remember to choose 32bit.
 - http://www.mingw.org/
+- http://mingw-w64.org/doku.php
  
 Make sure that include and library folders in "tasks.json" are correct for you configuration. Check "c_cpp_configuration.json" that folder are correct as well, to ensure that intellisense is working correctly.
 
@@ -22,9 +23,8 @@ At least these packages are needed for MinGW from Basic Setup
 - mingw32-base-bin
 - mingw32-gcc-g++-bin
 - msys-base-bin
-- additionally:
- - mingw32-libmingwex-dev
- - mingw32-libmingwex-dll
+- mingw32-libmingwex-dev
+- mingw32-libmingwex-dll
 
 # Notes on compiling
 ### Windows/Linux
@@ -33,6 +33,10 @@ Create output folder for executable(ie. bin/debug) it cannot create folders by i
 ### Windows
 Make sure that mingw is available, easy way to handle this is to add mingw folder (e.g. "C:\MinGW\bin") to PATH variable
 Copy glfw3.dll, glew32.dll and bass.dll into output folder.
+
+### Linux
+Use following command to install required libraries
+`sudo apt-get install g++-multilib libglfw3-dev libglfw3 ibglew-dev`
 
 ### Visual Studio Code
 Visual Studio Code suits greatly to compile this, https://code.visualstudio.com/ just make sure that paths are correct for your setup in "tasks.json". Paths for following folders needs to be set to comply your setup:
