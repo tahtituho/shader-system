@@ -39,6 +39,7 @@
                 "-I${workspaceFolder}/libs/bass24-linux",
                 "-static-libstdc++",
                 "-fpermissive",
+                "-std=c++17",
                 "-o",
                 "bin/debug/shader-system"
             ],
@@ -91,6 +92,7 @@
                 "-I${workspaceFolder}/libs/bass24/c",
                 "-static-libstdc++",
                 "-fpermissive",
+                "-std=c++17",
                 "-o",
                 "bin/release/shader-system"
             ],
@@ -143,6 +145,7 @@
                 "-static-libstdc++",
                 "-fpermissive",
                 "-mwindows",
+                "-std=c++17",
                 "-o",
                 "bin\\debug\\shader-system.exe"
             ],
@@ -194,6 +197,7 @@
                 "-static-libstdc++",
                 "-fpermissive",
                 "-mwindows",
+                "-std=c++17",
                 "-o",
                 "bin\\release\\shader-system.exe"
             ],
