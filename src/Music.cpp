@@ -89,6 +89,7 @@ void DemoSystem::Music::silence()
 
 std::string DemoSystem::Music::version()
 {
+    /*
     byte version1 = (BASSVERSION >> 0) & 0xFF;
     byte version2 = (BASSVERSION >> 8) & 0xFF;
 
@@ -96,6 +97,8 @@ std::string DemoSystem::Music::version()
     stream << std::hex << version1 << "." << std::hex << version2;
     std::string result(stream.str());
     return result;
+    */
+   return "";
 }
 
 void DemoSystem::Music::cleanUp()
