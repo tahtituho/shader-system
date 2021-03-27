@@ -1,11 +1,14 @@
-#ifndef COSMONAUT_H
-#define COSMONAUT_H
+#ifndef SYNCHRONIZER_H
+#define SYNCHRONIZER_H
 #include <sync.h>
 #include <string>
 #include <math.h>
 #include <list>
+#include <map>
+#include <map>
 #include <GL/gl.h>
 #include "Configuration.h"
+#include "Variable.h"
 #define SYNC_PLAYER
 
 namespace DemoSystem
@@ -19,33 +22,11 @@ namespace DemoSystem
         bool connectPlayer(std::string host);
         void setFunctions(sync_cb *functions);
         void update(double row);
-        void setTracks(std::list<Configuration::Track> tracks);
+        void initializeTrackVariables(std::list<Configuration::Variable> trackVariables);
+        void initializeBasicVariables();
         void cleanUp();
-
-        struct SyncTrack
-        {
-            const sync_track *x;
-            const sync_track *y;
-            const sync_track *z;
-        };
-
-        struct Vector3
-        {
-            double x;
-            double y;
-            double z;
-        };
-
-        struct Gateway
-        {
-            SyncTrack syncTrack;
-            Vector3 value;
-            Configuration::Track::TrackType type;
-            std::string name;
-            GLint uniform;
-        };
-
-        std::list<Gateway> gateways;
+        std::list<TrackVariable> trackVariables;
+        std::map<std::string, BasicVariable> basicVariables;
 
     private:
         bool player;
@@ -56,6 +37,8 @@ namespace DemoSystem
 
         sync_device *device;
         sync_cb *functions;
+
+        void addBasicVariable(std::string name, Variable::DataType datatype);
     };
 } // namespace DemoSystem
 

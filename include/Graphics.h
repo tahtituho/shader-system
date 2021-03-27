@@ -3,11 +3,13 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <string>
+#include <map>
 #include "lodepng.h"
 #include "Configuration.h"
 #include "Synchronizer.h"
 #include "Textures.h"
 #include "Logger.h"
+#include "Variable.h"
 
 namespace DemoSystem
 {
@@ -17,9 +19,11 @@ namespace DemoSystem
         Graphics();
         ~Graphics();
         void initialize(Configuration::Shaders shaders, Configuration::Screen screen, Configuration::Demo demo);
-        void registerGateways(std::list<Synchronizer::Gateway> *gateways);
+        void registerSynchronizer(DemoSystem::Synchronizer *synchronizer);
         void registerTextures(std::list<Textures::Texture> *textures);
         void registerKeyboard(GLFWkeyfun callback);
+        void registerMouseMove(GLFWcursorposfun callback);
+        void registerMouseButtons(GLFWmousebuttonfun callback);
         void registerLogger(Logger *logger);
         void initShaders(std::string vertexSource, std::string fragmentSource);
         void initFrameBuffer();
@@ -32,15 +36,13 @@ namespace DemoSystem
     private:
         GLFWwindow *window;
         GLuint program;
-        GLint timeUniform;
-        GLint resolutionUniform;
         bool fullscreen;
 
         GLuint vertexShader;
         GLuint fragmentShader;
         unsigned int VBO, VAO, EBO;
 
-        std::list<Synchronizer::Gateway> *gateways;
+        DemoSystem::Synchronizer *synchronizer;
         std::list<Textures::Texture> *textures;
         Logger *logger;
         void compileShader(const GLenum type, std::string source);

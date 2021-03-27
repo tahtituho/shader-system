@@ -5,7 +5,7 @@
 #include "Synchronizer.h"
 #include "Textures.h"
 #include "Logger.h"
-#include "Keyboard.h"
+#include "InputDevices.h"
 #include "Helpers.h"
 
 const std::string VERSION = ShaderSystem_VERSION_MAJOR + "." + ShaderSystem_VERSION_MINOR;
@@ -13,6 +13,9 @@ void mainLoop();
 void cleanUp();
 
 void handleKeyboard(GLFWwindow *window, int key, int scancode, int action, int mods);
+void handleMouseMove(GLFWwindow *window, double x, double y);
+void handleMouseButtons(GLFWwindow *window, int button, int action, int mods);
+
 void musicPause(void *c, int flag);
 void musicSetRow(void *c, int row);
 int musicPlaying(void *c);
@@ -23,7 +26,7 @@ DemoSystem::Synchronizer synchronizer;
 DemoSystem::Textures textures;
 DemoSystem::Logger logger;
 DemoSystem::Graphics graphics;
-DemoSystem::Keyboard keyboard;
+DemoSystem::InputDevices inputDevices;
 
 int main(int argc, char *args[])
 {
@@ -59,19 +62,23 @@ int main(int argc, char *args[])
     functions.pause = &musicPause;
     functions.set_row = &musicSetRow;
     synchronizer.setFunctions(&functions);
-    synchronizer.setTracks(configurations->tracks);
+    synchronizer.initializeTrackVariables(configurations->trackVariables);
+    synchronizer.initializeBasicVariables();
+
     textures.setTextures(configurations->assets);
 
     graphics.registerLogger(&logger);
     graphics.registerKeyboard(&handleKeyboard);
+    graphics.registerMouseMove(&handleMouseMove);
+    graphics.registerMouseButtons(&handleMouseButtons);
     graphics.registerTextures(&textures.textures);
-    graphics.registerGateways(&synchronizer.gateways);
-
+    graphics.registerSynchronizer(&synchronizer);
     std::string vertexSource = DemoSystem::Helpers::readFile(configurations->shaders.vertex);
     std::string fragmentSource = DemoSystem::Helpers::readFile(configurations->shaders.fragment);
     graphics.initShaders(vertexSource, fragmentSource);
     graphics.initFrameBuffer();
-    keyboard.initialize(graphics, music, logger, configurations->demo.release);
+
+    inputDevices.initialize(&graphics, &music, &logger, &synchronizer, configurations->demo.release);
 
     music.play();
     mainLoop();
@@ -127,7 +134,17 @@ void mainLoop()
 
 void handleKeyboard(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
-    keyboard.handleKeyboard(window, key, scancode, action, mods);
+    inputDevices.handleKeyboard(window, key, scancode, action, mods);
+}
+
+void handleMouseMove(GLFWwindow *window, double x, double y)
+{
+    inputDevices.handleMouseMove(window, x, y);
+}
+
+void handleMouseButtons(GLFWwindow *window, int button, int action, int mods)
+{
+    inputDevices.handleMouseButtons(window, button, action, mods);
 }
 
 void cleanUp()

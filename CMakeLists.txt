@@ -48,7 +48,7 @@ add_executable(${PROJECT_NAME}
     src/Textures.cpp 
     src/Logger.cpp 
     src/Graphics.cpp 
-    src/Keyboard.cpp 
+    src/InputDevices.cpp 
     src/Helpers.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC build include libs libs/rocket libs/json libs/glfw-3.3.3/include ${GLEW_INCLUDE_DIRS} ${BASS_INCLUDE})

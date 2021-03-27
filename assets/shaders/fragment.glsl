@@ -3,7 +3,12 @@ out vec4 FragColor;
 
 uniform float time;
 uniform vec2 resolution;
+uniform vec3 position;
+uniform vec2 mouse;
+uniform vec3 user;
+
 uniform vec3 scene1Color;
+uniform vec3 scene1Position;
 uniform sampler2D texture01;
 uniform sampler2D texture02;
 
