@@ -20,6 +20,10 @@ void DemoSystem::Logger::initialize(int size, float x, float y, bool e)
 
 void DemoSystem::Logger::write(DemoSystem::Logger::LOG_LEVEL level, std::string text)
 {
+    if (text.length() == 0)
+    {
+        return;
+    }
     std::ostringstream stream;
     switch (level)
     {
