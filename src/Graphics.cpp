@@ -128,21 +128,14 @@ void DemoSystem::Graphics::initShaders(std::string vertexSource, std::string fra
     if (linkStatus == GL_FALSE)
     {
         GLint logLength;
-        char *log;
-
         glGetProgramiv(this->program, GL_INFO_LOG_LENGTH, &logLength);
-        log = new char[logLength];
-        GLint infoLogStatus;
-        glGetProgramInfoLog(this->program, logLength, &infoLogStatus, log);
-        logger->write(DemoSystem::Logger::ERR, "program linking error" + std::string(log));
-        delete[] log;
-        //what is meaning of this?
-        if (this->program != 0)
+        if (logLength > 0)
         {
-            glDeleteProgram(this->program);
-            this->program = 0;
+            char *log = new char[logLength];
+            glGetProgramInfoLog(this->program, logLength, NULL, log);
+            logger->write(DemoSystem::Logger::ERR, std::string(log));
+            delete[] log;
         }
-
         return;
     }
     timeUniform = glGetUniformLocation(this->program, "time");
@@ -294,14 +287,14 @@ void DemoSystem::Graphics::compileShader(const GLenum type, std::string source)
     if (compileResult == GL_FALSE)
     {
         GLint logLength;
-        char *log;
-
-        glGetProgramiv(this->program, GL_INFO_LOG_LENGTH, &logLength);
-        log = new char[logLength];
-        GLint infoLogStatus;
-        glGetShaderInfoLog(shader, logLength, &infoLogStatus, log);
-        logger->write(DemoSystem::Logger::ERR, std::string(log));
-        delete[] log;
+        glGetProgramiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+        if (logLength > 0)
+        {
+            char *log = new char[logLength];
+            glGetShaderInfoLog(shader, logLength, NULL, log);
+            logger->write(DemoSystem::Logger::ERR, std::string(log));
+            delete[] log;
+        }
 
         glDeleteShader(shader);
         this->program = 0;
