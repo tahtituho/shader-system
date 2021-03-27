@@ -295,10 +295,7 @@ void DemoSystem::Graphics::compileShader(const GLenum type, std::string source)
             logger->write(DemoSystem::Logger::ERR, std::string(log));
             delete[] log;
         }
-
         glDeleteShader(shader);
-        this->program = 0;
-
         return;
     }
     if (type == GL_VERTEX_SHADER)
