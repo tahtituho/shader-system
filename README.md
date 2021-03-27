@@ -17,7 +17,7 @@ C++ compiler is needed, and on linux g++ can found easily from package managemen
 - http://www.mingw.org/
 - http://mingw-w64.org/doku.php
  
-Make sure that include and library folders in "tasks.json" are correct for you configuration. Check "c_cpp_configuration.json" that folder are correct as well, to ensure that intellisense is working correctly.
+Make sure that miDebuggerPath is correct in `lauch.json`. Check `c_cpp_configuration.json` that compilerPath is correct as well, to ensure that intellisense is working correctly. **NOTE** do not commit those changes to repository, as they are specific to your system.
 
 At least these packages are needed for MinGW from Basic Setup
 - mingw32-base-bin

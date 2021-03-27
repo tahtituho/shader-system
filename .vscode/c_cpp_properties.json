@@ -13,8 +13,8 @@
                 "WIN32",
                 "GLEW_BUILD"
             ],
-            "compilerPath": "C:\\MinGW\\bin\\gcc.exe",
-            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "D:\\development\\mingw-w64\\i686-8.1.0-posix-dwarf-rt_v6-rev0\\mingw32\\bin\\g++.exe",
+            "intelliSenseMode": "gcc-x86",
             "browse": {
                 "path": [
                     "${workspaceFolder}",
