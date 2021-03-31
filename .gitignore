@@ -3,3 +3,4 @@ bin/*
 .vscode/settings.json
 .vscode/ipch/*
 /log.txt
+build/*

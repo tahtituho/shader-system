@@ -4,11 +4,11 @@ Attempt to create simple shader demo system with support for rocket and png text
 # Requirements
 glfw, rocket, jsoncpp, bass, glew, lodepng and glText are included in project.
 
-- glfw version 3.2.1 https://www.glfw.org/
+- glfw version 3.3.3 https://www.glfw.org/
 - rocket https://github.com/emoon/rocket
 - jsoncpp version 0.10.7 https://github.com/open-source-parsers/jsoncpp
 - bass version 2.4.13.8 http://www.un4seen.com/bass.html
-- glew version 2.1.0 http://glew.sourceforge.net/
+- glew version 2.2.0 http://glew.sourceforge.net/
 - lodepng https://lodev.org/lodepng/
 - glText https://github.com/vallentin/glText
 
@@ -26,31 +26,37 @@ At least these packages are needed for MinGW from Basic Setup
 - mingw32-libmingwex-dev
 - mingw32-libmingwex-dll
 
+CMake is needed. Download it from https://cmake.org/ and install **CMake Tools** extension for Visual Studio Code
 # Notes on compiling
 ### Windows/Linux
-Create output folder for executable(ie. bin/debug) it cannot create folders by itself.
+Create output folder for executable(ie. bin/debug) as compiler cannot create folders by itself.
 
 ### Windows
 Make sure that mingw is available, easy way to handle this is to add mingw folder (e.g. "C:\MinGW\bin") to PATH variable
-Copy glfw3.dll, glew32.dll and bass.dll into output folder.
+Make sure that .vscode/settings.json has `"C_Cpp.intelliSenseEngine": "Tag Parser"`
 
 ### Linux
 Use following command to install required libraries
 `sudo apt-get install g++-multilib libglfw3-dev libglfw3 ibglew-dev`
 
-### Visual Studio Code
-Visual Studio Code suits greatly to compile this, https://code.visualstudio.com/ just make sure that paths are correct for your setup in "tasks.json". Paths for following folders needs to be set to comply your setup:
-- glew lib 
-- glew include
-- bass lib
-- bass include
+### Compiling
+Use command *CMake: Configure* to create configuration. Configuration will appear in **build** folder. Use command *CMake: Build* to compile shader system. 
+
+### Debugging
+Press F5 to start debug.
 
 # executing
-When demo system is executed without parameters, it defaults configuration file to "configuration.json".
-If "configuration.json" is non existing, system defaults to default values, which are defined in Configuration class constructor.
-Be sure that shaders, music and textures defined in "configuration.json" exist.
+To run shader-system in release mode execute following steps. Release mode means mode where you write shader code, sync graphics with music and present your demo at party.
+1. Make directory where you want to store shader-system.
+1. Build relese version.
+1. Copy bass.dl from libs/bass-24-win/ to newly created folder
+1. Copy glew32.dl from libs/glew-2.2.0/bin/Release to newly created folder
+1. Copy glfw3.dll from /build/libs/glfw-3.3.3/src to newly created folder
 
-# usage
+When demo system is executed without parameters, it defaults configuration file to "configuration.json".
+
+Be sure that shaders, music and textures defined in "configuration.json" exist, as shader system does not give any error messages is some files are missing.
+
 1. start rocket client
-2. start "shader-system.exe"
-Tracks defined in "configuration.json" will appear on rocket. Open fragment shader defined in "configuration.json" and verify that uniform variables corresponding to rocket tracks are present. When changes have been made to fragment shader press "r" to reload shader. 
+2. start "ShaderSystem.exe"
+Tracks defined in "configuration.json" will appear on rocket. Open fragment shader defined in "configuration.json" and verify that uniform variables corresponding to rocket tracks are present. When changes have been made to fragment shader press "r" to reload shader. Press "s" to turn tune on or off.
