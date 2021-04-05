@@ -1,0 +1,2 @@
+#define ShaderSystem_VERSION_MAJOR @ShaderSystem_VERSION_MAJOR@
+#define ShaderSystem_VERSION_MINOR @ShaderSystem_VERSION_MINOR@

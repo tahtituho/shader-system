@@ -1,3 +1,4 @@
+#include "ShaderSystemConfig.h"
 #include "Graphics.h"
 #include "Configuration.h"
 #include "Music.h"
@@ -7,8 +8,7 @@
 #include "Keyboard.h"
 #include "Helpers.h"
 
-const char *VERSION = "1.4";
-
+const std::string VERSION = ShaderSystem_VERSION_MAJOR + "." + ShaderSystem_VERSION_MINOR;
 void mainLoop();
 void cleanUp();
 
@@ -37,8 +37,9 @@ int main(int argc, char *args[])
 
     graphics.initialize(configurations->shaders, configurations->screen, configurations->demo);
     logger.initialize(25, 0.0, configurations->screen.height, !configurations->demo.release);
-
-    logger.write(DemoSystem::Logger::INFO, "shader system version " + std::string(VERSION) + " by tahtituho 2019");
+    std::ostringstream stream;
+    stream << "shader system version " << ShaderSystem_VERSION_MAJOR << "." << ShaderSystem_VERSION_MINOR << " by tahtituho 2019";
+    logger.write(DemoSystem::Logger::INFO, stream.str());
     logger.write(DemoSystem::Logger::INFO, "opengl vendor:   " + std::string((const char *)glGetString(GL_VENDOR)));
     logger.write(DemoSystem::Logger::INFO, "opengl renderer  " + std::string((const char *)glGetString(GL_RENDERER)));
     logger.write(DemoSystem::Logger::INFO, "opengl version:  " + std::string((const char *)glGetString(GL_VERSION)));

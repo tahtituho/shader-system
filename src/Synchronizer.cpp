@@ -25,6 +25,7 @@ bool DemoSystem::Synchronizer::connectPlayer(std::string host)
 {
     this->player = true;
     sync_tcp_connect(this->device, host.c_str(), SYNC_DEFAULT_PORT);
+    return true;
 }
 
 void DemoSystem::Synchronizer::setFunctions(sync_cb *functions)
