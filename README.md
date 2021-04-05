@@ -37,7 +37,7 @@ Make sure that .vscode/settings.json has `"C_Cpp.intelliSenseEngine": "Tag Parse
 
 ### Linux
 Use following command to install required libraries
-`sudo apt-get install g++-multilib libglfw3-dev libglfw3 ibglew-dev`
+`sudo apt-get install g++-multilib libglew-dev xorg-dev`
 
 ### Compiling
 Use command *CMake: Configure* to create configuration. Configuration will appear in **build** folder. Use command *CMake: Build* to compile shader system. 
