@@ -37,13 +37,12 @@
             "file": "assets\\textures\\texture02.png"
         }
     ],
-    "tracks": [
+    "variables": [
         {
-            "type": "float3",
-            "name": {
-                "track": "scene1.color",
-                "variable": "scene1Color"
-            }
+            "variableType": "track",
+            "variable": "scene1Color",
+            "dataType": "float3",
+            "track": "scene1.color"
         }
     ]
 }

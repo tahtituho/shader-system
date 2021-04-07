@@ -43,18 +43,18 @@ void DemoSystem::Synchronizer::update(double row)
         }
     }
 
-    for (auto it = this->gateways.begin(); it != this->gateways.end(); it++)
+    for (auto it = this->trackVariables.begin(); it != this->trackVariables.end(); it++)
     {
-        if (it->type == Configuration::Track::TrackType::FLOAT1)
+        if (it->type == Variable::DataType::FLOAT1)
         {
             it->value.x = sync_get_val(it->syncTrack.x, row);
         }
-        else if (it->type == Configuration::Track::TrackType::FLOAT2)
+        else if (it->type == Variable::DataType::FLOAT2)
         {
             it->value.x = sync_get_val(it->syncTrack.x, row);
             it->value.y = sync_get_val(it->syncTrack.y, row);
         }
-        else if (it->type == Configuration::Track::TrackType::FLOAT3)
+        else if (it->type == Variable::DataType::FLOAT3)
         {
             it->value.x = sync_get_val(it->syncTrack.x, row);
             it->value.y = sync_get_val(it->syncTrack.y, row);
@@ -63,33 +63,55 @@ void DemoSystem::Synchronizer::update(double row)
     }
 }
 
-void DemoSystem::Synchronizer::setTracks(std::list<Configuration::Track> tracks)
+void DemoSystem::Synchronizer::initializeTrackVariables(std::list<Configuration::Variable> trackVariables)
 {
-    for (Configuration::Track track : tracks)
+    for (Configuration::Variable track : trackVariables)
     {
-        Gateway gateway;
-        gateway.type = track.type;
-        gateway.name = track.variableName;
-        if (track.type == Configuration::Track::FLOAT1)
+        TrackVariable variable;
+        switch (track.type)
         {
-            gateway.syncTrack.x = sync_get_track(this->device, track.trackName.c_str());
+        case Configuration::Variable::DataType::FLOAT1:
+            variable.type = Variable::DataType::FLOAT1;
+            variable.syncTrack.x = sync_get_track(this->device, track.trackName.c_str());
+            break;
+        case Configuration::Variable::DataType::FLOAT2:
+            variable.type = Variable::DataType::FLOAT2;
+            variable.syncTrack.x = sync_get_track(this->device, (track.trackName + ".x").c_str());
+            variable.syncTrack.y = sync_get_track(this->device, (track.trackName + ".y").c_str());
+            break;
+        case Configuration::Variable::DataType::FLOAT3:
+            variable.type = Variable::DataType::FLOAT3;
+            variable.syncTrack.x = sync_get_track(this->device, (track.trackName + ".x").c_str());
+            variable.syncTrack.y = sync_get_track(this->device, (track.trackName + ".y").c_str());
+            variable.syncTrack.z = sync_get_track(this->device, (track.trackName + ".z").c_str());
+            break;
         }
-        else if (track.type == Configuration::Track::FLOAT2)
-        {
-            gateway.syncTrack.x = sync_get_track(this->device, (track.trackName + ".x").c_str());
-            gateway.syncTrack.y = sync_get_track(this->device, (track.trackName + ".y").c_str());
-        }
-        else if (track.type == Configuration::Track::FLOAT3)
-        {
-            gateway.syncTrack.x = sync_get_track(this->device, (track.trackName + ".x").c_str());
-            gateway.syncTrack.y = sync_get_track(this->device, (track.trackName + ".y").c_str());
-            gateway.syncTrack.z = sync_get_track(this->device, (track.trackName + ".z").c_str());
-        }
-        this->gateways.push_back(gateway);
+        variable.name = track.variableName;
+        this->trackVariables.push_back(variable);
     }
+}
+
+void DemoSystem::Synchronizer::initializeBasicVariables()
+{
+    this->addBasicVariable("time", Variable::DataType::FLOAT1);
+    this->addBasicVariable("resolution", Variable::DataType::FLOAT2);
+    this->addBasicVariable("position", Variable::DataType::FLOAT3);
+    this->addBasicVariable("mouse", Variable::DataType::FLOAT2);
+    this->addBasicVariable("user", Variable::DataType::FLOAT3);
 }
 
 void DemoSystem::Synchronizer::cleanUp()
 {
     sync_destroy_device(this->device);
+}
+
+void DemoSystem::Synchronizer::addBasicVariable(std::string name, Variable::DataType datatype)
+{
+    BasicVariable v;
+    v.name = name;
+    v.type = datatype;
+    v.value.x = 0.0;
+    v.value.y = 0.0;
+    v.value.z = 0.0;
+    this->basicVariables[name] = v;
 }

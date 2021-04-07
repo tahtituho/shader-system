@@ -65,27 +65,28 @@ bool DemoSystem::Configuration::read(std::string file)
         this->shaders.majorVersion = c["shaders"]["majorVersion"].type() != Json::ValueType::nullValue ? c["shaders"]["majorVersion"].asInt() : this->shaders.majorVersion;
         this->shaders.minorVersion = c["shaders"]["minorVersion"].type() != Json::ValueType::nullValue ? c["shaders"]["minorVersion"].asInt() : this->shaders.minorVersion;
 
-        if (c["tracks"].type() != Json::ValueType::nullValue)
+        if (c["variables"].type() != Json::ValueType::nullValue)
         {
-            for (int i = 0; i < c["tracks"].size(); i++)
+            for (int i = 0; i < c["variables"].size(); i++)
             {
-                Track t;
-                t.variableName = c["tracks"][i]["name"]["variable"].asString();
-                t.trackName = c["tracks"][i]["name"]["track"].asString();
-                std::string type = c["tracks"][i]["type"].asString();
-                if (type == "float1")
+                Variable t;
+                std::string dataType = c["variables"][i]["dataType"].asString();
+                if (dataType == "float1")
                 {
-                    t.type = DemoSystem::Configuration::Track::FLOAT1;
+                    t.type = Variable::DataType::FLOAT1;
                 }
-                else if (type == "float2")
+                else if (dataType == "float2")
                 {
-                    t.type = Track::TrackType::FLOAT2;
+                    t.type = Variable::DataType::FLOAT2;
                 }
-                else if (type == "float3")
+                else if (dataType == "float3")
                 {
-                    t.type = Track::TrackType::FLOAT3;
+                    t.type = Variable::DataType::FLOAT3;
                 }
-                this->tracks.push_back(t);
+                t.variableName = c["variables"][i]["variable"].asString();
+                std::string variableType = c["variables"][i]["variableType"].asString();
+                t.trackName = c["variables"][i]["track"].asString();
+                this->trackVariables.push_back(t);
             }
         }
 

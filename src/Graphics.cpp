@@ -86,9 +86,9 @@ void DemoSystem::Graphics::initialize(Configuration::Shaders shaders, Configurat
     return;
 }
 
-void DemoSystem::Graphics::registerGateways(std::list<Synchronizer::Gateway> *gateways)
+void DemoSystem::Graphics::registerSynchronizer(DemoSystem::Synchronizer *synchronizer)
 {
-    this->gateways = gateways;
+    this->synchronizer = synchronizer;
 }
 
 void DemoSystem::Graphics::registerTextures(std::list<Textures::Texture> *textures)
@@ -99,6 +99,16 @@ void DemoSystem::Graphics::registerTextures(std::list<Textures::Texture> *textur
 void DemoSystem::Graphics::registerKeyboard(GLFWkeyfun callback)
 {
     glfwSetKeyCallback(this->window, callback);
+}
+
+void DemoSystem::Graphics::registerMouseMove(GLFWcursorposfun callback)
+{
+    glfwSetCursorPosCallback(this->window, callback);
+}
+
+void DemoSystem::Graphics::registerMouseButtons(GLFWmousebuttonfun callback)
+{
+    glfwSetMouseButtonCallback(this->window, callback);
 }
 
 void DemoSystem::Graphics::registerLogger(Logger *logger)
@@ -138,13 +148,17 @@ void DemoSystem::Graphics::initShaders(std::string vertexSource, std::string fra
         }
         return;
     }
-    timeUniform = glGetUniformLocation(this->program, "time");
-    resolutionUniform = glGetUniformLocation(this->program, "resolution");
 
-    for (auto it = this->gateways->begin(); it != this->gateways->end(); it++)
+    for (auto tv = this->synchronizer->trackVariables.begin(); tv != this->synchronizer->trackVariables.end(); tv++)
     {
-        it->uniform = glGetUniformLocation(this->program, it->name.c_str());
+        tv->uniform = glGetUniformLocation(this->program, tv->name.c_str());
     }
+
+    for (auto bv = this->synchronizer->basicVariables.begin(); bv != this->synchronizer->basicVariables.end(); bv++)
+    {
+        bv->second.uniform = glGetUniformLocation(this->program, bv->first.c_str());
+    }
+
     for (auto it = this->textures->begin(); it != this->textures->end(); it++)
     {
         glGenTextures(1, &it->handle);
@@ -205,24 +219,33 @@ void DemoSystem::Graphics::render(double time)
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(program);
 
-    glUniform1f(timeUniform, (GLfloat)time);
     int width, height;
     glfwGetWindowSize(this->window, &width, &height);
-    glUniform2f(resolutionUniform, (GLfloat)width, (GLfloat)height);
 
-    for (auto it = this->gateways->begin(); it != this->gateways->end(); it++)
+    BasicVariable *timeVariable = &this->synchronizer->basicVariables.at("time");
+    glUniform1f(timeVariable->uniform, (GLfloat)time);
+    BasicVariable *resolutionVariable = &this->synchronizer->basicVariables.at("resolution");
+    glUniform2f(resolutionVariable->uniform, (GLfloat)width, (GLfloat)height);
+    BasicVariable *positionVariable = &this->synchronizer->basicVariables.at("position");
+    glUniform3f(positionVariable->uniform, (GLfloat)positionVariable->value.x, (GLfloat)positionVariable->value.y, (GLfloat)positionVariable->value.z);
+    BasicVariable *mouseVariable = &this->synchronizer->basicVariables.at("mouse");
+    glUniform2f(mouseVariable->uniform, (GLfloat)mouseVariable->value.x, (GLfloat)mouseVariable->value.y);
+    BasicVariable *userVariable = &this->synchronizer->basicVariables.at("user");
+    glUniform3f(userVariable->uniform, (GLfloat)userVariable->value.x, (GLfloat)userVariable->value.y, (GLfloat)userVariable->value.z);
+
+    for (auto tv = this->synchronizer->trackVariables.begin(); tv != this->synchronizer->trackVariables.end(); tv++)
     {
-        if (it->type == Configuration::Track::FLOAT1)
+        if (tv->type == Variable::DataType::FLOAT1)
         {
-            glUniform1f(it->uniform, (GLfloat)it->value.x);
+            glUniform1f(tv->uniform, (GLfloat)tv->value.x);
         }
-        else if (it->type == Configuration::Track::FLOAT2)
+        else if (tv->type == Variable::DataType::FLOAT2)
         {
-            glUniform2f(it->uniform, (GLfloat)it->value.x, (GLfloat)it->value.y);
+            glUniform2f(tv->uniform, (GLfloat)tv->value.x, (GLfloat)tv->value.y);
         }
-        else if (it->type == Configuration::Track::FLOAT3)
+        else if (tv->type == Variable::DataType::FLOAT3)
         {
-            glUniform3f(it->uniform, (GLfloat)it->value.x, (GLfloat)it->value.y, (GLfloat)it->value.z);
+            glUniform3f(tv->uniform, (GLfloat)tv->value.x, (GLfloat)tv->value.y, (GLfloat)tv->value.z);
         }
     }
 

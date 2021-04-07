@@ -48,18 +48,31 @@ namespace DemoSystem
             int minorVersion;
         };
 
-        struct Track
+        struct Variable
         {
-            enum TrackType
+            enum DataType
             {
                 FLOAT1,
                 FLOAT2,
                 FLOAT3
             };
-
-            TrackType type;
+            enum VariableType
+            {
+                TRACK_VARIABLE,
+                PERSISTENT
+            };
+            struct Value
+            {
+                double x;
+                double y;
+                double z;
+            };
+            VariableType variableType;
+            DataType type;
+            Value initialValue;
             std::string trackName;
             std::string variableName;
+            bool persistent;
         };
 
         struct Asset
@@ -81,7 +94,7 @@ namespace DemoSystem
         Tune tune;
         Sync sync;
         Shaders shaders;
-        std::list<Configuration::Track> tracks;
+        std::list<Configuration::Variable> trackVariables;
         std::list<Configuration::Asset> assets;
 
     private:
