@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(ShaderSystem VERSION 1.4.0)
+project(ShaderSystem VERSION 1.5.0)
 configure_file(ShaderSystemConfig.h.in ShaderSystemConfig.h)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
