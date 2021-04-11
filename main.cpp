@@ -43,7 +43,7 @@ int main(int argc, char *args[])
     graphics.initialize(configurations->shaders, configurations->screen, configurations->demo);
     logger.initialize(25, 0.0, configurations->screen.height, !configurations->demo.release);
     std::ostringstream stream;
-    stream << "shader system version " << ShaderSystem_VERSION_MAJOR << "." << ShaderSystem_VERSION_MINOR << " by tahtituho 2019";
+    stream << "shader system version " << ShaderSystem_VERSION_MAJOR << "." << ShaderSystem_VERSION_MINOR << " by tahtituho 2021";
     logger.write(DemoSystem::Logger::INFO, stream.str());
     logger.write(DemoSystem::Logger::INFO, "opengl vendor:   " + std::string((const char *)glGetString(GL_VENDOR)));
     logger.write(DemoSystem::Logger::INFO, "opengl renderer  " + std::string((const char *)glGetString(GL_RENDERER)));
