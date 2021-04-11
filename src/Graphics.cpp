@@ -91,22 +91,27 @@ void DemoSystem::Graphics::registerSynchronizer(DemoSystem::Synchronizer *synchr
     this->synchronizer = synchronizer;
 }
 
+void DemoSystem::Graphics::registerCamera(DemoSystem::Camera *camera)
+{
+    this->camera = camera;
+}
+
 void DemoSystem::Graphics::registerTextures(std::list<Textures::Texture> *textures)
 {
     this->textures = textures;
 }
 
-void DemoSystem::Graphics::registerKeyboard(GLFWkeyfun callback)
+void DemoSystem::Graphics::registerKeyboardCallback(GLFWkeyfun callback)
 {
     glfwSetKeyCallback(this->window, callback);
 }
 
-void DemoSystem::Graphics::registerMouseMove(GLFWcursorposfun callback)
+void DemoSystem::Graphics::registerMouseMoveCallback(GLFWcursorposfun callback)
 {
     glfwSetCursorPosCallback(this->window, callback);
 }
 
-void DemoSystem::Graphics::registerMouseButtons(GLFWmousebuttonfun callback)
+void DemoSystem::Graphics::registerMouseButtonsCallback(GLFWmousebuttonfun callback)
 {
     glfwSetMouseButtonCallback(this->window, callback);
 }
@@ -224,12 +229,18 @@ void DemoSystem::Graphics::render(double time)
 
     BasicVariable *timeVariable = &this->synchronizer->basicVariables.at("time");
     glUniform1f(timeVariable->uniform, (GLfloat)time);
+
     BasicVariable *resolutionVariable = &this->synchronizer->basicVariables.at("resolution");
     glUniform2f(resolutionVariable->uniform, (GLfloat)width, (GLfloat)height);
+
     BasicVariable *positionVariable = &this->synchronizer->basicVariables.at("position");
-    glUniform3f(positionVariable->uniform, (GLfloat)positionVariable->value.x, (GLfloat)positionVariable->value.y, (GLfloat)positionVariable->value.z);
-    BasicVariable *mouseVariable = &this->synchronizer->basicVariables.at("mouse");
-    glUniform2f(mouseVariable->uniform, (GLfloat)mouseVariable->value.x, (GLfloat)mouseVariable->value.y);
+    Vector3 cameraPosition = this->camera->getPosition();
+    glUniform3f(positionVariable->uniform, (GLfloat)cameraPosition.x, (GLfloat)cameraPosition.y, (GLfloat)cameraPosition.z);
+
+    BasicVariable *viewDirVariable = &this->synchronizer->basicVariables.at("viewDir");
+    Vector3 viewDir = this->camera->getViewDir();
+    glUniform3f(viewDirVariable->uniform, (GLfloat)viewDir.x, (GLfloat)viewDir.y, (GLfloat)viewDir.z);
+
     BasicVariable *userVariable = &this->synchronizer->basicVariables.at("user");
     glUniform3f(userVariable->uniform, (GLfloat)userVariable->value.x, (GLfloat)userVariable->value.y, (GLfloat)userVariable->value.z);
 

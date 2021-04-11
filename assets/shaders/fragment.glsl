@@ -4,7 +4,7 @@ out vec4 FragColor;
 uniform float time;
 uniform vec2 resolution;
 uniform vec3 position;
-uniform vec2 mouse;
+uniform vec2 viewDir;
 uniform vec3 user;
 
 uniform vec3 scene1Color;

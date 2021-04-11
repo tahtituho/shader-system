@@ -50,6 +50,8 @@ add_executable(${PROJECT_NAME}
     src/Graphics.cpp 
     src/InputDevices.cpp 
     src/Helpers.cpp
+    src/Camera.cpp
+    src/Vector3.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC build include libs libs/rocket libs/json libs/glfw-3.3.3/include ${GLEW_INCLUDE_DIRS} ${BASS_INCLUDE})
 target_link_directories(${PROJECT_NAME} PUBLIC libs ${BASS_LIBRARIES} ${GLEW_LIBRARIES})

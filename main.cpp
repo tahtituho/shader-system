@@ -7,6 +7,7 @@
 #include "Logger.h"
 #include "InputDevices.h"
 #include "Helpers.h"
+#include "Camera.h"
 
 const std::string VERSION = ShaderSystem_VERSION_MAJOR + "." + ShaderSystem_VERSION_MINOR;
 void mainLoop();
@@ -27,6 +28,7 @@ DemoSystem::Textures textures;
 DemoSystem::Logger logger;
 DemoSystem::Graphics graphics;
 DemoSystem::InputDevices inputDevices;
+DemoSystem::Camera camera;
 
 int main(int argc, char *args[])
 {
@@ -68,17 +70,18 @@ int main(int argc, char *args[])
     textures.setTextures(configurations->assets);
 
     graphics.registerLogger(&logger);
-    graphics.registerKeyboard(&handleKeyboard);
-    graphics.registerMouseMove(&handleMouseMove);
-    graphics.registerMouseButtons(&handleMouseButtons);
+    graphics.registerKeyboardCallback(&handleKeyboard);
+    graphics.registerMouseMoveCallback(&handleMouseMove);
+    graphics.registerMouseButtonsCallback(&handleMouseButtons);
     graphics.registerTextures(&textures.textures);
     graphics.registerSynchronizer(&synchronizer);
+    graphics.registerCamera(&camera);
     std::string vertexSource = DemoSystem::Helpers::readFile(configurations->shaders.vertex);
     std::string fragmentSource = DemoSystem::Helpers::readFile(configurations->shaders.fragment);
     graphics.initShaders(vertexSource, fragmentSource);
     graphics.initFrameBuffer();
 
-    inputDevices.initialize(&graphics, &music, &logger, &synchronizer, configurations->demo.release);
+    inputDevices.initialize(&graphics, &music, &logger, &synchronizer, &camera, configurations->demo.release);
 
     music.play();
     mainLoop();
@@ -123,6 +126,7 @@ void mainLoop()
         double position = music.position();
         synchronizer.update(position);
         graphics.render(position);
+        camera.update();
         logger.render();
 
         if (configurations->demo.release == true && music.hasMusicEnded() == true)

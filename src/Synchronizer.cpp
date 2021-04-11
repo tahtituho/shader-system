@@ -96,7 +96,7 @@ void DemoSystem::Synchronizer::initializeBasicVariables()
     this->addBasicVariable("time", Variable::DataType::FLOAT1);
     this->addBasicVariable("resolution", Variable::DataType::FLOAT2);
     this->addBasicVariable("position", Variable::DataType::FLOAT3);
-    this->addBasicVariable("mouse", Variable::DataType::FLOAT2);
+    this->addBasicVariable("viewDir", Variable::DataType::FLOAT3);
     this->addBasicVariable("user", Variable::DataType::FLOAT3);
 }
 
