@@ -49,7 +49,7 @@ int main(int argc, char *args[])
     logger.write(DemoSystem::Logger::INFO, "opengl renderer  " + std::string((const char *)glGetString(GL_RENDERER)));
     logger.write(DemoSystem::Logger::INFO, "opengl version:  " + std::string((const char *)glGetString(GL_VERSION)));
     logger.write(DemoSystem::Logger::INFO, "shading version: " + std::string((const char *)glGetString(GL_SHADING_LANGUAGE_VERSION)));
-    logger.write(DemoSystem::Logger::INFO, "context version  " + std::to_string(configurations->shaders.majorVersion) + "." + std::to_string(configurations->shaders.minorVersion));
+    logger.write(DemoSystem::Logger::INFO, "context version: " + std::to_string(configurations->shaders.majorVersion) + "." + std::to_string(configurations->shaders.minorVersion));
     logger.write(DemoSystem::Logger::INFO, "bass version:    " + music.version());
 
     music.initialize(configurations->tune.frequency, configurations->tune.file);
