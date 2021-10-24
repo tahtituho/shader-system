@@ -27,11 +27,24 @@ void DemoSystem::Framebuffer::drawFBO() {
     glBindTexture(GL_TEXTURE_2D, this->fbo_texture);
     glUniform1i(uniform_fbo_texture, /*GL_TEXTURE*/0);
     //glEnableVertexAttribArray(attribute_v_coord_postproc);
+    glEnableVertexAttribArray(attribute_v_coord_postproc);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo_fbo_vertices);
-    glBindVertexArray(this->vto);
+    glVertexAttribPointer(
+        attribute_v_coord_postproc,  // attribute
+        2,                  // number of elements per vertex, here (x,y)
+        GL_FLOAT,           // the type of each element
+        GL_FALSE,           // take our values as-is
+        0,                  // no extra data between each position
+        0                   // offset of first element
+    );
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glDisableVertexAttribArray(attribute_v_coord_postproc);
+
+    // glBindBuffer(GL_ARRAY_BUFFER, vbo_fbo_vertices);
+    // glBindVertexArray(this->vto);
     // This crashes the program. Maybe the drawing is incorrect? Is it trying to draw something wrong?
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	// glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glUseProgram(0);
 }
 
@@ -49,12 +62,10 @@ DemoSystem::Logger::Message DemoSystem::Framebuffer::generateFBO(unsigned int wi
     glBindTexture(GL_TEXTURE_2D, 0);
 
     /* Depth buffer */
-    /*
     glGenRenderbuffers(1, &this->rbo_depth);
     glBindRenderbuffer(GL_RENDERBUFFER, this->rbo_depth);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
-    */
 
     /* Framebuffer to link everything together */
     glGenFramebuffers(1, &this->fbo);
