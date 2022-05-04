@@ -13,18 +13,19 @@ glfw, rocket, jsoncpp, bass, glew, lodepng and glText are included in project.
 - glText https://github.com/vallentin/glText
 
 
-C++ compiler is needed, and on linux g++ can found easily from package management, but on windows mingw or mingw-64 works well. Remember to choose 32bit.
-- http://www.mingw.org/
-- http://mingw-w64.org/doku.php
- 
-Make sure that miDebuggerPath is correct in `lauch.json`. Check `c_cpp_configuration.json` that compilerPath is correct as well, to ensure that intellisense is working correctly. **NOTE** do not commit those changes to repository, as they are specific to your system.
+C++ compiler is needed, and on linux g++ can found easily from package management, but on windows mingw-64 works well.
+- https://www.mingw-w64.org/downloads/ choose MSYS2 (other options might be viable, but MSYS2 is known to work)
 
-At least these packages are needed for MinGW from Basic Setup
-- mingw32-base-bin
-- mingw32-gcc-g++-bin
-- msys-base-bin
-- mingw32-libmingwex-dev
-- mingw32-libmingwex-dll
+After MSYS2 is installed open MSYS2 and type
+
+`pacman -S --needed base-devel mingw-w64-x86_64-toolchain`
+
+Make sure visual studio code knows where to find `g++.exe`. Two options are provided here, and option number **2** is preferred.
+
+1. Make sure that miDebuggerPath is correct in `lauch.json`. Check `c_cpp_configuration.json` that compilerPath is correct as well, to ensure that intellisense is working correctly. **NOTE** do not commit those changes to repository, as they are specific to your system.
+2. add mingw bin folder to your PATH, for example `C:\development\msys64\mingw32\bin` (preferred way)
+
+More information about compiler installation: [C/C++ for Visual Studio Code](https://code.visualstudio.com/docs/languages/cpp)
 
 CMake is needed. Download it from https://cmake.org/ and install **CMake Tools** extension for Visual Studio Code
 # Notes on compiling
