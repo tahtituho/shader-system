@@ -5,8 +5,7 @@
 #include <math.h>
 #include <list>
 #include <map>
-#include <map>
-#include <GL/gl.h>
+#include <GL/glew.h>
 #include "Configuration.h"
 #include "Variable.h"
 #define SYNC_PLAYER

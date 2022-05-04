@@ -16,7 +16,7 @@ if(LINUX)
     cmake_policy (SET CMP0072 OLD)
 endif(LINUX)
 
-add_subdirectory(libs/glfw-3.3.3)
+add_subdirectory(libs/glfw-3.3.7)
 find_package(OpenGL REQUIRED)
 
 set(CMAKE_CXX_STANDARD 11)
