@@ -27,7 +27,11 @@ Make sure visual studio code knows where to find `g++.exe`. Two options are prov
 
 More information about compiler installation: [C/C++ for Visual Studio Code](https://code.visualstudio.com/docs/languages/cpp)
 
-CMake is needed. Download it from https://cmake.org/ and install **CMake Tools** extension for Visual Studio Code
+**CMake** is needed. Download it from [https://cmake.org/](https://cmake.org/) and add it to your path.
+
+Install **CMake** and **CMake Tools** extensions for Visual Studio Code, both can be found from Visual Studio Extensions
+
+**Ninja** is needed, Download it from [https://ninja-build.org/](https://ninja-build.org/) and install it somewhere and add installation path to your path, so cmake can find it.
 # Notes on compiling
 ### Windows/Linux
 Create output folder for executable(ie. bin/debug) as compiler cannot create folders by itself.
@@ -43,10 +47,17 @@ Use following command to install required libraries
 ### Compiling
 Use command *CMake: Configure* to create configuration. Configuration will appear in **build** folder. Use command *CMake: Build* to compile shader system. 
 
-### Debugging
-Press F5 to start debug.
+# Debugging
+Before debugging copy following files NORTE these steps has to be done only once, not every time you debug.
+1. Copy bass.dl from libs/bass-24-win/ **build** folder
+1. Copy glew32.dl from libs/glew-2.2.0/bin/Release **build** folder
 
-# executing
+There is two different ways to debug
+- Pressing **F5** will use debug profiles defined in `.vscode/launch.json` 
+- Pressing small bug icon on lower part of Visual Studio Code, this will create it's own definition on the fly (preferred method)
+
+
+# Executing
 To run shader-system in release mode execute following steps. Release mode means mode where you write shader code, sync graphics with music and present your demo at party.
 1. Make directory where you want to store shader-system.
 1. Build relese version.
@@ -56,7 +67,7 @@ To run shader-system in release mode execute following steps. Release mode means
 
 When demo system is executed without parameters, it defaults configuration file to "configuration.json".
 
-Be sure that shaders, music and textures defined in "configuration.json" exist, as shader system does not give any error messages is some files are missing.
+Be sure that shaders, music and textures defined in "configuration.json" exist, as shader system does not give any error messages if some files are missing.
 
 1. start rocket client
 2. start "ShaderSystem.exe"

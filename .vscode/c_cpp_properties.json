@@ -13,8 +13,7 @@
                 "WIN32",
                 "GLEW_BUILD"
             ],
-            "compilerPath": "D:\\development\\mingw-w64\\i686-8.1.0-posix-dwarf-rt_v6-rev0\\mingw32\\bin\\g++.exe",
-            "intelliSenseMode": "gcc-x86",
+            "intelliSenseMode": "windows-clang-x86",
             "browse": {
                 "path": [
                     "${workspaceFolder}",
@@ -27,7 +26,8 @@
             },
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "configurationProvider": "ms-vscode.cmake-tools"
+            "configurationProvider": "ms-vscode.cmake-tools",
+            "compilerPath": "C:/development/LLVM/bin/clang++.exe"
         }
     ],
     "version": 4
