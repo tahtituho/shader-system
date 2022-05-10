@@ -12,7 +12,7 @@ DemoSystem::Configuration *DemoSystem::Configuration::getInstance()
 
 DemoSystem::Configuration::Configuration()
 {
-    this->demo.release = true;
+    this->demo.release = false;
     this->demo.name = "demo";
     this->demo.group = "demogroup";
     this->demo.icon = "assets/pics/tt.png";
@@ -30,8 +30,8 @@ DemoSystem::Configuration::Configuration()
 
     this->shaders.vertex = "shaders/vertex.glsl";
     this->shaders.fragment = "shaders/fragment.glsl";
-    this->shaders.majorVersion = 2;
-    this->shaders.minorVersion = 1;
+    this->shaders.majorVersion = 4;
+    this->shaders.minorVersion = 3;
 }
 
 bool DemoSystem::Configuration::read(std::string file)

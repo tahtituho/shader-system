@@ -31,7 +31,7 @@
             "name": "(gdb) Windows Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/ShaderSystem.exe",
+            "program": "${command:cmake.launchTargetPath}",
             "args": [
                 "configuration.json"
             ],
@@ -43,9 +43,34 @@
                     "value": "$PATH:${command:cmake.launchTargetDirectory}"
                 }
             ],
+            "targetArchitecture" :"x86_64",
+            "miDebuggerPath": "gdb.exe",
             "externalConsole": true,
             "MIMode": "gdb",
-            "miDebuggerPath": "D:\\development\\mingw-w64\\i686-8.1.0-posix-dwarf-rt_v6-rev0\\mingw32\\bin\\gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "(lldb) Windows Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${command:cmake.launchTargetPath}",
+            "args": [
+                "configuration.json"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [
+                {
+                    "name": "PATH",
+                    "value": "$PATH:${command:cmake.launchTargetDirectory}"
+                }
+            ],
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -53,7 +78,14 @@
                     "ignoreFailures": true
                 }
             ],
-            "targetArchitecture": "x86_64"
+            "miDebuggerPath": "lldb.exe",
+            "externalConsole": true,
+            "MIMode": "lldb",
+            "logging": {
+                "trace": true,
+                "traceResponse": true,
+                "engineLogging": true
+            }
         }
     ]
 }

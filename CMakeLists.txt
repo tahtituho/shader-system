@@ -1,6 +1,17 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.23.1)
 project(ShaderSystem VERSION 1.5.0)
 configure_file(ShaderSystemConfig.h.in ShaderSystemConfig.h)
+# Most probably we need to copy exe and dlls files to Debug folder
+# Also assets folder and configuration.json should be copied to Debug folder
+# By doing that we ensure that working directory is correct, maybe
+
+# This commands cmake to copy all compiled stuff to build folder
+# Reasoning for this is that with that we get glfw.dll next to exe
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -8,6 +19,7 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
 set(GLFW_VULKAN_STATIC OFF CACHE BOOL "" FORCE)
 
+set(WORKING_DIRECTORY, PROJECT_SOURCE_DIR)
 if(UNIX AND NOT APPLE)
     set(LINUX TRUE)
 endif()
@@ -16,13 +28,15 @@ if(LINUX)
     cmake_policy (SET CMP0072 OLD)
 endif(LINUX)
 
+# This adds glfw folder so cmake knows where to look for(?)
 add_subdirectory(libs/glfw-3.3.7)
 find_package(OpenGL REQUIRED)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(GLEW_INCLUDE_DIRS libs/glew-2.2.0/include)
+set(GLEW_INCLUDE libs/glew-2.2.0/include)
+set(GLFW_INCLUDE libs/glfw-3.3.7/include)
 if(WIN32)
     set(GLEW_LIBRARIES libs/glew-2.2.0/lib/Release/Win32)
     set(BASS_INCLUDE libs/bass24-win/c)
@@ -52,10 +66,16 @@ add_executable(${PROJECT_NAME}
     src/Helpers.cpp
     src/Camera.cpp
     src/Vector3.cpp
-)
-target_include_directories(${PROJECT_NAME} PUBLIC build include libs libs/rocket libs/json libs/glfw-3.3.3/include ${GLEW_INCLUDE_DIRS} ${BASS_INCLUDE})
-target_link_directories(${PROJECT_NAME} PUBLIC libs ${BASS_LIBRARIES} ${GLEW_LIBRARIES})
+) 
+
+# This command includes header file directories, like rocket and glfw
+target_include_directories(${PROJECT_NAME} PUBLIC build include libs libs/rocket libs/json ${GLFW_INCLUDE} ${GLEW_INCLUDE} ${BASS_INCLUDE})
+
+# This command tells where to find lib files (why we don't have GLFW here?)
+target_link_directories(${PROJECT_NAME} PUBLIC libs ${GLEW_LIBRARIES} ${BASS_LIBRARIES} )
 target_link_libraries(${PROJECT_NAME} ${LIBS})
+
+# target_link_options are parameters for compiler (g++ or clang++)
 if(WIN32)
     target_link_options(${PROJECT_NAME} PRIVATE "-mwindows" "-fpermissive" "-static-libstdc++" "-D_WIN32_WINNT=0x501")
 else(WIN32)
