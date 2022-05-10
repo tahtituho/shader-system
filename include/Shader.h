@@ -36,6 +36,7 @@ namespace DemoSystem {
             void setTextureManager(DemoSystem::TextureManager* textureManager);
             DemoSystem::Logger::Message initShader();
             void cleanShader();
+            void renderPost(double time);
             void render(double time);
 
         protected:

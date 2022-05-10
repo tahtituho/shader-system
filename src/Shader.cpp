@@ -156,6 +156,26 @@ void DemoSystem::Shader::cleanShader() {
     glDeleteProgram(this->program);
 }
 
+// Rendering function used for "quick-and-dirty" post-processing without renderbuffer
+void DemoSystem::Shader::renderPost(double time) {
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(this->program);
+
+
+    glBindTexture(GL_TEXTURE_2D, 1);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, this->width, this->height, 0);
+	glGenerateMipmap(GL_TEXTURE_2D);
+    glActiveTexture(GL_TEXTURE0);
+	glUniform1i(0, 0);
+    
+    glBindVertexArray(this->VAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    glUseProgram(0);
+}
+
 void DemoSystem::Shader::render(double time) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);

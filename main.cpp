@@ -266,8 +266,10 @@ void mainLoop()
         //glfwSwapBuffers(window);
         glfwPollEvents();
         framebuffer.unBind();
-        // THIS SHOULD DRAW THE RENDERED TEXTURE, BUT IT CRASHES
         framebuffer.drawFBO();
+        //"qnd" pp. also comment framebuffers and previous logger
+        //framebuffer.renderPost(time);
+        //logger.render();
         glfwSwapBuffers(window);
         if(configurations.demo.release == true && music.hasMusicEnded() == true) {
            glfwSetWindowShouldClose(window, GLFW_TRUE); 
