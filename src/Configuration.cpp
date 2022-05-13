@@ -21,15 +21,16 @@ DemoSystem::Configuration::Configuration()
     this->screen.height = 600;
     this->screen.FPS = 60;
 
-    this->tune.file = "tune.mp3";
+    this->tune.file = "assets/music/tune.mp3";
     this->tune.BPM = 80.0;
     this->tune.frequency = 44000;
 
+    this->sync.enabled = false;
     this->sync.RPB = 8;
     this->sync.host = "localhost";
 
-    this->shaders.vertex = "shaders/vertex.glsl";
-    this->shaders.fragment = "shaders/fragment.glsl";
+    this->shaders.vertex = "assets/shaders/vertex.glsl";
+    this->shaders.fragment = "assets/shaders/fragment.glsl";
     this->shaders.majorVersion = 4;
     this->shaders.minorVersion = 3;
 }
@@ -57,6 +58,7 @@ bool DemoSystem::Configuration::read(std::string file)
         this->tune.BPM = c["music"]["BPM"].type() != Json::ValueType::nullValue ? c["music"]["BPM"].asDouble() : this->tune.BPM;
         this->tune.frequency = c["music"]["frequency"].type() != Json::ValueType::nullValue ? c["music"]["frequency"].asInt() : this->tune.frequency;
 
+        this->demo.release = c["sync"]["enabled"].type() != Json::ValueType::nullValue ? c["sync"]["enabled"].asBool() : this->demo.release;
         this->sync.host = c["sync"]["host"].type() != Json::ValueType::nullValue ? c["sync"]["host"].asString() : this->sync.host;
         this->sync.RPB = c["sync"]["RPB"].type() != Json::ValueType::nullValue ? c["sync"]["RPB"].asInt() : this->sync.RPB;
 

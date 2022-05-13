@@ -36,6 +36,7 @@ namespace DemoSystem
 
         struct Sync
         {
+            bool enabled;
             int RPB;
             std::string host;
         };
