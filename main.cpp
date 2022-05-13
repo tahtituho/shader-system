@@ -1,3 +1,5 @@
+#include <string>
+
 #include "ShaderSystemConfig.h"
 #include "Graphics.h"
 #include "Configuration.h"
@@ -9,7 +11,7 @@
 #include "Helpers.h"
 #include "Camera.h"
 
-const std::string VERSION = ShaderSystem_VERSION_MAJOR + "." + ShaderSystem_VERSION_MINOR;
+const std::string VERSION = std::to_string(ShaderSystem_VERSION_MAJOR) + "." + std::to_string(ShaderSystem_VERSION_MINOR);
 void mainLoop();
 void cleanUp();
 
@@ -38,26 +40,36 @@ int main(int argc, char *args[])
         confFile = std::string(args[1]);
     }
     configurations = DemoSystem::Configuration::getInstance();
-    configurations->read(confFile);
+    bool confReadOk = configurations->read(confFile);
 
     graphics.initialize(configurations->shaders, configurations->screen, configurations->demo);
     logger.initialize(25, 0.0, configurations->screen.height, !configurations->demo.release);
-    std::ostringstream stream;
-    stream << "shader system version " << ShaderSystem_VERSION_MAJOR << "." << ShaderSystem_VERSION_MINOR << " by tahtituho 2021";
-    logger.write(DemoSystem::Logger::INFO, stream.str());
+
+    logger.write(DemoSystem::Logger::INFO, "shader system version " + VERSION + " by tahtituho 2022");
     logger.write(DemoSystem::Logger::INFO, "opengl vendor:   " + std::string((const char *)glGetString(GL_VENDOR)));
-    logger.write(DemoSystem::Logger::INFO, "opengl renderer  " + std::string((const char *)glGetString(GL_RENDERER)));
+    logger.write(DemoSystem::Logger::INFO, "opengl renderer: " + std::string((const char *)glGetString(GL_RENDERER)));
     logger.write(DemoSystem::Logger::INFO, "opengl version:  " + std::string((const char *)glGetString(GL_VERSION)));
     logger.write(DemoSystem::Logger::INFO, "shading version: " + std::string((const char *)glGetString(GL_SHADING_LANGUAGE_VERSION)));
-    logger.write(DemoSystem::Logger::INFO, "context version: " + std::to_string(configurations->shaders.majorVersion) + "." + std::to_string(configurations->shaders.minorVersion));
     logger.write(DemoSystem::Logger::INFO, "bass version:    " + music.version());
 
-    music.initialize(configurations->tune.frequency, configurations->tune.file);
+    if (!confReadOk)
+    {
+        logger.write(DemoSystem::Logger::ERR, "configuration file not found: " + confFile);
+    }
+    if (!music.initialize(configurations->tune.frequency, configurations->tune.file)) 
+    {
+        logger.write(DemoSystem::Logger::ERR, "error initializing song: " + configurations->tune.file);
+    }
     synchronizer.initialize(configurations->tune.BPM, configurations->sync.RPB);
 
-    if (!configurations->demo.release)
+    bool rocketClientNeeded = !configurations->demo.release && configurations->sync.enabled;
+    if (rocketClientNeeded)
     {
-        synchronizer.connectPlayer(configurations->sync.host);
+        bool rocketConnection = synchronizer.connectPlayer(configurations->sync.host);
+        if (!rocketConnection)
+        {
+            logger.write(DemoSystem::Logger::ERR, "cannot connect to rocket. make sure that rocket is running and restart shader system.");
+        }
     }
     sync_cb functions;
     functions.is_playing = &musicPlaying;

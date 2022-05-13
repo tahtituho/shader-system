@@ -36,14 +36,14 @@
                 "configuration.json"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build",
+            "cwd": "${workspaceFolder}",
             "environment": [
                 {
                     "name": "PATH",
                     "value": "$PATH:${command:cmake.launchTargetDirectory}"
                 }
             ],
-            "targetArchitecture" :"x86_64",
+            "targetArchitecture" :"x86",
             "miDebuggerPath": "gdb.exe",
             "externalConsole": true,
             "MIMode": "gdb",

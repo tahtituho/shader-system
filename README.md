@@ -18,7 +18,7 @@ C++ compiler is needed, and on linux g++ can found easily from package managemen
 
 After MSYS2 is installed open MSYS2 and type
 
-`pacman -S --needed base-devel mingw-w64-x86_64-toolchain`
+`pacman -S --needed base-devel mingw-w64-i686-toolchain` (will install 32 bit version)
 
 Make sure visual studio code knows where to find `g++.exe`. Two options are provided here, and option number **2** is preferred.
 
@@ -32,13 +32,16 @@ More information about compiler installation: [C/C++ for Visual Studio Code](htt
 Install **CMake** and **CMake Tools** extensions for Visual Studio Code, both can be found from Visual Studio Extensions
 
 **Ninja** is needed, Download it from [https://ninja-build.org/](https://ninja-build.org/) and install it somewhere and add installation path to your path, so cmake can find it.
+
+Example of `c_cpp_properties.json` is provided and you should copy `c_cpp_properties_example.json` to `.vscode` and rename it to `c_cpp_properties.json` and make changes accordinug to your setup.
+
 # Notes on compiling
 ### Windows/Linux
 Create output folder for executable(ie. bin/debug) as compiler cannot create folders by itself.
 
 ### Windows
 Make sure that mingw is available, easy way to handle this is to add mingw folder (e.g. "C:\MinGW\bin") to PATH variable
-Make sure that .vscode/settings.json has `"C_Cpp.intelliSenseEngine": "Tag Parser"`
+Make sure that `.vscode/settings.json` has `"C_Cpp.intelliSenseEngine": "Tag Parser"`
 
 ### Linux
 Use following command to install required libraries
@@ -72,3 +75,6 @@ Be sure that shaders, music and textures defined in "configuration.json" exist, 
 1. start rocket client
 2. start "ShaderSystem.exe"
 Tracks defined in "configuration.json" will appear on rocket. Open fragment shader defined in "configuration.json" and verify that uniform variables corresponding to rocket tracks are present. When changes have been made to fragment shader press "r" to reload shader. Press "s" to turn tune on or off.
+
+# Credits
+Included example song **Monplaisir - Feet Gone Wild Speed Version**: [http://ccmixter.org/files/Monplaisir/56217](http://ccmixter.org/files/Monplaisir/56217)

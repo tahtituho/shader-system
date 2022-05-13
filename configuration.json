@@ -11,18 +11,19 @@
         "FPS": 60
     },
     "music": {
-        "file": "assets\\music\\Monplaisir_-_Feet_Gone_Wild_Speed_Version.mp3",
+        "file": "assets\\music\\tune.mp3",
         "BPM": 120.0,
         "frequency": 44000
     },
     "sync": {
+        "enabled": "true",
         "RPB": 8,
         "host": "localhost"
     },
     "shaders": {
         "vertex": "assets\\shaders\\vertex.glsl",
         "fragment": "assets\\shaders\\fragment.glsl",
-        "majorVersion": 3,
+        "majorVersion": 4,
         "minorVersion": 3
     },
     "assets": [

@@ -24,7 +24,11 @@ void DemoSystem::Synchronizer::initialize(double bpm, int rpb)
 bool DemoSystem::Synchronizer::connectPlayer(std::string host)
 {
     this->player = true;
-    sync_tcp_connect(this->device, host.c_str(), SYNC_DEFAULT_PORT);
+    if (sync_tcp_connect(this->device, host.c_str(), SYNC_DEFAULT_PORT) == -1)
+    {
+        this->player = false;
+        return false;
+    };
     return true;
 }
 
