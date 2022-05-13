@@ -4,7 +4,7 @@ Attempt to create simple shader demo system with support for rocket and png text
 # Requirements
 glfw, rocket, jsoncpp, bass, glew, lodepng and glText are included in project.
 
-- glfw version 3.3.3 https://www.glfw.org/
+- glfw version 3.3.7 https://www.glfw.org/
 - rocket https://github.com/emoon/rocket
 - jsoncpp version 0.10.7 https://github.com/open-source-parsers/jsoncpp
 - bass version 2.4.13.8 http://www.un4seen.com/bass.html
