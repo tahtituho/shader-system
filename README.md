@@ -51,14 +51,13 @@ Use following command to install required libraries
 Use command *CMake: Configure* to create configuration. Configuration will appear in **build** folder. Use command *CMake: Build* to compile shader system. 
 
 # Debugging
-Before debugging copy following files NORTE these steps has to be done only once, not every time you debug.
-1. Copy bass.dl from libs/bass-24-win/ **build** folder
+Before debugging copy following files NOTE these steps has to be done only once, not every time you debug.
+1. Copy bass.dll from libs/bass-24-win/ **build** folder
 1. Copy glew32.dl from libs/glew-2.2.0/bin/Release **build** folder
 
 There is two different ways to debug
 - Pressing **F5** will use debug profiles defined in `.vscode/launch.json` 
 - Pressing small bug icon on lower part of Visual Studio Code, this will create it's own definition on the fly (preferred method)
-
 
 # Executing
 To run shader-system in release mode execute following steps. Release mode means mode where you write shader code, sync graphics with music and present your demo at party.
@@ -66,7 +65,7 @@ To run shader-system in release mode execute following steps. Release mode means
 1. Build relese version.
 1. Copy bass.dl from libs/bass-24-win/ to newly created folder
 1. Copy glew32.dl from libs/glew-2.2.0/bin/Release to newly created folder
-1. Copy glfw3.dll from /build/libs/glfw-3.3.3/src to newly created folder
+1. Copy glfw3.dll from /build/libs/glfw-3.3.7/src to newly created folder
 
 When demo system is executed without parameters, it defaults configuration file to "configuration.json".
 

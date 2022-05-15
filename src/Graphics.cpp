@@ -123,6 +123,16 @@ void DemoSystem::Graphics::registerLogger(Logger *logger)
 
 void DemoSystem::Graphics::initShaders(std::string vertexSource, std::string fragmentSource)
 {
+    if (vertexSource == "") 
+    {
+        logger->write(DemoSystem::Logger::ERR, "vertex shader source is empty");
+        return;
+    }
+    if (fragmentSource == "") 
+    {
+        logger->write(DemoSystem::Logger::ERR, "fragment shader source is empty");
+        return;
+    }
     logger->write(DemoSystem::Logger::INFO, "compile started...");
     if (this->program != 0)
     {
@@ -130,7 +140,6 @@ void DemoSystem::Graphics::initShaders(std::string vertexSource, std::string fra
     }
     this->program = glCreateProgram();
 
-    //exception
     this->compileShader(GL_VERTEX_SHADER, vertexSource);
     this->compileShader(GL_FRAGMENT_SHADER, fragmentSource);
 
