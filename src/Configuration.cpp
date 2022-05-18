@@ -58,7 +58,7 @@ bool DemoSystem::Configuration::read(std::string file)
         this->tune.BPM = c["music"]["BPM"].type() != Json::ValueType::nullValue ? c["music"]["BPM"].asDouble() : this->tune.BPM;
         this->tune.frequency = c["music"]["frequency"].type() != Json::ValueType::nullValue ? c["music"]["frequency"].asInt() : this->tune.frequency;
 
-        this->demo.release = c["sync"]["enabled"].type() != Json::ValueType::nullValue ? c["sync"]["enabled"].asBool() : this->demo.release;
+        this->sync.enabled = c["sync"]["enabled"].type() != Json::ValueType::nullValue ? c["sync"]["enabled"].asBool() : this->sync.enabled;
         this->sync.host = c["sync"]["host"].type() != Json::ValueType::nullValue ? c["sync"]["host"].asString() : this->sync.host;
         this->sync.RPB = c["sync"]["RPB"].type() != Json::ValueType::nullValue ? c["sync"]["RPB"].asInt() : this->sync.RPB;
 

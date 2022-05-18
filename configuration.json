@@ -16,7 +16,7 @@
         "frequency": 44000
     },
     "sync": {
-        "enabled": "true",
+        "enabled": true,
         "RPB": 8,
         "host": "localhost"
     },
