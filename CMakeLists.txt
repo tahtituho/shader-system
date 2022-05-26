@@ -75,6 +75,21 @@ target_include_directories(${PROJECT_NAME} PUBLIC build include libs libs/rocket
 target_link_directories(${PROJECT_NAME} PUBLIC libs ${GLEW_LIBRARIES} ${BASS_LIBRARIES} )
 target_link_libraries(${PROJECT_NAME} ${LIBS})
 
+# This copies files to build folder, which are needed to run shader system
+# assets folder contains glsl source, textures, music etc
+# configuration file is for configuration
+# then copy precompiled glew32.dll, bass.dll (not sure about linux part here)
+file(COPY assets DESTINATION .)
+file(COPY configuration.json DESTINATION .)
+if(WIN32)
+    file(COPY libs/bass24-win/bass.dll DESTINATION .)
+    file(COPY libs/glew-2.2.0/bin/Release/Win32/glew32.dll DESTINATION .)
+else(WIN32)
+    if(LINUX)
+        file(COPY libs/bass24-linux/libbass.so DESTINATION .)
+    endif(LINUX)
+endif(WIN32)
+
 # target_link_options are parameters for compiler (g++ or clang++)
 if(WIN32)
     target_link_options(${PROJECT_NAME} PRIVATE "-mwindows" "-fpermissive" "-static-libstdc++" "-D_WIN32_WINNT=0x501")
