@@ -21,6 +21,7 @@ namespace DemoSystem
         Graphics();
         ~Graphics();
         void initialize(Configuration::Shaders shaders, Configuration::Screen screen, Configuration::Demo demo);
+        void addUniforms();
         void registerSynchronizer(DemoSystem::Synchronizer *synchronizer);
         void registerTextures(std::list<Textures::Texture> *textures);
         void registerCamera(DemoSystem::Camera *camera);
@@ -31,12 +32,14 @@ namespace DemoSystem
         void initShaders(std::string vertexSource, std::string fragmentSource);
         void initFrameBuffer();
         void render(double time);
+        void renderPost(double time);
+        void swapBuffers();
         void requestFullscreen();
         void initStop();
         bool shouldStop();
         void cleanUp();
 
-    private:
+    protected:
         GLFWwindow *window;
         GLuint program;
         bool fullscreen;

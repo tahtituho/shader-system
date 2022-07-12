@@ -45,6 +45,8 @@ namespace DemoSystem
         {
             std::string vertex;
             std::string fragment;
+            std::string vertexPost;
+            std::string fragmentPost;
             int majorVersion;
             int minorVersion;
         };

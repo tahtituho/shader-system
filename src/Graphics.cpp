@@ -9,6 +9,7 @@ void logError(int error, const char *desc)
 void static frameBufferResizeCallback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
+    // This should have framebuffer resize too, but can't control inherited class
 }
 
 DemoSystem::Graphics::Graphics()
@@ -163,6 +164,12 @@ void DemoSystem::Graphics::initShaders(std::string vertexSource, std::string fra
         return;
     }
 
+    logger->write(DemoSystem::Logger::INFO, "compile done");
+    return;
+}
+
+void DemoSystem::Graphics::addUniforms()
+{
     for (auto tv = this->synchronizer->trackVariables.begin(); tv != this->synchronizer->trackVariables.end(); tv++)
     {
         tv->uniform = glGetUniformLocation(this->program, tv->name.c_str());
@@ -184,8 +191,6 @@ void DemoSystem::Graphics::initShaders(std::string vertexSource, std::string fra
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, it->width, it->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &it->image[0]);
         it->uniform = glGetUniformLocation(this->program, it->name.c_str());
     }
-    logger->write(DemoSystem::Logger::INFO, "compile done");
-    return;
 }
 
 void DemoSystem::Graphics::initFrameBuffer()
@@ -282,10 +287,37 @@ void DemoSystem::Graphics::render(double time)
     glBindVertexArray(this->VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-    this->logger->render();
-    glUseProgram(0);
-    glfwSwapBuffers(this->window);
+    //this->logger->render();
+    //glUseProgram(0);
+    //glfwSwapBuffers(this->window);
     glfwPollEvents();
+}
+
+// Rendering function used for "quick-and-dirty" post-processing without renderbuffer
+void DemoSystem::Graphics::renderPost(double time) {
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(this->program);
+
+    int width, height;
+    glfwGetWindowSize(this->window, &width, &height);
+
+    glBindTexture(GL_TEXTURE_2D, 1);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, (GLfloat)width, (GLfloat)height, 0);
+	glGenerateMipmap(GL_TEXTURE_2D);
+    glActiveTexture(GL_TEXTURE0);
+	glUniform1i(0, 0);
+    
+    glBindVertexArray(this->VAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    glUseProgram(0);
+}
+
+void DemoSystem::Graphics::swapBuffers()
+{
+    glfwSwapBuffers(this->window);
 }
 
 void DemoSystem::Graphics::requestFullscreen()

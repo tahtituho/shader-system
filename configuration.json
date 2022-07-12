@@ -23,6 +23,8 @@
     "shaders": {
         "vertex": "assets\\shaders\\vertex.glsl",
         "fragment": "assets\\shaders\\fragment.glsl",
+        "vertexPost": "assets\\shaders\\vertex_post.glsl",
+        "fragmentPost": "assets\\shaders\\fragment_post.glsl",
         "majorVersion": 4,
         "minorVersion": 3
     },

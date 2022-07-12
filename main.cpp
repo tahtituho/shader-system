@@ -10,6 +10,7 @@
 #include "InputDevices.h"
 #include "Helpers.h"
 #include "Camera.h"
+#include "Framebuffer.h"
 
 const std::string VERSION = std::to_string(ShaderSystem_VERSION_MAJOR) + "." + std::to_string(ShaderSystem_VERSION_MINOR);
 void mainLoop();
@@ -31,6 +32,7 @@ DemoSystem::Logger logger;
 DemoSystem::Graphics graphics;
 DemoSystem::InputDevices inputDevices;
 DemoSystem::Camera camera;
+DemoSystem::Framebuffer framebuffer;
 
 int main(int argc, char *args[])
 {
@@ -81,6 +83,7 @@ int main(int argc, char *args[])
 
     textures.setTextures(configurations->assets);
 
+    // Main shader configuration
     graphics.registerLogger(&logger);
     graphics.registerKeyboardCallback(&handleKeyboard);
     graphics.registerMouseMoveCallback(&handleMouseMove);
@@ -91,7 +94,18 @@ int main(int argc, char *args[])
     std::string vertexSource = DemoSystem::Helpers::readFile(configurations->shaders.vertex);
     std::string fragmentSource = DemoSystem::Helpers::readFile(configurations->shaders.fragment);
     graphics.initShaders(vertexSource, fragmentSource);
+    graphics.addUniforms();
     graphics.initFrameBuffer();
+
+    // Post-processing shader configuration
+    framebuffer.registerLogger(&logger);
+    //framebuffer.registerSynchronizer(&synchronizer);
+    //graphics.registerCamera(&camera);
+    framebuffer.initFrameBuffer();
+    std::string vertexPostSource = DemoSystem::Helpers::readFile(configurations->shaders.vertexPost);
+    std::string fragmentPostSource = DemoSystem::Helpers::readFile(configurations->shaders.fragmentPost);
+    framebuffer.initShaders(vertexSource, fragmentSource);
+    framebuffer.generateFBO(configurations->screen.width, configurations->screen.height);
 
     inputDevices.initialize(&graphics, &music, &logger, &synchronizer, &camera, configurations->demo.release);
 
@@ -135,11 +149,17 @@ void mainLoop()
 {
     while (!graphics.shouldStop())
     {
+        framebuffer.bind();
         double position = music.position();
         synchronizer.update(position);
         graphics.render(position);
         camera.update();
         logger.render();
+        // "qnd" pp. do not use
+        //framebuffer.renderPost(position);
+        framebuffer.unBind();
+        framebuffer.drawFBO();
+        graphics.swapBuffers();
 
         if (configurations->demo.release == true && music.hasMusicEnded() == true)
         {
