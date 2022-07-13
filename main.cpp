@@ -152,11 +152,11 @@ void mainLoop()
         synchronizer.update(position);
         graphics.mainShader.render(position);
         camera.update();
-        logger.render();
         // "qnd" pp. do not use
         //graphics.postprocessingShader.renderPost(position);
         graphics.postprocessingShader.unBind();
         graphics.postprocessingShader.drawFBO();
+        logger.render();
         graphics.swapBuffers();
 
         if (configurations->demo.release == true && music.hasMusicEnded() == true)
