@@ -41,7 +41,10 @@ void DemoSystem::InputDevices::handleKeyboard(GLFWwindow *window, int key, int s
                 DemoSystem::Configuration *configurations = DemoSystem::Configuration::getInstance();
                 std::string vertexSource = DemoSystem::Helpers::readFile(configurations->shaders.vertex);
                 std::string fragmentSource = DemoSystem::Helpers::readFile(configurations->shaders.fragment);
-                graphics->initShaders(vertexSource, fragmentSource);
+                graphics->mainShader.initShaders(vertexSource, fragmentSource);
+                std::string vertexPostSource = DemoSystem::Helpers::readFile(configurations->shaders.vertexPost);
+                std::string fragmentPostSource = DemoSystem::Helpers::readFile(configurations->shaders.fragmentPost);
+                graphics->postprocessingShader.initShaders(vertexPostSource, fragmentPostSource);
                 break;
             }
             case GLFW_KEY_M:

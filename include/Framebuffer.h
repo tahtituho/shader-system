@@ -1,10 +1,10 @@
 #ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
 #include <GL/glew.h>
-#include "Graphics.h"
+#include "Shader.h"
 
 namespace DemoSystem {
-    class Framebuffer: public DemoSystem::Graphics {
+    class Framebuffer: public DemoSystem::Shader {
         public:
             Framebuffer();   
             ~Framebuffer();
