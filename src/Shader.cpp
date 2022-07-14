@@ -179,7 +179,7 @@ void DemoSystem::Shader::compileShader(const GLenum type, std::string source)
 
 void DemoSystem::Shader::render(double time)
 {
-    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.45f, 0.45f, 0.45f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(program);
 

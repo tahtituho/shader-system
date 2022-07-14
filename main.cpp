@@ -95,16 +95,17 @@ int main(int argc, char *args[])
     std::string vertexSource = DemoSystem::Helpers::readFile(configurations->shaders.vertex);
     std::string fragmentSource = DemoSystem::Helpers::readFile(configurations->shaders.fragment);
     graphics.mainShader.initShaders(vertexSource, fragmentSource);
-    graphics.addUniforms();
+    graphics.mainShader.addUniforms();
     graphics.mainShader.initFrameBuffer();
 
     // Post-processing shader configuration
-
     std::string vertexPostSource = DemoSystem::Helpers::readFile(configurations->shaders.vertexPost);
     std::string fragmentPostSource = DemoSystem::Helpers::readFile(configurations->shaders.fragmentPost);
     graphics.postprocessingShader.initShaders(vertexPostSource, fragmentPostSource);
+    graphics.postprocessingShader.addUniformsPost();
     graphics.postprocessingShader.initFrameBuffer();
     graphics.postprocessingShader.generateFBO(configurations->screen.width, configurations->screen.height);
+
     inputDevices.initialize(&graphics, &music, &logger, &synchronizer, &camera, configurations->demo.release);
 
     music.play();
@@ -155,9 +156,9 @@ void mainLoop()
         camera.update();
         // "qnd" pp. do not use
         //graphics.postprocessingShader.renderPost(position);
-        logger.render();    
         graphics.postprocessingShader.unBind();
         graphics.postprocessingShader.drawFBO();
+        logger.render();  
 
         graphics.swapBuffers();
 

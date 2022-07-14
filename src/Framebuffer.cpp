@@ -22,13 +22,14 @@ void DemoSystem::Framebuffer::unBind() {
 void DemoSystem::Framebuffer::drawFBO() {
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-
+    // Have no idea why this bind is done here, but it works for some reason...
+    glBindVertexArray(this->vto);
     glUseProgram(this->program);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, this->fbo_texture);
-    glUniform1i(uniform_fbo_texture, /*GL_TEXTURE*/0);
-    //glEnableVertexAttribArray(attribute_v_coord_postproc);
-    glEnableVertexAttribArray(attribute_v_coord_postproc);
-
+    glUniform1i(this->uniform_fbo_texture, 0);
+    glEnableVertexAttribArray(this->attribute_v_coord_postproc);
+    
     glBindBuffer(GL_ARRAY_BUFFER, vbo_fbo_vertices);
     glVertexAttribPointer(
         attribute_v_coord_postproc,  // attribute
@@ -86,6 +87,21 @@ void DemoSystem::Framebuffer::generateFBO(unsigned int width, unsigned int heigh
     glGenVertexArrays(1, &this->vto);
 	glBindVertexArray(this->vto);
     this->logger->write(DemoSystem::Logger::INFO, "FBO SUCCESS");
+}
+
+void DemoSystem::Framebuffer::addUniformsPost() 
+{
+    const char* uniform_name;
+    uniform_name = "v_coord";
+    this->attribute_v_coord_postproc = glGetAttribLocation(this->program, uniform_name);
+    if (this->attribute_v_coord_postproc == -1) {
+        this->logger->write(DemoSystem::Logger::ERR, "Could not bind uniform");
+    }
+    uniform_name = "fbo_texture";
+    this->uniform_fbo_texture = glGetUniformLocation(this->program, uniform_name);
+    if (this->uniform_fbo_texture == -1) {
+        this->logger->write(DemoSystem::Logger::ERR, "Could not bind uniform");
+    }
 }
 
 void DemoSystem::Framebuffer::resizeFBO(unsigned int width, unsigned int height) {

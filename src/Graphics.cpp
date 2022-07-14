@@ -128,7 +128,7 @@ void DemoSystem::Graphics::registerLogger(Logger *logger)
     this->postprocessingShader.registerLogger(logger);
 }
 
-
+// Not used at the moment, need to find a way to add uniforms to postprocessing too
 void DemoSystem::Graphics::addUniforms()
 {
     this->mainShader.addUniforms();
