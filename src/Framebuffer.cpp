@@ -74,6 +74,7 @@ void DemoSystem::Framebuffer::generateFBO(unsigned int width, unsigned int heigh
     GLenum status;
     if ((status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE) {
         this->logger->write(DemoSystem::Logger::ERR, "FBO FAILURE");
+        return;
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

@@ -229,10 +229,7 @@ void DemoSystem::Shader::render(double time)
     glBindVertexArray(this->VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-    //this->logger->render();
-    //glUseProgram(0);
-    //glfwSwapBuffers(this->window);
-    glfwPollEvents();
+    glUseProgram(0);
 }
 
 // Rendering function used for "quick-and-dirty" post-processing without renderbuffer

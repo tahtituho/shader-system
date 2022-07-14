@@ -99,12 +99,12 @@ int main(int argc, char *args[])
     graphics.mainShader.initFrameBuffer();
 
     // Post-processing shader configuration
-    graphics.postprocessingShader.initFrameBuffer();
+
     std::string vertexPostSource = DemoSystem::Helpers::readFile(configurations->shaders.vertexPost);
     std::string fragmentPostSource = DemoSystem::Helpers::readFile(configurations->shaders.fragmentPost);
     graphics.postprocessingShader.initShaders(vertexPostSource, fragmentPostSource);
+    graphics.postprocessingShader.initFrameBuffer();
     graphics.postprocessingShader.generateFBO(configurations->screen.width, configurations->screen.height);
-
     inputDevices.initialize(&graphics, &music, &logger, &synchronizer, &camera, configurations->demo.release);
 
     music.play();
@@ -148,15 +148,17 @@ void mainLoop()
     while (!graphics.shouldStop())
     {
         graphics.postprocessingShader.bind();
+
         double position = music.position();
         synchronizer.update(position);
         graphics.mainShader.render(position);
         camera.update();
         // "qnd" pp. do not use
         //graphics.postprocessingShader.renderPost(position);
+        logger.render();    
         graphics.postprocessingShader.unBind();
         graphics.postprocessingShader.drawFBO();
-        logger.render();
+
         graphics.swapBuffers();
 
         if (configurations->demo.release == true && music.hasMusicEnded() == true)

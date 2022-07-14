@@ -137,6 +137,7 @@ void DemoSystem::Graphics::addUniforms()
 void DemoSystem::Graphics::swapBuffers()
 {
     glfwSwapBuffers(this->window);
+    glfwPollEvents();
 }
 
 void DemoSystem::Graphics::requestFullscreen()
