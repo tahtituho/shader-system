@@ -89,6 +89,19 @@ bool DemoSystem::Configuration::read(std::string file)
                 {
                     t.type = Variable::DataType::FLOAT3;
                 }
+                std::string shaderType = c["variables"][i]["shaderType"].asString();
+                if (shaderType == "main")
+                {
+                    t.shaderType = Variable::ShaderType::MAIN;
+                }
+                else if (shaderType == "post")
+                {
+                    t.shaderType = Variable::ShaderType::POST;
+                }
+                else if (shaderType == "all")
+                {
+                    t.shaderType = Variable::ShaderType::ALL;
+                }
                 t.variableName = c["variables"][i]["variable"].asString();
                 std::string variableType = c["variables"][i]["variableType"].asString();
                 t.trackName = c["variables"][i]["track"].asString();

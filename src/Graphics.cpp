@@ -94,6 +94,7 @@ void DemoSystem::Graphics::initialize(Configuration::Shaders shaders, Configurat
 void DemoSystem::Graphics::registerSynchronizer(DemoSystem::Synchronizer *synchronizer)
 {
     this->mainShader.registerSynchronizer(synchronizer);
+    this->postprocessingShader.registerSynchronizer(synchronizer);
 }
 
 void DemoSystem::Graphics::registerCamera(DemoSystem::Camera *camera)
@@ -128,10 +129,10 @@ void DemoSystem::Graphics::registerLogger(Logger *logger)
     this->postprocessingShader.registerLogger(logger);
 }
 
-// Not used at the moment, need to find a way to add uniforms to postprocessing too
+// Not used at the moment, as uniforms are added per shader program
 void DemoSystem::Graphics::addUniforms()
 {
-    this->mainShader.addUniforms();
+    //this->mainShader.addUniforms();
 }
 
 void DemoSystem::Graphics::swapBuffers()

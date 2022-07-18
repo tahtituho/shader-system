@@ -90,6 +90,20 @@ void DemoSystem::Synchronizer::initializeTrackVariables(std::list<Configuration:
             variable.syncTrack.z = sync_get_track(this->device, (track.trackName + ".z").c_str());
             break;
         }
+        switch (track.shaderType)
+        {
+        case Configuration::Variable::ShaderType::MAIN:
+            variable.shaderType = TrackVariable::ShaderType::MAIN;
+            break;
+        
+        case Configuration::Variable::ShaderType::POST:
+            variable.shaderType = TrackVariable::ShaderType::POST;
+            break;
+        
+        case Configuration::Variable::ShaderType::ALL:
+            variable.shaderType = TrackVariable::ShaderType::ALL;
+            break;
+        }
         variable.name = track.variableName;
         this->trackVariables.push_back(variable);
     }

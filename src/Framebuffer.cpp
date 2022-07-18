@@ -29,6 +29,26 @@ void DemoSystem::Framebuffer::drawFBO() {
     glBindTexture(GL_TEXTURE_2D, this->fbo_texture);
     glUniform1i(this->uniform_mainImage, 0);
     glEnableVertexAttribArray(this->attribute_position_postproc);
+
+    // Tracked uniforms
+    for (auto tv = this->synchronizer->trackVariables.begin(); tv != this->synchronizer->trackVariables.end(); tv++)
+    {
+        if (tv->shaderType == TrackVariable::ShaderType::POST)
+        {
+            if (tv->type == Variable::DataType::FLOAT1)
+            {
+                glUniform1f(tv->uniform, (GLfloat)tv->value.x);
+            }
+            else if (tv->type == Variable::DataType::FLOAT2)
+            {
+                glUniform2f(tv->uniform, (GLfloat)tv->value.x, (GLfloat)tv->value.y);
+            }
+            else if (tv->type == Variable::DataType::FLOAT3)
+            {
+                glUniform3f(tv->uniform, (GLfloat)tv->value.x, (GLfloat)tv->value.y, (GLfloat)tv->value.z);
+            }
+        }
+    }
     
     glBindBuffer(GL_ARRAY_BUFFER, vbo_fbo_vertices);
     glVertexAttribPointer(
@@ -91,6 +111,7 @@ void DemoSystem::Framebuffer::generateFBO(unsigned int width, unsigned int heigh
 
 void DemoSystem::Framebuffer::addUniformsPost() 
 {
+    // PostProcessing specific uniforms
     const char* uniform_name;
     uniform_name = "position";
     this->attribute_position_postproc = glGetAttribLocation(this->program, uniform_name);
@@ -101,6 +122,14 @@ void DemoSystem::Framebuffer::addUniformsPost()
     this->uniform_mainImage = glGetUniformLocation(this->program, uniform_name);
     if (this->uniform_mainImage == -1) {
         this->logger->write(DemoSystem::Logger::ERR, "Could not bind uniform");
+    }
+    // Tracked uniforms
+    for (auto tv = this->synchronizer->trackVariables.begin(); tv != this->synchronizer->trackVariables.end(); tv++)
+    {
+        if (tv->shaderType == TrackVariable::ShaderType::POST)
+        {
+            tv->uniform = glGetUniformLocation(this->program, tv->name.c_str());
+        }
     }
 }
 

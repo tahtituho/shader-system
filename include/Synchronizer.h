@@ -20,7 +20,7 @@ namespace DemoSystem
         void initialize(double bpm, int rpb);
         bool connectPlayer(std::string host);
         void setFunctions(sync_cb *functions);
-        void update(double row);
+        void update(double time);
         void initializeTrackVariables(std::list<Configuration::Variable> trackVariables);
         void initializeBasicVariables();
         void cleanUp();
