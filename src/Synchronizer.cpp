@@ -37,9 +37,10 @@ void DemoSystem::Synchronizer::setFunctions(sync_cb *functions)
     this->functions = functions;
 }
 
-void DemoSystem::Synchronizer::update(double row)
+void DemoSystem::Synchronizer::update(double time)
 {
-    if (sync_update(this->device, (int)floor(row * this->rowRate), this->functions, &this->rowRate))
+    float row = time * this->rowRate;
+    if (sync_update(this->device, (int)floor(row), this->functions, &this->rowRate))
     {
         if (this->player == true)
         {
