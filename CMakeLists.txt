@@ -66,6 +66,8 @@ add_executable(${PROJECT_NAME}
     src/Helpers.cpp
     src/Camera.cpp
     src/Vector3.cpp
+    src/Framebuffer.cpp
+    src/Shader.cpp
 ) 
 
 # This command includes header file directories, like rocket and glfw

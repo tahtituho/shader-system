@@ -31,6 +31,8 @@ DemoSystem::Configuration::Configuration()
 
     this->shaders.vertex = "assets/shaders/vertex.glsl";
     this->shaders.fragment = "assets/shaders/fragment.glsl";
+    this->shaders.vertexPost = "assets/shaders/vertex_post.glsl";
+    this->shaders.fragmentPost = "assets/shaders/fragment_post.glsl";
     this->shaders.majorVersion = 4;
     this->shaders.minorVersion = 3;
 }
@@ -64,6 +66,8 @@ bool DemoSystem::Configuration::read(std::string file)
 
         this->shaders.vertex = c["shaders"]["vertex"].type() != Json::ValueType::nullValue ? c["shaders"]["vertex"].asString() : this->shaders.vertex;
         this->shaders.fragment = c["shaders"]["fragment"].type() != Json::ValueType::nullValue ? c["shaders"]["fragment"].asString() : this->shaders.fragment;
+        this->shaders.vertexPost = c["shaders"]["vertexPost"].type() != Json::ValueType::nullValue ? c["shaders"]["vertexPost"].asString() : this->shaders.vertexPost;
+        this->shaders.fragmentPost = c["shaders"]["fragmentPost"].type() != Json::ValueType::nullValue ? c["shaders"]["fragmentPost"].asString() : this->shaders.fragmentPost;
         this->shaders.majorVersion = c["shaders"]["majorVersion"].type() != Json::ValueType::nullValue ? c["shaders"]["majorVersion"].asInt() : this->shaders.majorVersion;
         this->shaders.minorVersion = c["shaders"]["minorVersion"].type() != Json::ValueType::nullValue ? c["shaders"]["minorVersion"].asInt() : this->shaders.minorVersion;
 

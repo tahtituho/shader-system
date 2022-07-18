@@ -6,12 +6,13 @@
 #include <map>
 #include "lodepng.h"
 #include "Configuration.h"
-#include "Synchronizer.h"
 #include "Textures.h"
 #include "Logger.h"
 #include "Variable.h"
 #include "Camera.h"
 #include "Vector3.h"
+#include "Shader.h"
+#include "Framebuffer.h"
 
 namespace DemoSystem
 {
@@ -21,6 +22,8 @@ namespace DemoSystem
         Graphics();
         ~Graphics();
         void initialize(Configuration::Shaders shaders, Configuration::Screen screen, Configuration::Demo demo);
+        void addUniforms();
+
         void registerSynchronizer(DemoSystem::Synchronizer *synchronizer);
         void registerTextures(std::list<Textures::Texture> *textures);
         void registerCamera(DemoSystem::Camera *camera);
@@ -28,28 +31,21 @@ namespace DemoSystem
         void registerMouseMoveCallback(GLFWcursorposfun callback);
         void registerMouseButtonsCallback(GLFWmousebuttonfun callback);
         void registerLogger(Logger *logger);
-        void initShaders(std::string vertexSource, std::string fragmentSource);
-        void initFrameBuffer();
-        void render(double time);
+        
+        void swapBuffers();
         void requestFullscreen();
         void initStop();
         bool shouldStop();
         void cleanUp();
 
-    private:
+        Shader mainShader;
+        Framebuffer postprocessingShader;
+
+    protected:
         GLFWwindow *window;
-        GLuint program;
         bool fullscreen;
 
-        GLuint vertexShader;
-        GLuint fragmentShader;
-        unsigned int VBO, VAO, EBO;
-
-        DemoSystem::Synchronizer *synchronizer;
-        DemoSystem::Camera *camera;
-        std::list<Textures::Texture> *textures;
         Logger *logger;
-        void compileShader(const GLenum type, std::string source);
     };
 }
 #endif

@@ -10,6 +10,7 @@
 #include "InputDevices.h"
 #include "Helpers.h"
 #include "Camera.h"
+#include "Framebuffer.h"
 
 const std::string VERSION = std::to_string(ShaderSystem_VERSION_MAJOR) + "." + std::to_string(ShaderSystem_VERSION_MINOR);
 void mainLoop();
@@ -81,6 +82,7 @@ int main(int argc, char *args[])
 
     textures.setTextures(configurations->assets);
 
+    // Main Graphics registrations
     graphics.registerLogger(&logger);
     graphics.registerKeyboardCallback(&handleKeyboard);
     graphics.registerMouseMoveCallback(&handleMouseMove);
@@ -88,10 +90,21 @@ int main(int argc, char *args[])
     graphics.registerTextures(&textures.textures);
     graphics.registerSynchronizer(&synchronizer);
     graphics.registerCamera(&camera);
+
+    // Main shader configuration
     std::string vertexSource = DemoSystem::Helpers::readFile(configurations->shaders.vertex);
     std::string fragmentSource = DemoSystem::Helpers::readFile(configurations->shaders.fragment);
-    graphics.initShaders(vertexSource, fragmentSource);
-    graphics.initFrameBuffer();
+    graphics.mainShader.initShaders(vertexSource, fragmentSource);
+    graphics.mainShader.addUniforms();
+    graphics.mainShader.initFrameBuffer();
+
+    // Post-processing shader configuration
+    std::string vertexPostSource = DemoSystem::Helpers::readFile(configurations->shaders.vertexPost);
+    std::string fragmentPostSource = DemoSystem::Helpers::readFile(configurations->shaders.fragmentPost);
+    graphics.postprocessingShader.initShaders(vertexPostSource, fragmentPostSource);
+    graphics.postprocessingShader.addUniformsPost();
+    graphics.postprocessingShader.initFrameBuffer();
+    graphics.postprocessingShader.generateFBO(configurations->screen.width, configurations->screen.height);
 
     inputDevices.initialize(&graphics, &music, &logger, &synchronizer, &camera, configurations->demo.release);
 
@@ -135,11 +148,20 @@ void mainLoop()
 {
     while (!graphics.shouldStop())
     {
+        // Bind framebuffer and render to framebuffers texture the main shader pass
+        graphics.postprocessingShader.bind();
+
         double position = music.position();
         synchronizer.update(position);
-        graphics.render(position);
+        graphics.mainShader.render(position);
         camera.update();
-        logger.render();
+        
+        // Post-processing pass, unbind framebuffer and draw to screen from framebuffer
+        graphics.postprocessingShader.unBind();
+        graphics.postprocessingShader.drawFBO();
+        logger.render();  
+
+        graphics.swapBuffers();
 
         if (configurations->demo.release == true && music.hasMusicEnded() == true)
         {
