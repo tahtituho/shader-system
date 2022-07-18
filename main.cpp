@@ -148,14 +148,15 @@ void mainLoop()
 {
     while (!graphics.shouldStop())
     {
+        // Bind framebuffer and render to framebuffers texture the main shader pass
         graphics.postprocessingShader.bind();
 
         double position = music.position();
         synchronizer.update(position);
         graphics.mainShader.render(position);
         camera.update();
-        // "qnd" pp. do not use
-        //graphics.postprocessingShader.renderPost(position);
+        
+        // Post-processing pass, unbind framebuffer and draw to screen from framebuffer
         graphics.postprocessingShader.unBind();
         graphics.postprocessingShader.drawFBO();
         logger.render();  

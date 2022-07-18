@@ -18,7 +18,7 @@ namespace DemoSystem {
             void bind();
             void unBind();
         private:  
-		    GLuint fbo;                   //framebuffer object
+            GLuint fbo;                   //framebuffer object
             GLuint vto;
 		    GLuint fbo_texture;         
 		    GLuint rbo_depth;	
@@ -30,8 +30,8 @@ namespace DemoSystem {
                 1,  1,
             };
             // uniforms?
-            GLuint attribute_v_coord_postproc;
-            GLuint uniform_fbo_texture;
+            GLuint attribute_position_postproc;
+            GLuint uniform_mainImage;
 		    //std::vector<GLenum> drawbuffer;     //add texture attachements
     };
 }

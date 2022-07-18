@@ -27,12 +27,12 @@ void DemoSystem::Framebuffer::drawFBO() {
     glUseProgram(this->program);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, this->fbo_texture);
-    glUniform1i(this->uniform_fbo_texture, 0);
-    glEnableVertexAttribArray(this->attribute_v_coord_postproc);
+    glUniform1i(this->uniform_mainImage, 0);
+    glEnableVertexAttribArray(this->attribute_position_postproc);
     
     glBindBuffer(GL_ARRAY_BUFFER, vbo_fbo_vertices);
     glVertexAttribPointer(
-        attribute_v_coord_postproc,  // attribute
+        attribute_position_postproc,  // attribute
         2,                  // number of elements per vertex, here (x,y)
         GL_FLOAT,           // the type of each element
         GL_FALSE,           // take our values as-is
@@ -40,7 +40,7 @@ void DemoSystem::Framebuffer::drawFBO() {
         0                   // offset of first element
     );
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glDisableVertexAttribArray(attribute_v_coord_postproc);
+    glDisableVertexAttribArray(attribute_position_postproc);
 
     // glBindBuffer(GL_ARRAY_BUFFER, vbo_fbo_vertices);
     // glBindVertexArray(this->vto);
@@ -85,21 +85,21 @@ void DemoSystem::Framebuffer::generateFBO(unsigned int width, unsigned int heigh
     glBufferData(GL_ARRAY_BUFFER, sizeof(this->fbo_vertices), this->fbo_vertices, GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glGenVertexArrays(1, &this->vto);
-	glBindVertexArray(this->vto);
+    glBindVertexArray(this->vto);
     this->logger->write(DemoSystem::Logger::INFO, "FBO SUCCESS");
 }
 
 void DemoSystem::Framebuffer::addUniformsPost() 
 {
     const char* uniform_name;
-    uniform_name = "v_coord";
-    this->attribute_v_coord_postproc = glGetAttribLocation(this->program, uniform_name);
-    if (this->attribute_v_coord_postproc == -1) {
+    uniform_name = "position";
+    this->attribute_position_postproc = glGetAttribLocation(this->program, uniform_name);
+    if (this->attribute_position_postproc == -1) {
         this->logger->write(DemoSystem::Logger::ERR, "Could not bind uniform");
     }
-    uniform_name = "fbo_texture";
-    this->uniform_fbo_texture = glGetUniformLocation(this->program, uniform_name);
-    if (this->uniform_fbo_texture == -1) {
+    uniform_name = "mainImage";
+    this->uniform_mainImage = glGetUniformLocation(this->program, uniform_name);
+    if (this->uniform_mainImage == -1) {
         this->logger->write(DemoSystem::Logger::ERR, "Could not bind uniform");
     }
 }
@@ -116,7 +116,7 @@ void DemoSystem::Framebuffer::resizeFBO(unsigned int width, unsigned int height)
 
 void DemoSystem::Framebuffer::cleanFramebuffer() {
     glDeleteFramebuffers(1, &this->fbo);
-	glDeleteTextures(1, &this->fbo_texture);
-	glDeleteTextures(1, &this->rbo_depth);
+    glDeleteTextures(1, &this->fbo_texture);
+    glDeleteTextures(1, &this->rbo_depth);
     glDeleteBuffers(1, &this->vbo_fbo_vertices);
 }
