@@ -70,9 +70,16 @@ namespace DemoSystem
                 double y;
                 double z;
             };
+            enum ShaderType 
+            {
+                MAIN,
+                POST,
+                ALL
+            };
             VariableType variableType;
             DataType type;
             Value initialValue;
+            ShaderType shaderType;
             std::string trackName;
             std::string variableName;
             bool persistent;

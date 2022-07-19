@@ -37,9 +37,10 @@ void DemoSystem::Synchronizer::setFunctions(sync_cb *functions)
     this->functions = functions;
 }
 
-void DemoSystem::Synchronizer::update(double row)
+void DemoSystem::Synchronizer::update(double time)
 {
-    if (sync_update(this->device, (int)floor(row * this->rowRate), this->functions, &this->rowRate))
+    float row = time * this->rowRate;
+    if (sync_update(this->device, (int)floor(row), this->functions, &this->rowRate))
     {
         if (this->player == true)
         {
@@ -88,6 +89,20 @@ void DemoSystem::Synchronizer::initializeTrackVariables(std::list<Configuration:
             variable.syncTrack.x = sync_get_track(this->device, (track.trackName + ".x").c_str());
             variable.syncTrack.y = sync_get_track(this->device, (track.trackName + ".y").c_str());
             variable.syncTrack.z = sync_get_track(this->device, (track.trackName + ".z").c_str());
+            break;
+        }
+        switch (track.shaderType)
+        {
+        case Configuration::Variable::ShaderType::MAIN:
+            variable.shaderType = TrackVariable::ShaderType::MAIN;
+            break;
+        
+        case Configuration::Variable::ShaderType::POST:
+            variable.shaderType = TrackVariable::ShaderType::POST;
+            break;
+        
+        case Configuration::Variable::ShaderType::ALL:
+            variable.shaderType = TrackVariable::ShaderType::ALL;
             break;
         }
         variable.name = track.variableName;

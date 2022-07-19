@@ -45,7 +45,15 @@
             "variableType": "track",
             "variable": "scene1Color",
             "dataType": "float3",
-            "track": "scene1.color"
+            "track": "scene1.color",
+            "shaderType": "main"
+        },
+        {
+            "variableType": "track",
+            "variable": "effect1",
+            "dataType": "float1",
+            "track": "scene1.effect",
+            "shaderType": "post"
         }
     ]
 }

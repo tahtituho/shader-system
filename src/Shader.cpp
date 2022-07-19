@@ -36,7 +36,10 @@ void DemoSystem::Shader::addUniforms()
 {
     for (auto tv = this->synchronizer->trackVariables.begin(); tv != this->synchronizer->trackVariables.end(); tv++)
     {
-        tv->uniform = glGetUniformLocation(this->program, tv->name.c_str());
+        if (tv->shaderType == TrackVariable::ShaderType::MAIN)
+        {
+            tv->uniform = glGetUniformLocation(this->program, tv->name.c_str());
+        }
     }
 
     for (auto bv = this->synchronizer->basicVariables.begin(); bv != this->synchronizer->basicVariables.end(); bv++)
@@ -202,17 +205,20 @@ void DemoSystem::Shader::render(double time)
 
     for (auto tv = this->synchronizer->trackVariables.begin(); tv != this->synchronizer->trackVariables.end(); tv++)
     {
-        if (tv->type == Variable::DataType::FLOAT1)
+        if (tv->shaderType == TrackVariable::ShaderType::MAIN)
         {
-            glUniform1f(tv->uniform, (GLfloat)tv->value.x);
-        }
-        else if (tv->type == Variable::DataType::FLOAT2)
-        {
-            glUniform2f(tv->uniform, (GLfloat)tv->value.x, (GLfloat)tv->value.y);
-        }
-        else if (tv->type == Variable::DataType::FLOAT3)
-        {
-            glUniform3f(tv->uniform, (GLfloat)tv->value.x, (GLfloat)tv->value.y, (GLfloat)tv->value.z);
+            if (tv->type == Variable::DataType::FLOAT1)
+            {
+                glUniform1f(tv->uniform, (GLfloat)tv->value.x);
+            }
+            else if (tv->type == Variable::DataType::FLOAT2)
+            {
+                glUniform2f(tv->uniform, (GLfloat)tv->value.x, (GLfloat)tv->value.y);
+            }
+            else if (tv->type == Variable::DataType::FLOAT3)
+            {
+                glUniform3f(tv->uniform, (GLfloat)tv->value.x, (GLfloat)tv->value.y, (GLfloat)tv->value.z);
+            }
         }
     }
 

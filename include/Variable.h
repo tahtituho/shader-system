@@ -35,6 +35,13 @@ namespace DemoSystem
             const sync_track *y;
             const sync_track *z;
         };
+        enum ShaderType
+        {
+            MAIN,
+            POST,
+            ALL
+        };
+        ShaderType shaderType;
         SyncTrack syncTrack;
     };
 
