@@ -129,12 +129,6 @@ void DemoSystem::Graphics::registerLogger(Logger *logger)
     this->postprocessingShader.registerLogger(logger);
 }
 
-// Not used at the moment, as uniforms are added per shader program
-void DemoSystem::Graphics::addUniforms()
-{
-    //this->mainShader.addUniforms();
-}
-
 void DemoSystem::Graphics::swapBuffers()
 {
     glfwSwapBuffers(this->window);

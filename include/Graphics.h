@@ -22,7 +22,6 @@ namespace DemoSystem
         Graphics();
         ~Graphics();
         void initialize(Configuration::Shaders shaders, Configuration::Screen screen, Configuration::Demo demo);
-        void addUniforms();
 
         void registerSynchronizer(DemoSystem::Synchronizer *synchronizer);
         void registerTextures(std::list<Textures::Texture> *textures);
