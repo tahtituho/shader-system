@@ -6,7 +6,6 @@ uniform float effect1;
 in vec2 texPosition;
 
 void main(void) {
-  vec4 colorFromTex = texture2D(mainImage, texPosition);
-  // Values from texture
-  gl_FragColor = colorFromTex;
+	vec4 color = mod(gl_FragCoord.y, 2.0) * texture(mainImage, texPosition);
+	gl_FragColor = color;
 } 
