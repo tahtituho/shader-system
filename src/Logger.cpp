@@ -24,6 +24,9 @@ void DemoSystem::Logger::write(DemoSystem::Logger::LOG_LEVEL level, std::string 
     {
         return;
     }
+    if (!this->enabled) {
+        return;
+    }
     std::ostringstream stream;
     switch (level)
     {
@@ -75,6 +78,10 @@ void DemoSystem::Logger::toggleEnable()
 
 void DemoSystem::Logger::cleanUp()
 {
+    if (!this->enabled)
+    {
+        return;
+    }
     for (GLTtext *text : this->buffer)
     {
         gltDeleteText(text);
