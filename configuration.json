@@ -21,10 +21,10 @@
         "host": "localhost"
     },
     "shaders": {
-        "vertex": "assets\\shaders\\vertex.glsl",
-        "fragment": "assets\\shaders\\fragment.glsl",
-        "vertexPost": "assets\\shaders\\vertex_post.glsl",
-        "fragmentPost": "assets\\shaders\\fragment_post.glsl",
+        "vertex": "assets\\shaders\\vertex.vert",
+        "fragment": "assets\\shaders\\fragment.frag",
+        "vertexPost": "assets\\shaders\\vertex_post.vert",
+        "fragmentPost": "assets\\shaders\\fragment_post.frag",
         "majorVersion": 4,
         "minorVersion": 3
     },
