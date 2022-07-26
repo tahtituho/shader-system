@@ -33,6 +33,12 @@ void DemoSystem::Graphics::initialize(Configuration::Shaders shaders, Configurat
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, shaders.majorVersion);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, shaders.minorVersion);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_FOCUS_ON_SHOW, GLFW_TRUE);
+
+    if (demo.release)
+    {
+        glfwWindowHint(GLFW_AUTO_ICONIFY, GLFW_FALSE);
+    }
 
     if (demo.release)
     {
@@ -72,7 +78,7 @@ void DemoSystem::Graphics::initialize(Configuration::Shaders shaders, Configurat
 
     if (demo.release)
     {
-        glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 
     glfwMakeContextCurrent(this->window);
