@@ -94,10 +94,11 @@ endif(WIN32)
 
 # target_link_options are parameters for compiler (g++ or clang++)
 if(WIN32)
-    target_link_options(${PROJECT_NAME} PRIVATE "-mwindows" "-fpermissive" "-static-libstdc++" "-D_WIN32_WINNT=0x501")
+    target_link_options(${PROJECT_NAME} PRIVATE "-mwindows" "-fpermissive" "-static-libstdc++" "-static-libgcc" "-static" "-D_WIN32_WINNT=0x501")
+    add_compile_options(-mwindows -fpermissive -static-libstdc++ -D_WIN32_WINNT=0x501)
 else(WIN32)
     if(LINUX)
-        target_link_options(${PROJECT_NAME} PRIVATE "-fpermissive" "-static-libstdc++")
+        target_link_options(${PROJECT_NAME} PRIVATE "-fpermissive" "-static-libstdc++" "-static-libstdc++" "-static-libgcc")
     endif(LINUX)
 endif(WIN32)
 
