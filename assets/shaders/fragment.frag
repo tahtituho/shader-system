@@ -871,22 +871,18 @@ vec3 generateTexture(vec3 point, textureOptions textureOptions) {
     return r;
 }
 
-vec3 determinePixelBaseColor(float steps, float dist) {
-    float smoothedSteps = 1.0 - smoothstep(0.0, RAY_MAX_STEPS, steps);
-    return vec3(smoothedSteps);
-}
 
-vec3 processColor(hit h, vec3 rd, vec3 eye, vec2 uv) { 
+vec4 processColor(hit h, vec3 rd, vec3 eye, vec2 uv) { 
     if(h.dist > RAY_MAX_DISTANCE) {
-        return background(uv, eye, rd, h);
+        return vec4(background(uv, eye, rd, h), 0.0);
     }
 
     entity entity = h.entity;
     material em = entity.material;
-    vec3 base = determinePixelBaseColor(h.steps, h.dist); 
+    float depth = smoothstep(0.0, RAY_MAX_DISTANCE, h.dist);
     vec3 texture = generateTexture(entity.point, em.texture);
 
-    vec3 result = texture * base;
+    vec3 result = texture * (1.0 - depth);
     if (entity.needNormals == true) {
         vec3 lights = calculateOmniLight(entity.normal, eye, omniLightPosition, entity.point, em.ambient, em.diffuse, em.specular);     
         vec3 shadows = calculateShadows(entity.point, omniLightPosition, em.shadow);
@@ -907,12 +903,11 @@ vec3 processColor(hit h, vec3 rd, vec3 eye, vec2 uv) {
     }      
     
     result = fog(result, fogColor, h.dist, fogIntensity);
-    result = pow(result, vec3(1.0 / 1.2));
    
-    return vec3(result);
+    return vec4(result, depth);
 }
 
-vec3 drawMarching(vec2 uv) {
+vec4 drawMarching(vec2 uv) {
     vec3 forward = normalize(cameraLookAt - cameraPosition);   
     vec3 right = normalize(vec3(forward.z, 0.0, -forward.x));
     vec3 up = normalize(cross(forward, right)); 
@@ -944,5 +939,5 @@ void main() {
     uv.x *= aspectRatio;
 
     initialize();
-    FragColor = vec4(drawMarching(uv), 1.0);
+    FragColor = drawMarching(uv);
 }
