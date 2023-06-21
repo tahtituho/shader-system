@@ -111,6 +111,7 @@ void DemoSystem::Graphics::registerCamera(DemoSystem::Camera *camera)
 void DemoSystem::Graphics::registerTextures(std::list<Textures::Texture> *textures)
 {
     this->mainShader.registerTextures(textures);
+    this->postprocessingShader.registerTextures(textures);
 }
 
 void DemoSystem::Graphics::registerKeyboardCallback(GLFWkeyfun callback)

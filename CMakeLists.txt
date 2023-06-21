@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.23.1)
-project(ShaderSystem VERSION 1.5.0)
+project(ShaderSystem VERSION 1.6.0)
 configure_file(ShaderSystemConfig.h.in ShaderSystemConfig.h)
 # Most probably we need to copy exe and dlls files to Debug folder
 # Also assets folder and configuration.json should be copied to Debug folder

@@ -46,7 +46,7 @@ int main(int argc, char *args[])
     graphics.initialize(configurations->shaders, configurations->screen, configurations->demo);
     logger.initialize(25, 0.0, configurations->screen.height, !configurations->demo.release);
 
-    logger.write(DemoSystem::Logger::INFO, "shader system version " + VERSION + " by tahtituho 2022");
+    logger.write(DemoSystem::Logger::INFO, "shader system version " + VERSION + " by tahtituho 2023");
     logger.write(DemoSystem::Logger::INFO, "opengl vendor:   " + std::string((const char *)glGetString(GL_VENDOR)));
     logger.write(DemoSystem::Logger::INFO, "opengl renderer: " + std::string((const char *)glGetString(GL_RENDERER)));
     logger.write(DemoSystem::Logger::INFO, "opengl version:  " + std::string((const char *)glGetString(GL_VERSION)));
@@ -80,7 +80,7 @@ int main(int argc, char *args[])
     synchronizer.initializeTrackVariables(configurations->trackVariables);
     synchronizer.initializeBasicVariables();
 
-    textures.setTextures(configurations->assets);
+    textures.setTextures(configurations->textures);
 
     // Main Graphics registrations
     graphics.registerLogger(&logger);

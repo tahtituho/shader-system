@@ -49,7 +49,17 @@ void DemoSystem::Framebuffer::drawFBO() {
             }
         }
     }
-    
+
+    unsigned int textureIndex = 1;
+
+    for (auto it = this->textures->begin(); it != this->textures->end(); it++)
+    {
+        glActiveTexture(GL_TEXTURE0 + textureIndex);
+        glBindTexture(GL_TEXTURE_2D, it->handle);
+        glUniform1i(it->uniform, textureIndex);
+        textureIndex++;
+    }
+
     glBindBuffer(GL_ARRAY_BUFFER, vbo_fbo_vertices);
     glVertexAttribPointer(
         attribute_position_postproc,  // attribute
@@ -116,12 +126,12 @@ void DemoSystem::Framebuffer::addUniformsPost()
     uniform_name = "position";
     this->attribute_position_postproc = glGetAttribLocation(this->program, uniform_name);
     if (this->attribute_position_postproc == -1) {
-        this->logger->write(DemoSystem::Logger::ERR, "Could not bind uniform");
+        this->logger->write(DemoSystem::Logger::ERR, "Could not bind position uniform");
     }
     uniform_name = "mainImage";
     this->uniform_mainImage = glGetUniformLocation(this->program, uniform_name);
     if (this->uniform_mainImage == -1) {
-        this->logger->write(DemoSystem::Logger::ERR, "Could not bind uniform");
+        this->logger->write(DemoSystem::Logger::ERR, "Could not bind main image uniform");
     }
     // Tracked uniforms
     for (auto tv = this->synchronizer->trackVariables.begin(); tv != this->synchronizer->trackVariables.end(); tv++)
@@ -130,6 +140,18 @@ void DemoSystem::Framebuffer::addUniformsPost()
         {
             tv->uniform = glGetUniformLocation(this->program, tv->name.c_str());
         }
+    }
+
+    for (auto it = this->textures->begin(); it != this->textures->end(); it++)
+    {
+        glGenTextures(1, &it->handle);
+        glBindTexture(GL_TEXTURE_2D, it->handle);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, it->wrapS);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, it->wrapT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, it->width, it->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &it->image[0]);
+        it->uniform = glGetUniformLocation(this->program, it->name.c_str());
     }
 }
 

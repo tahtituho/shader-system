@@ -32,12 +32,23 @@
         {
             "type": "texture",
             "name": "texture01",
-            "file": "assets\\textures\\texture01.png"
+            "file": "assets\\textures\\texture01.png",
+            "wrapS": "repeat",
+            "wrapT": "repeat"
         },
         {
             "type": "texture",
             "name": "texture02",
-            "file": "assets\\textures\\texture02.png"
+            "file": "assets\\textures\\texture02.png",
+            "wrapS": "repeat",
+            "wrapT": "repeat"
+        },
+        {
+            "type": "texture",
+            "name": "logo",
+            "file": "assets\\textures\\logo.png",
+            "wrapS": "clampToBorder",
+            "wrapT": "clampToBorder"
         }
     ],
     "variables": [

@@ -5,6 +5,8 @@
 #include <list>
 #include <vector>
 #include "Configuration.h"
+#include "Helpers.h"
+
 namespace DemoSystem
 {
     class Textures
@@ -18,12 +20,14 @@ namespace DemoSystem
             unsigned int height;
             unsigned int handle;
             unsigned int uniform;
+            int wrapS;
+            int wrapT;
         };
 
         Textures();
         ~Textures();
         std::string add(std::string file, std::string name);
-        void setTextures(std::list<Configuration::Asset> textures);
+        void setTextures(std::list<Configuration::Texture> textures);
         std::list<Textures::Texture> textures;
     };
 
