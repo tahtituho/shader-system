@@ -14,7 +14,7 @@ namespace DemoSystem {
             void generateFBO(unsigned int width, unsigned int height);
             void resizeFBO(unsigned int width, unsigned int height);
             void addUniformsPost();
-            void drawFBO();
+            void drawFBO(double time);
             void bind();
             void unBind();
         private:  

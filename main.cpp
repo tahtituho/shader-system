@@ -158,7 +158,7 @@ void mainLoop()
         
         // Post-processing pass, unbind framebuffer and draw to screen from framebuffer
         graphics.postprocessingShader.unBind();
-        graphics.postprocessingShader.drawFBO();
+        graphics.postprocessingShader.drawFBO(position);
         logger.render();  
 
         graphics.swapBuffers();
