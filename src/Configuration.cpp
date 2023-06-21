@@ -113,16 +113,16 @@ bool DemoSystem::Configuration::read(std::string file)
         {
             for (int i = 0; i < c["assets"].size(); i++)
             {
-                Asset a;
-                a.name = c["assets"][i]["name"].asString();
-                a.file = c["assets"][i]["file"].asString();
                 std::string type = c["assets"][i]["type"].asString();
                 if (type == "texture")
                 {
-                    a.type = Configuration::Asset::AssetType::TEXTURE;
+                    Texture a;
+                    a.name = c["assets"][i]["name"].asString();
+                    a.file = c["assets"][i]["file"].asString();
+                    a.wrapS = c["assets"][i]["wrapS"].asString();
+                    a.wrapT = c["assets"][i]["wrapT"].asString();
+                    this->textures.push_back(a);
                 }
-
-                this->assets.push_back(a);
             }
         }
         return true;

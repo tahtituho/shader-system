@@ -85,16 +85,12 @@ namespace DemoSystem
             bool persistent;
         };
 
-        struct Asset
+        struct Texture
         {
-            enum AssetType
-            {
-                TEXTURE
-            };
-
-            AssetType type;
             std::string file;
             std::string name;
+            std::string wrapS;
+            std::string wrapT;
         };
         static Configuration *getInstance();
         ~Configuration();
@@ -105,7 +101,7 @@ namespace DemoSystem
         Sync sync;
         Shaders shaders;
         std::list<Configuration::Variable> trackVariables;
-        std::list<Configuration::Asset> assets;
+        std::list<Configuration::Texture> textures;
 
     private:
         static Configuration *instance;
