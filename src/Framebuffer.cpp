@@ -19,7 +19,7 @@ void DemoSystem::Framebuffer::unBind() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void DemoSystem::Framebuffer::drawFBO() {
+void DemoSystem::Framebuffer::drawFBO(double time) {
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     // Have no idea why this bind is done here, but it works for some reason...
@@ -30,6 +30,9 @@ void DemoSystem::Framebuffer::drawFBO() {
     glUniform1i(this->uniform_mainImage, 0);
     glEnableVertexAttribArray(this->attribute_position_postproc);
 
+    BasicVariable *timeVariable = &this->synchronizer->basicVariables.at("time");
+    glUniform1f(timeVariable->uniform, (GLfloat)time);
+    
     // Tracked uniforms
     for (auto tv = this->synchronizer->trackVariables.begin(); tv != this->synchronizer->trackVariables.end(); tv++)
     {

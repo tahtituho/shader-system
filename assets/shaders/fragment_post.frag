@@ -4,6 +4,7 @@ out vec4 FragColor;
 uniform sampler2D mainImage;
 uniform sampler2D logo;
 uniform float effect1;
+uniform float time;
 in vec2 texPosition;
 
 #define PI 3.14159265359
@@ -22,7 +23,7 @@ void main(void) {
 	
 	vec2 logoUv = texPosition;
 	logoUv.y = (logoUv.y - 1.0) * -1.0;
-	vec4 logoColor = texture(logo, rotateUV(logoUv * vec2(4.0, 4.0) - vec2(0.1, 0.1), PI * 1.9));
+	vec4 logoColor = texture(logo, rotateUV(logoUv * vec2(4.0, 4.0) - vec2(0.1, 0.1), time));
 
 	color = mix(color, logoColor, logoColor.a);
 	color = pow(color, vec4(1.0 / 1.2));
