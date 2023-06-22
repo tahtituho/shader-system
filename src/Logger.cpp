@@ -8,12 +8,12 @@ DemoSystem::Logger::~Logger()
 {
 }
 
-void DemoSystem::Logger::initialize(int size, float x, float y, bool e)
+void DemoSystem::Logger::initialize(int size, Configuration::Screen screen, Configuration::Demo demo)
 {
     this->size = size;
-    this->x = x;
-    this->y = y;
-    this->enabled = e;
+    this->x = 0.0;
+    this->y = screen.height * screen.scale;
+    this->enabled = !demo.release;
 
     gltInit();
 }

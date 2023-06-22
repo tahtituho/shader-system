@@ -8,7 +8,8 @@
     "screen": {
         "width": 640,
         "height": 480,
-        "FPS": 60
+        "FPS": 60,
+        "scale": 1
     },
     "music": {
         "file": "assets\\music\\tune.mp3",

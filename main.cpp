@@ -44,7 +44,7 @@ int main(int argc, char *args[])
     bool confReadOk = configurations->read(confFile);
 
     graphics.initialize(configurations->shaders, configurations->screen, configurations->demo);
-    logger.initialize(25, 0.0, configurations->screen.height, !configurations->demo.release);
+    logger.initialize(25, configurations->screen, configurations->demo);
 
     logger.write(DemoSystem::Logger::INFO, "shader system version " + VERSION + " by tahtituho 2023");
     logger.write(DemoSystem::Logger::INFO, "opengl vendor:   " + std::string((const char *)glGetString(GL_VENDOR)));

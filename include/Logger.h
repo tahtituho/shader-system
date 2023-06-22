@@ -7,6 +7,7 @@
 #include <GLFW/glfw3.h>
 #define GLT_IMPLEMENTATION
 #include "gltext.h"
+#include "Configuration.h"
 
 namespace DemoSystem
 {
@@ -21,7 +22,7 @@ namespace DemoSystem
             INFO,
             ERR
         };
-        void initialize(int size, float x, float y, bool e);
+        void initialize(int size, Configuration::Screen screen, Configuration::Demo demo);
         void write(LOG_LEVEL level, std::string text);
         void render();
         bool isEnabled();
