@@ -40,13 +40,15 @@ void DemoSystem::Graphics::initialize(Configuration::Shaders shaders, Configurat
         glfwWindowHint(GLFW_AUTO_ICONIFY, GLFW_FALSE);
     }
 
+    int scaledScreenWidth = screen.width * screen.scale;
+    int scaledScreenHeight = screen.height * screen.scale;
     if (demo.release)
     {
-        this->window = glfwCreateWindow(screen.width, screen.height, (demo.group + " - " + demo.name).c_str(), glfwGetPrimaryMonitor(), NULL);
+        this->window = glfwCreateWindow(scaledScreenWidth, scaledScreenHeight, (demo.group + " - " + demo.name).c_str(), glfwGetPrimaryMonitor(), NULL);
     }
     else
     {
-        this->window = glfwCreateWindow(screen.width, screen.height, (demo.group + " - " + demo.name).c_str(), NULL, NULL);
+        this->window = glfwCreateWindow(scaledScreenWidth, scaledScreenHeight, (demo.group + " - " + demo.name).c_str(), NULL, NULL);
     }
 
     this->postprocessingShader.setScreenSize(screen.width, screen.height);
@@ -91,7 +93,7 @@ void DemoSystem::Graphics::initialize(Configuration::Shaders shaders, Configurat
         return;
     }
 
-    glViewport(0, 0, screen.width, screen.height);
+    glViewport(0, 0, scaledScreenWidth, scaledScreenHeight);
     glfwSetFramebufferSizeCallback(window, frameBufferResizeCallback);
 
     return;

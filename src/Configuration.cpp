@@ -20,6 +20,7 @@ DemoSystem::Configuration::Configuration()
     this->screen.width = 800;
     this->screen.height = 600;
     this->screen.FPS = 60;
+    this->screen.scale = 1;
 
     this->tune.file = "assets/music/tune.mp3";
     this->tune.BPM = 80.0;
@@ -55,6 +56,7 @@ bool DemoSystem::Configuration::read(std::string file)
         this->screen.width = c["screen"]["width"].type() != Json::ValueType::nullValue ? c["screen"]["width"].asInt() : this->screen.width;
         this->screen.height = c["screen"]["height"].type() != Json::ValueType::nullValue ? c["screen"]["height"].asInt() : this->screen.height;
         this->screen.FPS = c["screen"]["FPS"].type() != Json::ValueType::nullValue ? c["screen"]["FPS"].asInt() : this->screen.FPS;
+        this->screen.scale = c["screen"]["scale"].type() != Json::ValueType::nullValue ? c["screen"]["scale"].asInt() : this->screen.scale;
 
         this->tune.file = c["music"]["file"].type() != Json::ValueType::nullValue ? c["music"]["file"].asString() : this->tune.file;
         this->tune.BPM = c["music"]["BPM"].type() != Json::ValueType::nullValue ? c["music"]["BPM"].asDouble() : this->tune.BPM;

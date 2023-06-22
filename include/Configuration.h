@@ -24,6 +24,7 @@ namespace DemoSystem
             int width;
             int height;
             int FPS;
+            int scale;
         };
 
         struct Tune
